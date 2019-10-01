@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_vpn">
+
+    <fragment
+        android:id="@+id/navigation_vpn"
+        android:name="org.mozilla.guardian.vpn.VpnFragment"
+        android:label="@string/title_vpn"
+        tools:layout="@layout/fragment_vpn" />
+
+    <fragment
+        android:id="@+id/navigation_insights"
+        android:name="org.mozilla.guardian.insights.InsightsFragment"
+        android:label="@string/title_insights"
+        tools:layout="@layout/fragment_insights" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="org.mozilla.guardian.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
