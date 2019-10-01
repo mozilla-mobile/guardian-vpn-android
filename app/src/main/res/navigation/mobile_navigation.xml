@@ -13,12 +13,6 @@
         tools:layout="@layout/fragment_vpn" />
 
     <fragment
-        android:id="@+id/navigation_insights"
-        android:name="org.mozilla.guardian.insights.InsightsFragment"
-        android:label="@string/title_insights"
-        tools:layout="@layout/fragment_insights" />
-
-    <fragment
         android:id="@+id/navigation_settings"
         android:name="org.mozilla.guardian.settings.SettingsFragment"
         android:label="@string/title_settings"

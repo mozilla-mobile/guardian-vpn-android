@@ -7,11 +7,6 @@
         android:title="@string/title_vpn" />
 
     <item
-        android:id="@+id/navigation_insights"
-        android:icon="@drawable/ic_insights"
-        android:title="@string/title_insights" />
-
-    <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/title_settings" />
