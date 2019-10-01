@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Name that color -->
+    <!-- http://chir.ag/projects/name-that-color/ -->
+
+    <!-- Alpha value reference -->
+    <!-- https://stackoverflow.com/a/17239853 -->
+
     <color name="colorPrimary">#E5E5E5</color>
     <color name="colorPrimaryDark">#990C0C0D</color>
     <color name="colorAccent">#0060DF</color>
+
+    <color name="meteorite">#321C64</color>
 </resources>
