@@ -1,0 +1,4 @@
+[submodule "modules/libwg"]
+	path = modules/libwg
+	url = git@github.com:mozilla-services/guardian-vpn-android.git
+	branch = max/dev/libwg
