@@ -1,2 +1,4 @@
 include ':app'
 rootProject.name='Guardian'
+include ':libwg'
+project(':libwg').projectDir = new File(rootDir, 'modules/libwg/libwg')
