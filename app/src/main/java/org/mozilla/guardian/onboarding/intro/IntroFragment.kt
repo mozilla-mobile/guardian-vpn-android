@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_intro.*
 import org.mozilla.guardian.R
+import org.mozilla.guardian.onboarding.OnboardingActivity
 
 class IntroFragment : Fragment() {
 
@@ -24,8 +25,14 @@ class IntroFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         btn_close.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_entrance))
-        btn_skip.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_auth))
-        btn_auth.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_auth))
+        btn_skip.setOnClickListener{
+            val activity = activity as? OnboardingActivity ?: return@setOnClickListener
+            activity.startLoginFlow()
+        }
+        btn_auth.setOnClickListener{
+            val activity = activity as? OnboardingActivity ?: return@setOnClickListener
+            activity.startLoginFlow()
+        }
     }
 
     private fun initRecyclerView() {
