@@ -60,13 +60,14 @@ class OnboardingActivity : AppCompatActivity() {
         }
     }
 
-    private fun processVerifyResult(verifyResult: Result<LoginResult, String>) {
+    private fun processVerifyResult(verifyResult: Result<LoginResult>) {
         when (verifyResult) {
-            is Result.Success -> processLoginResult(verifyResult.result)
-            else -> {
-                val message = (verifyResult as Result.Fail).message
-                Toast.makeText(this@OnboardingActivity, message, Toast.LENGTH_SHORT).show()
-            }
+            is Result.Success -> processLoginResult(verifyResult.value)
+            is Result.Fail -> Toast.makeText(
+                this,
+                "${verifyResult.exception}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
