@@ -2,33 +2,27 @@ package org.mozilla.guardian.user.data
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class UserRepository(val appContext: Context) {
+class UserRepository(private val appContext: Context) {
 
-    private val userService = Retrofit.Builder()
-            .baseUrl(HOST_GUARDIAN)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(UserService::class.java)
+    private val guardianService = GuardianService.newInstance()
 
     suspend fun getLoginInfo(): LoginInfo {
-        return userService.getLoginInfo()
+        return guardianService.getLoginInfo()
     }
 
-    suspend fun verifyLogin(info: LoginInfo): Result<LoginResult, String> {
-        val response = userService.verifyLogin(info.verificationUrl)
+    suspend fun verifyLogin(info: LoginInfo): Result<LoginResult> {
+        val response = guardianService.verifyLogin(info.verificationUrl)
+
         return if (response.isSuccessful) {
-            val loginResult = response.body()!!
-            PreferenceManager.getDefaultSharedPreferences(appContext).edit()
-                .putString(PREF_ACCESS_TOKEN, loginResult.token)
-                .apply()
-            Result.Success(loginResult)
+            response.body()?.let {
+                saveToken(it.token)
+                Result.Success(it)
+            } ?: Result.Fail(UnknownException("empty response body"))
         } else {
             when (val code = response.code()) {
-                401 -> Result.Fail("Unauthorized")
-                else -> Result.Fail("response $code")
+                401 -> Result.Fail(UnauthorizedException)
+                else -> Result.Fail(UnknownException("Unknown status code $code"))
             }
         }
     }
@@ -38,9 +32,13 @@ class UserRepository(val appContext: Context) {
         return pref.getString(PREF_ACCESS_TOKEN, null)
     }
 
-    companion object {
-        private const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
+    private fun saveToken(token: String) {
+        PreferenceManager.getDefaultSharedPreferences(appContext).edit()
+            .putString(PREF_ACCESS_TOKEN, token)
+            .apply()
+    }
 
+    companion object {
         private const val PREF_ACCESS_TOKEN = "access_token"
     }
 }
