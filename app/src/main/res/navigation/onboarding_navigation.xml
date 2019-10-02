@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboarding_navigation"
+    app:startDestination="@+id/navigation_entrance">
+
+    <fragment
+        android:id="@+id/navigation_entrance"
+        android:name="org.mozilla.guardian.onboarding.entrance.EntranceFragment"
+        tools:layout="@layout/fragment_entrance">
+
+        <action
+            android:id="@+id/action_auth"
+            app:destination="@id/navigation_auth"/>
+
+        <action
+            android:id="@+id/action_intro"
+            app:destination="@id/navigation_intro"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_auth"
+        android:name="org.mozilla.guardian.onboarding.auth.AuthFragment"
+        tools:layout="@layout/fragment_auth" />
+
+    <fragment
+        android:id="@+id/navigation_intro"
+        android:name="org.mozilla.guardian.onboarding.intro.IntroFragment"
+        tools:layout="@layout/fragment_intro" />
+</navigation>
