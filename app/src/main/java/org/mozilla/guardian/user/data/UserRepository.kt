@@ -28,6 +28,6 @@ class UserRepository {
     }
 
     companion object {
-        private const val HOST_GUARDIAN = "https://guardian-dev.herokuapp.com"
+        private const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
     }
 }
