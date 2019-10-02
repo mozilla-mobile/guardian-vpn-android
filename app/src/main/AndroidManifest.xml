@@ -24,16 +24,13 @@
 
         <activity
             android:name=".onboarding.OnboardingActivity"
+            android:launchMode="singleTask"
             android:exported="false"/>
 
         <activity
             android:name=".main.MainActivity"
+            android:launchMode="singleTask"
             android:exported="false"/>
-
-        <!-- TODO: Remove this test activity -->
-        <activity
-            android:name=".user.ui.AuthenticationActivity"
-            android:exported="true" />
 
     </application>
 

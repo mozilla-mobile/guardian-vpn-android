@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_entrance.*
 import org.mozilla.guardian.R
+import org.mozilla.guardian.onboarding.OnboardingActivity
 
 class EntranceFragment : Fragment() {
 
@@ -18,7 +19,10 @@ class EntranceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        btn_auth.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_auth))
+        btn_auth.setOnClickListener {
+            val activity = activity as? OnboardingActivity ?: return@setOnClickListener
+            activity.startLoginFlow()
+        }
         btn_intro.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_intro))
     }
 }
