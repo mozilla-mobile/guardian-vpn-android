@@ -2,4 +2,8 @@
     <string name="app_name">Guardian</string>
     <string name="title_vpn">VPN</string>
     <string name="title_settings">Settings</string>
+    <string name="entrance_title">Firefox Private Network</string>
+    <string name="entrance_description">A fast, secure and easy to use VPN\n(Virtual Private Network).</string>
+    <string name="action_auth">Get started</string>
+    <string name="action_learn_more">Learn more</string>
 </resources>
