@@ -12,28 +12,15 @@
         tools:layout="@layout/fragment_entrance">
 
         <action
-            android:id="@+id/action_auth"
-            app:destination="@id/navigation_auth"/>
-
-        <action
             android:id="@+id/action_intro"
             app:destination="@id/navigation_intro"/>
 
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_auth"
-        android:name="org.mozilla.guardian.onboarding.auth.AuthFragment"
-        tools:layout="@layout/fragment_auth" />
-
-    <fragment
         android:id="@+id/navigation_intro"
         android:name="org.mozilla.guardian.onboarding.intro.IntroFragment"
         tools:layout="@layout/fragment_intro">
-
-        <action
-            android:id="@+id/action_auth"
-            app:destination="@id/navigation_auth"/>
 
         <action
             android:id="@+id/action_entrance"
