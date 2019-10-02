@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/indicator_1"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:src="@drawable/ic_indicator_inactive" />
+
+    <ImageView
+        android:id="@+id/indicator_2"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_indicator_inactive" />
+
+    <ImageView
+        android:id="@+id/indicator_3"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_indicator_inactive" />
+
+    <ImageView
+        android:id="@+id/indicator_4"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_indicator_inactive" />
+
+</LinearLayout>
