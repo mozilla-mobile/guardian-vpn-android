@@ -1,4 +1,4 @@
-package org.mozilla.guardian.settings
+package org.mozilla.guardian.main.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
