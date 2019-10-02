@@ -1,4 +1,4 @@
-package org.mozilla.guardian.vpn
+package org.mozilla.guardian.main.vpn
 
 import android.os.Bundle
 import android.view.LayoutInflater

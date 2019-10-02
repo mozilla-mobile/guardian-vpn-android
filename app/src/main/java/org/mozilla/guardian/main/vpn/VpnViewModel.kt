@@ -1,4 +1,4 @@
-package org.mozilla.guardian.vpn
+package org.mozilla.guardian.main.vpn
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package org.mozilla.guardian.settings
+package org.mozilla.guardian.main.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
