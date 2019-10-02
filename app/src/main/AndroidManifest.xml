@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.mozilla.guardian">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -27,6 +29,11 @@
         <activity
             android:name=".main.MainActivity"
             android:exported="false"/>
+
+        <!-- TODO: Remove this test activity -->
+        <activity
+            android:name=".user.ui.AuthenticationActivity"
+            android:exported="true" />
 
     </application>
 
