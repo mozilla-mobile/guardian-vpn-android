@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 class VpnViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is Vpn Fragment"
+        value = "Click to toggle VPN on/off"
     }
     val text: LiveData<String> = _text
 }

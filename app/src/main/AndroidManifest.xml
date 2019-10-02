@@ -17,6 +17,7 @@
 
         <activity
             android:name=".splash.SplashActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,11 +27,13 @@
 
         <activity
             android:name=".onboarding.OnboardingActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:exported="false"/>
 
         <activity
             android:name=".main.MainActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:exported="false"/>
 
