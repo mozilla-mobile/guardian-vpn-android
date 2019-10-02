@@ -1,20 +1,18 @@
 package org.mozilla.guardian.user.ui
 
 import android.content.ComponentName
-import android.graphics.Color
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.mozilla.guardian.user.data.LoginInfo
 import org.mozilla.guardian.user.data.UserRepository
-import org.mozilla.guardian.user.domain.VerifyLoginUseCase
 import org.mozilla.guardian.user.domain.GetLoginInfoUseCase
+import org.mozilla.guardian.user.domain.VerifyLoginUseCase
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
