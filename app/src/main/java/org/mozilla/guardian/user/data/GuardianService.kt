@@ -28,7 +28,7 @@ interface GuardianService {
     suspend fun getServers(@Header("Authorization") token: String): Response<ServerList>
 
     @GET("api/v1/vpn/versions")
-    suspend fun getVersions(@Header("Authorization") token: String): Response<Versions>
+    suspend fun getVersions(): Response<Versions>
 
     companion object {
         const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
