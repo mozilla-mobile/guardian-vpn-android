@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsClient
@@ -13,7 +14,10 @@ import androidx.browser.customtabs.CustomTabsServiceConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mozilla.guardian.R
+import org.mozilla.guardian.device.data.DeviceRepository
+import org.mozilla.guardian.device.domain.AddDeviceUseCase
 import org.mozilla.guardian.main.MainActivity
 import org.mozilla.guardian.user.data.LoginResult
 import org.mozilla.guardian.user.data.Result
@@ -29,6 +33,13 @@ class OnboardingActivity : AppCompatActivity() {
 
     private lateinit var getLoginInfo: GetLoginInfoUseCase
     private lateinit var verifyLogin: VerifyLoginUseCase
+
+    private val addDevice: AddDeviceUseCase by lazy {
+        AddDeviceUseCase(
+            DeviceRepository(applicationContext),
+            userRepository
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +83,21 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun processLoginResult(loginResult: LoginResult) {
-        // TODO: Better way to clear custom tab
-        startActivity(getStartIntent(this).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        })
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val result = withContext(Dispatchers.IO) {
+                addDevice()
+            }
+            when (result) {
+                is Result.Success -> Log.d(TAG, "add device ${result.value}")
+                is Result.Fail -> Log.d(TAG, "add device failed: ${result.exception}")
+            }
+
+            // TODO: Better way to clear custom tab
+            startActivity(getStartIntent(this@OnboardingActivity).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            })
+        }
     }
 
     private suspend fun prepareCustomTab(): Unit = suspendCoroutine { cont ->
@@ -101,6 +123,7 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val TAG = "OnboardingActivity"
         fun getStartIntent(context: Context) = Intent(context, OnboardingActivity::class.java)
     }
 }
