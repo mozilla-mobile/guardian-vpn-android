@@ -1,5 +1,6 @@
 package org.mozilla.guardian.user.data
 
+import com.google.gson.*
 import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -10,6 +11,8 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Url
+import java.lang.reflect.Type
+
 
 interface GuardianService {
     @POST("api/v1/vpn/login")
@@ -24,6 +27,9 @@ interface GuardianService {
     @GET("api/v1/vpn/servers")
     suspend fun getServers(@Header("Authorization") token: String): Response<ServerList>
 
+    @GET("api/v1/vpn/versions")
+    suspend fun getVersions(@Header("Authorization") token: String): Response<Versions>
+
     companion object {
         const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
     }
@@ -36,9 +42,13 @@ fun GuardianService.Companion.newInstance(): GuardianService {
             })
             .build()
 
+    val gson = GsonBuilder()
+        .registerTypeAdapter(Versions::class.java, VersionsDeserializer())
+        .create()
+
     return Retrofit.Builder()
             .baseUrl(HOST_GUARDIAN)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
             .create(GuardianService::class.java)
@@ -176,6 +186,42 @@ data class Server(
 
     @SerializedName("ipv6_gateway")
     val ipv6Gateway: String
+)
+
+internal class VersionsDeserializer : JsonDeserializer<Versions> {
+    @Throws(JsonParseException::class)
+    override fun deserialize(je: JsonElement, type: Type, jdc: JsonDeserializationContext): Versions {
+        val gson = Gson()
+
+        return Versions(
+            je.asJsonObject.keySet()
+                .map { it to gson.fromJson(je.asJsonObject.get(it), PlatformVersion::class.java) }
+                .toMap()
+        )
+    }
+}
+
+data class Versions(
+    val map: Map<String, PlatformVersion>
+)
+
+data class PlatformVersion(
+    @SerializedName("latest")
+    val latest: Version,
+
+    @SerializedName("minimum")
+    val minimum: Version
+)
+
+data class Version(
+    @SerializedName("version")
+    val version: String,
+
+    @SerializedName("released_on")
+    val releasedOn: String,
+
+    @SerializedName("message")
+    val message: String
 )
 
 sealed class Result<out T : Any> {
