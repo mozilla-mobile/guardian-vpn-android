@@ -9,15 +9,19 @@ class ServerRepository {
     suspend fun getServers(token: String): Result<ServerList> {
         val bearerToken = "Bearer $token"
 
-        val response = guardianService.getServers(bearerToken)
-        return if (response.isSuccessful) {
-            val serverList = response.body()!!
-            Result.Success(serverList)
-        } else {
-            when (val code = response.code()) {
-                401 -> Result.Fail(UnauthorizedException)
-                else -> Result.Fail(RuntimeException("Unknown response code $code"))
+        return try {
+            val response = guardianService.getServers(bearerToken)
+            if (response.isSuccessful) {
+                val serverList = response.body()!!
+                Result.Success(serverList)
+            } else {
+                when (val code = response.code()) {
+                    401 -> Result.Fail(UnauthorizedException)
+                    else -> Result.Fail(RuntimeException("Unknown response code $code"))
+                }
             }
+        } catch (e: Exception) {
+            Result.Fail(RuntimeException("Unknown exception $e"))
         }
     }
 }
