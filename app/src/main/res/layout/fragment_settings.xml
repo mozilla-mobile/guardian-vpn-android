@@ -13,7 +13,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="24dp"
-        android:src="@drawable/ic_launcher_foreground"
         tools:src="@drawable/ic_launcher_foreground" />
 
     <TextView
@@ -23,7 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"
-        android:text="Jane Doe"
         tools:text="Jane Doe" />
 
     <TextView
@@ -35,7 +33,6 @@
         android:textAlignment="center"
         android:textSize="15sp"
         android:textColor="#990C0C0D"
-        android:text="janedoe@gmail.com"
         tools:text="janedoe@gmail.com" />
 
     <com.google.android.material.button.MaterialButton
