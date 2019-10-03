@@ -33,6 +33,12 @@ interface GuardianService {
         @Header("Authorization") token: String
     ): Response<DeviceInfo>
 
+    @DELETE("api/v1/vpn/device/{pubkey}")
+    suspend fun removeDevice(
+        @Path("pubkey") pubkey: String,
+        @Header("Authorization") token: String
+    ): Response<Unit>
+
     companion object {
         const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
     }

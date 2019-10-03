@@ -31,6 +31,20 @@ class DeviceRepository(
         }
     }
 
+    suspend fun removeDevice(pubKey: String, token: String): Result<Unit> {
+        val response = guardianService.removeDevice(pubKey, token)
+
+        return if (response.isSuccessful) {
+            return Result.Success(Unit)
+        } else {
+            when (val code = response.code()) {
+                400 -> Result.Fail(RuntimeException("code=$code, msg=${response.errorBody()?.string()}"))
+                401 -> Result.Fail(UnauthorizedException)
+                else -> Result.Fail(UnknownException("Unknown status code: $code"))
+            }
+        }
+    }
+
     fun getPrivateKey(): String? {
         return PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREF_PRIVATE_KEY, null)
     }
