@@ -44,7 +44,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <include layout="@layout/layout_vpn_offline" />
+        <include
+            layout="@layout/layout_vpn_offline"
+            android:id="@+id/vpn_state_offline" />
+
+        <include
+            layout="@layout/layout_vpn_connecting"
+            android:id="@+id/vpn_state_connecting"
+            android:visibility="gone" />
+
+        <include
+            layout="@layout/layout_vpn_online"
+            android:id="@+id/vpn_state_online"
+            android:visibility="gone" />
+
+        <include
+            layout="@layout/layout_vpn_switching"
+            android:id="@+id/vpn_state_switching"
+            android:visibility="gone" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/vpn_switch"
+            android:layout_width="44dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="48dp"
+            android:layout_gravity="center_horizontal|bottom"
+            app:thumbTint="@color/switch_thumb"
+            app:trackTint="@color/switch_track" />
 
     </com.google.android.material.card.MaterialCardView>
 
