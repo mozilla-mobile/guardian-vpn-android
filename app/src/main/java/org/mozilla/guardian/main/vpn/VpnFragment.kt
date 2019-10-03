@@ -70,6 +70,7 @@ class VpnFragment : Fragment() {
         val tunnel = tunnelManager.create(config, "aaa")
 
         vpn_switch.isChecked = tunnel.state == Tunnel.State.UP
+        switchState(tunnel.state)
 
         vpn_switch.setOnCheckedChangeListener { _, isChecked ->
             GlobalScope.launch(Dispatchers.IO) {
