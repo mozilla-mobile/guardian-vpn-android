@@ -3,6 +3,7 @@ package org.mozilla.guardian.main.vpn
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.guardian.MainApplication
 import org.mozilla.guardian.R
+import org.mozilla.guardian.device.data.DeviceRepository
 import java.net.InetAddress
 
 class VpnFragment : Fragment() {
@@ -32,6 +34,10 @@ class VpnFragment : Fragment() {
 
     private var pendingTunnel: Tunnel? = null
     private lateinit var config: Config
+
+    private val deviceRepository: DeviceRepository by lazy {
+        DeviceRepository(activity!!.applicationContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +69,7 @@ class VpnFragment : Fragment() {
                     if (intent != null) {
                         withContext(Dispatchers.Main){
                             vpn_switch.isChecked = false
+
                             startActivityForResult(intent, 0)
                         }
                     } else {
@@ -86,8 +93,14 @@ class VpnFragment : Fragment() {
 
     private fun prepareConfig(): Config {
         val inetInterface = Interface.Builder().apply {
-            setKeyPair(KeyPair(Key.fromBase64("+PRvHmXSZ11CkUqJX2NvvYuCATY8+6H2ctP0GXwebWs=")))
-            addAddress(InetNetwork.parse("10.64.114.119/32"))
+            val deviceInfo = deviceRepository.getDevice()
+            val privateKey = deviceRepository.getPrivateKey()
+            val ipv4Address = deviceInfo?.ipv4Address ?: ""
+            Log.d(TAG, "device=$deviceInfo")
+            Log.d(TAG, "private key=$privateKey")
+
+            setKeyPair(KeyPair(Key.fromBase64(privateKey)))
+            addAddress(InetNetwork.parse(ipv4Address))
             addDnsServer(InetAddress.getByAddress(byteArrayOf(1, 1, 1, 1)))
         }.build()
 
@@ -110,5 +123,9 @@ class VpnFragment : Fragment() {
 
             addPeers(peers)
         }.build()
+    }
+
+    companion object {
+        private const val TAG = "VpnFragment"
     }
 }
