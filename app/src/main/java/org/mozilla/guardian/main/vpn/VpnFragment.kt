@@ -15,7 +15,7 @@ import com.wireguard.config.Interface
 import com.wireguard.config.Peer
 import com.wireguard.crypto.Key
 import com.wireguard.crypto.KeyPair
-import kotlinx.android.synthetic.main.layout_vpn_offline.*
+import kotlinx.android.synthetic.main.fragment_vpn.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,14 +30,9 @@ class VpnFragment : Fragment() {
 
     private var pendingTunnel: Tunnel? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         vpnViewModel = ViewModelProviders.of(this).get(VpnViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_vpn, container, false)
-        return root
+        return inflater.inflate(R.layout.fragment_vpn, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

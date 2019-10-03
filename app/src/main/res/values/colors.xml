@@ -22,4 +22,5 @@
     <color name="shamrock">#2AC3A2</color>
     <color name="shamrock_alpha_40">#662AC3A2</color>
     <color name="athens_gray">#F9F9FA</color>
+    <color name="white_alpha_80">#CCFFFFFF</color>
 </resources>
