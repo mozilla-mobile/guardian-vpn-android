@@ -1,20 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_launcher_foreground"
+        tools:src="@drawable/ic_launcher_foreground" />
 
     <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
+        android:id="@+id/profile_name"
+        style="@style/PageTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_gravity="center_horizontal"
         android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="Jane Doe"
+        tools:text="Jane Doe" />
+
+    <TextView
+        android:id="@+id/profile_email"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        android:textColor="#990C0C0D"
+        android:text="janedoe@gmail.com"
+        tools:text="janedoe@gmail.com" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_manage_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/btn_manage_account"
+        android:textAllCaps="false"
+        android:textSize="15sp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/icon_my_devices"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_device" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:text="@string/label_my_devices"
+                android:textColor="#CC0C0C0D"
+                android:textSize="15sp"
+                tools:text="My devies" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/icon_get_help"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_get_help" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:text="@string/label_get_help"
+                android:textColor="#CC0C0C0D"
+                android:textSize="15sp"
+                tools:text="Get help" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/icon_about"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_about" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:text="@string/label_about"
+                android:textColor="#CC0C0C0D"
+                android:textSize="15sp"
+                tools:text="About" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="@string/btn_sign_out"
+        android:textColor="#FF4F5E"
+        android:textSize="15sp"
+        tools:text="Sign out" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

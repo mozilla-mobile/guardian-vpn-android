@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -15,6 +15,11 @@
     <style name="BottomNavigationTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorAccent</item>
         <item name="android:colorForeground">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="PageTitle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">#CC0C0C0D</item>
     </style>
 
 </resources>

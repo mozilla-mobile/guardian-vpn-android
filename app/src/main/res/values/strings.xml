@@ -19,4 +19,9 @@
     <string name="vpn_state_offline">VPN is off</string>
     <string name="vpn_state_offline_hint">Turn it on to protect your entire device</string>
     <string name="vpn_country_switch_hint">Select connection</string>
+    <string name="btn_manage_account">Manage account</string>
+    <string name="btn_sign_out">Sign out</string>
+    <string name="label_my_devices">My devices</string>
+    <string name="label_about">About</string>
+    <string name="label_get_help">Get help</string>
 </resources>
