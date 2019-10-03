@@ -73,9 +73,11 @@ class VpnFragment : Fragment() {
                             startActivityForResult(intent, 0)
                         }
                     } else {
+                        switchState(Tunnel.State.UP)
                         tunnel.state = Tunnel.State.TOGGLE
                     }
                 } else {
+                    switchState(Tunnel.State.DOWN)
                     tunnel.state = Tunnel.State.TOGGLE
                 }
             }
@@ -88,6 +90,23 @@ class VpnFragment : Fragment() {
             vpn_switch.isChecked = true
         } else {
             Toast.makeText(context, "Permission denied by user", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private suspend fun switchState(state: Tunnel.State) {
+        withContext(Dispatchers.Main){
+            vpn_state_offline.visibility = View.GONE
+            vpn_state_connecting.visibility = View.GONE
+            vpn_state_online.visibility = View.GONE
+            vpn_state_switching.visibility = View.GONE
+            when (state) {
+                Tunnel.State.UP -> {
+                    vpn_state_online.visibility = View.VISIBLE
+                }
+                Tunnel.State.DOWN -> {
+                    vpn_state_offline.visibility = View.VISIBLE
+                }
+            }
         }
     }
 
