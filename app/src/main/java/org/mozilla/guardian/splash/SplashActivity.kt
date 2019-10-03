@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_splash.*
-
 import org.mozilla.guardian.R
 import org.mozilla.guardian.main.MainActivity
 import org.mozilla.guardian.onboarding.OnboardingActivity
