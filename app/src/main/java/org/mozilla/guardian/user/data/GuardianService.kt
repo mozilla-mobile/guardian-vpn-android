@@ -7,10 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Url
+import retrofit2.http.*
 import java.lang.reflect.Type
 
 
@@ -29,6 +26,12 @@ interface GuardianService {
 
     @GET("api/v1/vpn/versions")
     suspend fun getVersions(): Response<Versions>
+
+    @POST("api/v1/vpn/device")
+    suspend fun addDevice(
+        @Body body: DeviceRequestBody,
+        @Header("Authorization") token: String
+    ): Response<DeviceInfo>
 
     companion object {
         const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
@@ -222,6 +225,10 @@ data class Version(
 
     @SerializedName("message")
     val message: String
+)
+data class DeviceRequestBody(
+    val name: String,
+    val pubkey: String
 )
 
 sealed class Result<out T : Any> {
