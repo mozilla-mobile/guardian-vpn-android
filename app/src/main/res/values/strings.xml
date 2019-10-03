@@ -15,4 +15,8 @@
     <string name="intro_description_2">We\'re Mozilla. We don\'t log your activity\nand we\'re always on your side.</string>
     <string name="intro_description_3">Stand up to tech bullies and protect your\naccess to the web.</string>
     <string name="intro_description_4">Stream, download and game. We won\'t\nrestrict your bandwidth.</string>
+    <string name="vpn_title">Private Network</string>
+    <string name="vpn_state_offline">VPN is off</string>
+    <string name="vpn_state_offline_hint">Turn it on to protect your entire device</string>
+    <string name="vpn_country_switch_hint">Select connection</string>
 </resources>

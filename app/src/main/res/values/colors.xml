@@ -13,4 +13,13 @@
 
     <color name="meteorite">#321C64</color>
     <color name="science_blue">#0060DF</color>
+    <color name="abbey_alpha_80">#CC0C0C0D</color>
+    <color name="abbey_alpha_60">#990C0C0D</color>
+    <color name="abbey_alpha_40">#660C0C0D</color>
+    <color name="abbey_alpha_10">#1A0C0C0D</color>
+    <color name="turquoise">#3FE1B0</color>
+    <color name="turquoise_alpha_40">#663FE1B0</color>
+    <color name="shamrock">#2AC3A2</color>
+    <color name="shamrock_alpha_40">#662AC3A2</color>
+    <color name="athens_gray">#F9F9FA</color>
 </resources>
