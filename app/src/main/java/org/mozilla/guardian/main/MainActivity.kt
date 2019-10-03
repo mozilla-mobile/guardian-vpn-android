@@ -31,22 +31,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // TODO: Check device limit first instead of adding device directly
-        GlobalScope.launch(Dispatchers.Main) {
-            val result = withContext(Dispatchers.IO) {
-                addDevice()
-            }
-            when (result) {
-                is Result.Success -> Log.d(TAG, "add device ${result.value}")
-                is Result.Fail -> Log.d(TAG, "add device failed: ${result.exception}")
-            }
-        }
-
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
         navView.setupWithNavController(navController)
-
-
     }
 
     companion object {
