@@ -18,6 +18,9 @@ interface GuardianService {
     @GET
     suspend fun verifyLogin(@Url verifyUrl: String): Response<LoginResult>
 
+    @GET("api/v1/vpn/account")
+    suspend fun getUserInfo(@Header("Authorization") token: String): Response<User>
+
     @GET("api/v1/vpn/servers")
     suspend fun getServers(@Header("Authorization") token: String): Response<ServerList>
 

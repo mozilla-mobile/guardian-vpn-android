@@ -27,6 +27,24 @@ class UserRepository(private val appContext: Context) {
         }
     }
 
+    suspend fun getUserInfo(): Result<User> {
+        val token = getToken()?.let {
+            "Bearer $it"
+        } ?: return Result.Fail(UnknownException("empty token"))
+
+        val response = guardianService.getUserInfo(token)
+        return if (response.isSuccessful) {
+            response.body()?.let {
+                Result.Success(it)
+            } ?: Result.Fail(UnknownException("empty response body"))
+        } else {
+            when (val code = response.code()) {
+                401 -> Result.Fail(UnauthorizedException)
+                else -> Result.Fail(UnknownException("Unknown status code $code"))
+            }
+        }
+    }
+
     fun getToken(): String? {
         val pref = PreferenceManager.getDefaultSharedPreferences(appContext)
         return pref.getString(PREF_ACCESS_TOKEN, null)
