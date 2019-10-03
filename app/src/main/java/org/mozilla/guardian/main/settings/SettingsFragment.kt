@@ -39,9 +39,10 @@ class SettingsFragment : Fragment() {
             when (userInfo) {
                 is Result.Success -> {
                     withContext(Dispatchers.Main){
-                        profile_name.text = userInfo.value.displayName
-                        profile_email.text = userInfo.value.email
-                        profile_image.load(userInfo.value.avatar)
+
+                        profile_name?.text = userInfo.value.displayName
+                        profile_email?.text = userInfo.value.email
+                        profile_image?.load(userInfo.value.avatar)
                     }
                 }
             }

@@ -174,8 +174,8 @@ class VpnFragment : Fragment() {
             }
             if (result is Result.Success) {
                 val adapter = ServerListAdapter(result.value.countries)
-                server_list.adapter = adapter
-                city_name.text = result.value.countries[0].name
+                server_list?.adapter = adapter
+                city_name?.text = result.value.countries[0].name
             }
         }
     }
