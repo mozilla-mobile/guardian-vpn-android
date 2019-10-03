@@ -30,4 +30,5 @@
     <string name="label_my_devices">My devices</string>
     <string name="label_about">About</string>
     <string name="label_get_help">Get help</string>
+    <string name="label_connection">Connection</string>
 </resources>

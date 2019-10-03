@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.wireguard.android.backend.GoBackend
 import com.wireguard.android.model.Tunnel
 import com.wireguard.config.Config
@@ -18,6 +19,7 @@ import com.wireguard.config.Interface
 import com.wireguard.config.Peer
 import com.wireguard.crypto.Key
 import com.wireguard.crypto.KeyPair
+import kotlinx.android.synthetic.main.bottom_sheet_servers.*
 import kotlinx.android.synthetic.main.fragment_vpn.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -26,17 +28,28 @@ import kotlinx.coroutines.withContext
 import org.mozilla.guardian.MainApplication
 import org.mozilla.guardian.R
 import org.mozilla.guardian.device.data.DeviceRepository
+import org.mozilla.guardian.servers.data.ServerRepository
+import org.mozilla.guardian.servers.domain.GetServersUseCase
+import org.mozilla.guardian.user.data.Result
+import org.mozilla.guardian.user.data.UserRepository
 import java.net.InetAddress
 
 class VpnFragment : Fragment() {
 
     private lateinit var vpnViewModel: VpnViewModel
-
+    private lateinit var behavior: BottomSheetBehavior<View>
     private var pendingTunnel: Tunnel? = null
     private lateinit var config: Config
 
     private val deviceRepository: DeviceRepository by lazy {
         DeviceRepository(activity!!.applicationContext)
+    }
+
+    private val getServerList: GetServersUseCase by lazy {
+        GetServersUseCase(
+            UserRepository(context!!),
+            ServerRepository()
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,11 +58,7 @@ class VpnFragment : Fragment() {
         config = prepareConfig()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         vpnViewModel = ViewModelProviders.of(this).get(VpnViewModel::class.java)
         return inflater.inflate(R.layout.fragment_vpn, container, false)
     }
@@ -82,6 +91,18 @@ class VpnFragment : Fragment() {
                 }
             }
         }
+
+        behavior = BottomSheetBehavior.from(bottom_sheet)
+
+        vpn_server_switch.setOnClickListener {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        btn_cancel.setOnClickListener {
+            behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        getServers()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -142,6 +163,21 @@ class VpnFragment : Fragment() {
 
             addPeers(peers)
         }.build()
+    }
+
+    private fun getServers() {
+        // TODO: 1. Do not use GlobalScope
+        // TODO: 2. Performance tuning
+        GlobalScope.launch(Dispatchers.Main) {
+            val result = withContext(Dispatchers.IO) {
+                getServerList(GetServersUseCase.FilterStrategy.ByCountry)
+            }
+            if (result is Result.Success) {
+                val adapter = ServerListAdapter(result.value.countries)
+                server_list.adapter = adapter
+                city_name.text = result.value.countries[0].name
+            }
+        }
     }
 
     companion object {
