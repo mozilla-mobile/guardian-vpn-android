@@ -17,8 +17,8 @@
 
         <activity
             android:name=".splash.SplashActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -27,15 +27,15 @@
 
         <activity
             android:name=".onboarding.OnboardingActivity"
-            android:screenOrientation="portrait"
+            android:exported="false"
             android:launchMode="singleTask"
-            android:exported="false"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".main.MainActivity"
-            android:screenOrientation="portrait"
+            android:exported="false"
             android:launchMode="singleTask"
-            android:exported="false"/>
+            android:screenOrientation="portrait" />
 
         <service
             android:name="com.wireguard.android.backend.GoBackend$VpnService"
