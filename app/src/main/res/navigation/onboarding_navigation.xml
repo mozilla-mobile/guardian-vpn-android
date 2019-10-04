@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/navigation_entrance"
-        android:name="org.mozilla.guardian.onboarding.entrance.EntranceFragment"
+        android:name="org.mozilla.firefox.vpn.onboarding.entrance.EntranceFragment"
         tools:layout="@layout/fragment_entrance">
 
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_intro"
-        android:name="org.mozilla.guardian.onboarding.intro.IntroFragment"
+        android:name="org.mozilla.firefox.vpn.onboarding.intro.IntroFragment"
         tools:layout="@layout/fragment_intro">
 
         <action
