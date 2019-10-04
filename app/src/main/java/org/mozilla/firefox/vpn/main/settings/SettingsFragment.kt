@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import coil.api.load
+import coil.transform.CircleCropTransformation
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,7 +42,10 @@ class SettingsFragment : Fragment() {
 
                         profile_name?.text = userInfo.value.displayName
                         profile_email?.text = userInfo.value.email
-                        profile_image?.load(userInfo.value.avatar)
+                        profile_image?.load(userInfo.value.avatar) {
+                            crossfade(true)
+                            transformations(CircleCropTransformation())
+                        }
                     }
                 }
             }

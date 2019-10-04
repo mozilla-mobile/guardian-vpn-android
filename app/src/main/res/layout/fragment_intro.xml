@@ -55,16 +55,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btn_close" />
 
-    <Button
+    <TextView
         android:id="@+id/btn_auth"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="48dp"
         android:background="@drawable/bg_primary_button"
+        android:gravity="center"
         android:text="@string/action_auth"
-        android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="15sp"
         android:visibility="gone"
