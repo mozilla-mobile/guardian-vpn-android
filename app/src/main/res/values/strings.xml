@@ -7,6 +7,8 @@
     <string name="action_auth">Get started</string>
     <string name="action_learn_more">Learn more</string>
     <string name="action_skip">skip</string>
+    <string name="action_manage_account">Manage account</string>
+    <string name="action_sign_out">Sign out</string>
     <string name="intro_title_1">Device level encryption</string>
     <string name="intro_title_2">No activity logs</string>
     <string name="intro_title_3">Servers in 40+ countries</string>
@@ -25,8 +27,6 @@
     <string name="vpn_state_switching">Switching&#8230;</string>
     <string name="vpn_state_switching_hint">From %1$s to %2$s</string>
     <string name="vpn_country_switch_hint">Select connection</string>
-    <string name="btn_manage_account">Manage account</string>
-    <string name="btn_sign_out">Sign out</string>
     <string name="label_my_devices">My devices</string>
     <string name="label_about">About</string>
     <string name="label_get_help">Get help</string>
