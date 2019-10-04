@@ -8,11 +8,11 @@
 
     <fragment
         android:id="@+id/navigation_vpn"
-        android:name="org.mozilla.guardian.main.vpn.VpnFragment"
+        android:name="org.mozilla.firefox.vpn.main.vpn.VpnFragment"
         tools:layout="@layout/fragment_vpn" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="org.mozilla.guardian.main.settings.SettingsFragment"
+        android:name="org.mozilla.firefox.vpn.main.settings.SettingsFragment"
         tools:layout="@layout/fragment_settings" />
 </navigation>

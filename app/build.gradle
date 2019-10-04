@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId "org.mozilla.guardian"
+        applicationId "org.mozilla.firefox.vpn"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -26,6 +26,18 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "product"
+
+    productFlavors {
+        guardian {
+
+        }
+
+        preview {
+            applicationIdSuffix ".beta"
         }
     }
 
@@ -50,11 +62,11 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.browser:browser:1.2.0-alpha08'
 
-    implementation("io.coil-kt:coil:0.7.0")
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
+    implementation 'io.coil-kt:coil:0.7.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     testImplementation 'junit:junit:4.12'

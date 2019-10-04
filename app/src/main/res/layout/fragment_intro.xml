@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_intro" />
 
-    <org.mozilla.guardian.onboarding.intro.IndicatorView
+    <org.mozilla.firefox.vpn.onboarding.intro.IndicatorView
         android:id="@+id/indicator_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
