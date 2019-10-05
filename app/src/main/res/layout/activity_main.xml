@@ -17,13 +17,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <fragment
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/bottom_navigation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/nav_view"
         app:layout_constraintStart_toStartOf="parent"
