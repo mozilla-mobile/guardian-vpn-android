@@ -4,28 +4,54 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.lifecycle.LiveData
+import androidx.navigation.NavController
+import kotlinx.android.synthetic.main.activity_main.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.device.data.DeviceRepository
-import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
-import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class MainActivity : AppCompatActivity() {
+
+    private var currentNavController: LiveData<NavController>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
-        navView.setupWithNavController(navController)
+        if (savedInstanceState == null) {
+            setupBottomNavigationBar()
+        } // Else, need to wait for onRestoreInstanceState
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // Now that BottomNavigationBar has restored its instance state
+        // and its selectedItemId, we can proceed with setting up the
+        // BottomNavigationBar with Navigation
+        setupBottomNavigationBar()
+    }
+
+    /**
+     * Called on first creation and when restoring state.
+     */
+    private fun setupBottomNavigationBar() {
+        val navGraphIds = listOf(R.navigation.vpn, R.navigation.settings)
+
+        // Setup the bottom navigation view with a list of navigation graphs
+        val controller = nav_view.setupWithNavController(
+            navGraphIds = navGraphIds,
+            fragmentManager = supportFragmentManager,
+            containerId = R.id.nav_host_container,
+            intent = intent
+        )
+
+        currentNavController = controller
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return currentNavController?.value?.navigateUp() ?: false
     }
 
     companion object {
-        private const val TAG = "MainActivity"
-
         fun getStartIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 }

@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_vpn"
+        android:id="@+id/vpn"
         android:icon="@drawable/ic_vpn_unconnected"
         android:title="@string/label_vpn" />
 
     <item
-        android:id="@+id/navigation_settings"
+        android:id="@+id/settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/label_settings" />
 
