@@ -14,13 +14,6 @@ import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class MainActivity : AppCompatActivity() {
 
-    private val addDevice: AddDeviceUseCase by lazy {
-        AddDeviceUseCase(
-            DeviceRepository(applicationContext),
-            UserRepository(applicationContext)
-        )
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
