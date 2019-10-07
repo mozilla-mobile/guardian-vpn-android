@@ -10,5 +10,16 @@
     <fragment
         android:id="@+id/settings_main"
         android:name="org.mozilla.firefox.vpn.main.settings.SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings">
+
+        <action
+            android:id="@+id/action_settings_main_to_devices"
+            app:destination="@id/settings_devices" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settings_devices"
+        android:name="org.mozilla.firefox.vpn.device.ui.DevicesFragment"
+        android:label="@string/label_my_devices"
+        tools:layout="@layout/fragment_devices" />
 </navigation>

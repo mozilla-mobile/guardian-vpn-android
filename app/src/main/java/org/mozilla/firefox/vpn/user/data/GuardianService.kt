@@ -242,6 +242,13 @@ sealed class Result<out T : Any> {
     data class Fail(val exception: Exception) : Result<Nothing>()
 }
 
+fun <T : Any, R : Any> Result<T>.mapValue(function: (T) -> R): Result<R> {
+    return when (this) {
+        is Result.Success -> Result.Success(function(value))
+        is Result.Fail -> this
+    }
+}
+
 object UnauthorizedException : RuntimeException()
 object IllegalTimeFormatException : RuntimeException()
 data class ExpiredException(val currentTime: String, val expireTime: String) : RuntimeException()

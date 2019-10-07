@@ -10,11 +10,7 @@ class GetServersUseCase(
 
     suspend operator fun invoke(filterStrategy: FilterStrategy): Result<ServerList> {
         val token = userRepository.getToken() ?: return Result.Fail(UnauthorizedException)
-
-        return when (val result = serverRepository.getServers(token)) {
-            is Result.Success -> Result.Success(filterServers(result.value, filterStrategy))
-            is Result.Fail -> result
-        }
+        return serverRepository.getServers(token).mapValue { filterServers(it, filterStrategy) }
     }
 
     private fun filterServers(
