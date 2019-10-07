@@ -12,8 +12,8 @@
     <color name="colorAccent">#0060DF</color>
 
     <color name="meteorite">#321C64</color>
+    <color name="catalina_blue">#073072</color>
     <color name="science_blue">#0060DF</color>
-    <color name="woodsmoke">#0C0C0D</color>
     <color name="abbey_alpha_80">#CC0C0C0D</color>
     <color name="abbey_alpha_60">#990C0C0D</color>
     <color name="abbey_alpha_40">#660C0C0D</color>
@@ -26,4 +26,5 @@
     <color name="silver">#C4C4C4</color>
     <color name="white_alpha_80">#CCFFFFFF</color>
     <color name="carnation">#FF4F5E</color>
+    <color name="pippin">#FFDFE7</color>
 </resources>
