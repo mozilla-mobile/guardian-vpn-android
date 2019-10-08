@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -15,6 +17,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.user.data.GuardianService
 import org.mozilla.firefox.vpn.user.data.Result
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
@@ -34,6 +37,11 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         btn_my_devices.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_devices)
+        }
+        btn_manage_account.setOnClickListener {
+            CustomTabsIntent.Builder().apply {
+                enableUrlBarHiding()
+            }.build().launchUrl(context, GuardianService.HOST_FXA.toUri())
         }
     }
 
