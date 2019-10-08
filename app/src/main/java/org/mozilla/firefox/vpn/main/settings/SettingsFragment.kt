@@ -43,6 +43,12 @@ class SettingsFragment : Fragment() {
                 enableUrlBarHiding()
             }.build().launchUrl(context, GuardianService.HOST_FXA.toUri())
         }
+        btn_get_help.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_main_to_help)
+        }
+        btn_about.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_main_to_about)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
