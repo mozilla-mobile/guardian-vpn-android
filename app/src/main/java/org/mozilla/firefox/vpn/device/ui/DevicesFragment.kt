@@ -2,7 +2,6 @@ package org.mozilla.firefox.vpn.device.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_devices.*
-import kotlinx.android.synthetic.main.item_device.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.user.data.DeviceInfo
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.TimeZone
-import java.util.Locale
 
 class DevicesFragment : Fragment() {
 
@@ -65,55 +58,4 @@ class DevicesFragment : Fragment() {
             .setNegativeButton(android.R.string.cancel) { _, _ ->  }
             .show()
     }
-}
-
-private class DevicesAdapter(
-    val devices: List<DeviceInfo>,
-    val onDeleteClicked: (DeviceInfo) -> Unit
-) : RecyclerView.Adapter<DevicesViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DevicesViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_device, parent, false)
-        val holder = DevicesViewHolder(itemView)
-
-        holder.itemView.delete.setOnClickListener {
-            if (holder.adapterPosition != RecyclerView.NO_POSITION) {
-                onDeleteClicked(devices[holder.adapterPosition])
-            }
-        }
-
-        return holder
-    }
-
-    override fun getItemCount(): Int {
-        return devices.size
-    }
-
-    override fun onBindViewHolder(holder: DevicesViewHolder, position: Int) {
-        holder.bind(devices[position])
-    }
-}
-
-private class DevicesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    fun bind(device: DeviceInfo) {
-        itemView.title.text = device.name
-        itemView.time.text = getRelativeTime(device.createdAt)
-    }
-}
-
-private fun getRelativeTime(iso8601Time: String): String? {
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
-    }
-
-    val time = try {
-        format.parse(iso8601Time)
-    } catch (e: ParseException) {
-        return null
-    }.time
-
-
-    val now = System.currentTimeMillis()
-    return DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS).toString()
 }
