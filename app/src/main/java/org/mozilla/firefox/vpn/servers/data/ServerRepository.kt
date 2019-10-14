@@ -21,7 +21,7 @@ class ServerRepository {
                 }
             }
         } catch (e: Exception) {
-            Result.Fail(RuntimeException("Unknown exception $e"))
+            Result.Fail(e)
         }
     }
 }

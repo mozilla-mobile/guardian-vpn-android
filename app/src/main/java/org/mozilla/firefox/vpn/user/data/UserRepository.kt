@@ -2,6 +2,7 @@ package org.mozilla.firefox.vpn.user.data
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import java.lang.Exception
 
 class UserRepository(private val appContext: Context) {
 
@@ -12,18 +13,22 @@ class UserRepository(private val appContext: Context) {
     }
 
     suspend fun verifyLogin(info: LoginInfo): Result<LoginResult> {
-        val response = guardianService.verifyLogin(info.verificationUrl)
+        return try {
+            val response = guardianService.verifyLogin(info.verificationUrl)
 
-        return if (response.isSuccessful) {
-            response.body()?.let {
-                saveToken(it.token)
-                Result.Success(it)
-            } ?: Result.Fail(UnknownException("empty response body"))
-        } else {
-            when (val code = response.code()) {
-                401 -> Result.Fail(UnauthorizedException)
-                else -> Result.Fail(UnknownException("Unknown status code $code"))
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    saveToken(it.token)
+                    Result.Success(it)
+                } ?: Result.Fail(UnknownException("empty response body"))
+            } else {
+                when (val code = response.code()) {
+                    401 -> Result.Fail(UnauthorizedException)
+                    else -> Result.Fail(UnknownException("Unknown status code $code"))
+                }
             }
+        } catch (e: Exception) {
+            Result.Fail(e)
         }
     }
 
@@ -32,16 +37,21 @@ class UserRepository(private val appContext: Context) {
             "Bearer $it"
         } ?: return Result.Fail(UnknownException("empty token"))
 
-        val response = guardianService.getUserInfo(token)
-        return if (response.isSuccessful) {
-            response.body()?.let {
-                Result.Success(it)
-            } ?: Result.Fail(UnknownException("empty response body"))
-        } else {
-            when (val code = response.code()) {
-                401 -> Result.Fail(UnauthorizedException)
-                else -> Result.Fail(UnknownException("Unknown status code $code"))
+        return try {
+            val response = guardianService.getUserInfo(token)
+
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.Success(it)
+                } ?: Result.Fail(UnknownException("empty response body"))
+            } else {
+                when (val code = response.code()) {
+                    401 -> Result.Fail(UnauthorizedException)
+                    else -> Result.Fail(UnknownException("Unknown status code $code"))
+                }
             }
+        } catch (e: Exception) {
+            Result.Fail(UnknownException("Unknown exception"))
         }
     }
 

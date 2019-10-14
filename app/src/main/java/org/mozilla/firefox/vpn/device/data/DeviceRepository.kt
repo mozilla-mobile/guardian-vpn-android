@@ -5,6 +5,7 @@ import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.wireguard.crypto.KeyPair
 import org.mozilla.firefox.vpn.user.data.*
+import java.lang.Exception
 import java.lang.RuntimeException
 
 class DeviceRepository(
@@ -14,34 +15,42 @@ class DeviceRepository(
     private val guardianService = GuardianService.newInstance()
 
     suspend fun addDevice(name: String, token: String): Result<DeviceInfo> {
-        val keyPair = KeyPair()
-        val response = guardianService.addDevice(DeviceRequestBody(name, keyPair.publicKey.toBase64()), token)
-        savePrivateKey(keyPair.privateKey.toBase64())
+        return try {
+            val keyPair = KeyPair()
+            val response = guardianService.addDevice(DeviceRequestBody(name, keyPair.publicKey.toBase64()), token)
+            savePrivateKey(keyPair.privateKey.toBase64())
 
-        return if (response.isSuccessful) {
-            response.body()?.let {
-                saveDevice(it)
-                Result.Success(it)
-            } ?: Result.Fail(UnknownException("empty response body"))
-        } else {
-            when (val code = response.code()) {
-                400, 401 -> Result.Fail(RuntimeException("code=$code, msg=${response.errorBody()?.string()}"))
-                else -> Result.Fail(UnknownException("Unknown status code: $code"))
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    saveDevice(it)
+                    Result.Success(it)
+                } ?: Result.Fail(UnknownException("empty response body"))
+            } else {
+                when (val code = response.code()) {
+                    400, 401 -> Result.Fail(RuntimeException("code=$code, msg=${response.errorBody()?.string()}"))
+                    else -> Result.Fail(UnknownException("Unknown status code: $code"))
+                }
             }
+        } catch (e: Exception) {
+            Result.Fail(e)
         }
     }
 
     suspend fun removeDevice(pubKey: String, token: String): Result<Unit> {
-        val response = guardianService.removeDevice(pubKey, token)
+        return try {
+            val response = guardianService.removeDevice(pubKey, token)
 
-        return if (response.isSuccessful) {
-            return Result.Success(Unit)
-        } else {
-            when (val code = response.code()) {
-                400 -> Result.Fail(RuntimeException("code=$code, msg=${response.errorBody()?.string()}"))
-                401 -> Result.Fail(UnauthorizedException)
-                else -> Result.Fail(UnknownException("Unknown status code: $code"))
+            if (response.isSuccessful) {
+                return Result.Success(Unit)
+            } else {
+                when (val code = response.code()) {
+                    400 -> Result.Fail(RuntimeException("code=$code, msg=${response.errorBody()?.string()}"))
+                    401 -> Result.Fail(UnauthorizedException)
+                    else -> Result.Fail(UnknownException("Unknown status code: $code"))
+                }
             }
+        } catch (e: Exception) {
+            Result.Fail(e)
         }
     }
 
