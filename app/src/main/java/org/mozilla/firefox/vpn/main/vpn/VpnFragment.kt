@@ -177,7 +177,7 @@ class VpnFragment : Fragment() {
         // TODO: 2. Performance tuning
         GlobalScope.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
-                getServerList(GetServersUseCase.FilterStrategy.ByCountry)
+                getServerList(GetServersUseCase.FilterStrategy.ByCity)
             }
             if (result is Result.Success) {
                 val adapter = ServerListAdapter(result.value.countries)
