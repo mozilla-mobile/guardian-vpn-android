@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.main.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,9 +40,7 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(R.id.action_settings_main_to_devices)
         }
         btn_manage_account.setOnClickListener {
-            CustomTabsIntent.Builder().apply {
-                enableUrlBarHiding()
-            }.build().launchUrl(context, GuardianService.HOST_FXA.toUri())
+            launchUrl(context!!, GuardianService.HOST_FXA)
         }
         btn_get_help.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_help)
@@ -49,6 +48,12 @@ class SettingsFragment : Fragment() {
         btn_about.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_about)
         }
+    }
+
+    private fun launchUrl(context: Context, url: String) {
+        CustomTabsIntent.Builder().apply {
+            enableUrlBarHiding()
+        }.build().launchUrl(context, url.toUri())
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -42,6 +42,11 @@ interface GuardianService {
     companion object {
         const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
         const val HOST_FXA = "$HOST_GUARDIAN/r/vpn/account"
+        const val HOST_FEEDBACK = "$HOST_GUARDIAN/r/vpn/client/feedback"
+        const val HOST_SUPPORT = "$HOST_GUARDIAN/r/vpn/support"
+        const val HOST_CONTACT = "$HOST_GUARDIAN/r/vpn/contact"
+        const val HOST_TERMS = "$HOST_GUARDIAN/r/vpn/terms"
+        const val HOST_PRIVACY = "$HOST_GUARDIAN/r/vpn/privacy"
     }
 }
 
