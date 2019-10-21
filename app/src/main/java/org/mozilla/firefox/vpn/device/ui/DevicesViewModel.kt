@@ -38,7 +38,7 @@ class DevicesViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    private suspend fun refreshDevices() {
+    private fun refreshDevices() {
         when (val result = getDevices()) {
             is Result.Success -> devices.postValue(result.value)
             is Result.Fail -> handleFail(result.exception)
