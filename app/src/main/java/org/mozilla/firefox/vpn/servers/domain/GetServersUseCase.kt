@@ -9,7 +9,7 @@ class GetServersUseCase(
 ) {
 
     suspend operator fun invoke(filterStrategy: FilterStrategy): Result<ServerList> {
-        val token = userRepository.getToken() ?: return Result.Fail(UnauthorizedException)
+        val token = userRepository.getUserInfo()?.token ?: return Result.Fail(UnauthorizedException)
         return serverRepository.getServers(token).mapValue { filterServers(it, filterStrategy) }
     }
 

@@ -39,7 +39,7 @@ class VpnFragment : Fragment() {
     private lateinit var vpnViewModel: VpnViewModel
     private lateinit var behavior: BottomSheetBehavior<View>
     private var pendingTunnel: Tunnel? = null
-    private lateinit var config: Config
+    private var config: Config? = null
 
     private val deviceRepository: DeviceRepository by lazy {
         DeviceRepository(activity!!.applicationContext)
@@ -65,6 +65,8 @@ class VpnFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // TODO: Refactor and check whether config is null
 
         val tunnelManager = (activity?.application as GuardianApp).tunnelManager
         val tunnel = tunnelManager.create(config, "aaa")
@@ -130,12 +132,14 @@ class VpnFragment : Fragment() {
         }
     }
 
-    private fun prepareConfig(): Config {
+    private fun prepareConfig(): Config? {
+        val currentDevice = deviceRepository.getDevice() ?: return null
+        val device = currentDevice.device
+        val privateKey = currentDevice.privateKeyBase64
+
         val inetInterface = Interface.Builder().apply {
-            val deviceInfo = deviceRepository.getDevice()
-            val privateKey = deviceRepository.getPrivateKey()
-            val ipv4Address = deviceInfo?.ipv4Address ?: ""
-            Log.d(TAG, "device=$deviceInfo")
+            val ipv4Address = device.ipv4Address
+            Log.d(TAG, "device=$device")
             Log.d(TAG, "private key=$privateKey")
 
             setKeyPair(KeyPair(Key.fromBase64(privateKey)))
