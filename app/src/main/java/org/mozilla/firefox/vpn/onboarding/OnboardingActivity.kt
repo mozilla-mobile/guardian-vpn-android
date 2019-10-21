@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsClient
@@ -22,6 +21,7 @@ import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.user.data.LoginResult
 import org.mozilla.firefox.vpn.user.data.Result
 import org.mozilla.firefox.vpn.user.data.UserRepository
+import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
 import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
 import org.mozilla.firefox.vpn.user.domain.VerifyLoginUseCase
 import kotlin.coroutines.resume
@@ -30,16 +30,13 @@ import kotlin.coroutines.suspendCoroutine
 class OnboardingActivity : AppCompatActivity() {
 
     private lateinit var userRepository: UserRepository
+    private lateinit var deviceRepository: DeviceRepository
 
     private lateinit var getLoginInfo: GetLoginInfoUseCase
     private lateinit var verifyLogin: VerifyLoginUseCase
+    private lateinit var createUser: CreateUserUseCase
 
-    private val addDevice: AddDeviceUseCase by lazy {
-        AddDeviceUseCase(
-            DeviceRepository(applicationContext),
-            userRepository
-        )
-    }
+    private lateinit var addDevice: AddDeviceUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,13 +44,17 @@ class OnboardingActivity : AppCompatActivity() {
 
         // TODO: Do not instantiate directly
         userRepository = UserRepository(applicationContext)
+        deviceRepository = DeviceRepository(applicationContext)
+
+        addDevice = AddDeviceUseCase(deviceRepository, userRepository)
         getLoginInfo = GetLoginInfoUseCase(userRepository)
         verifyLogin = VerifyLoginUseCase(userRepository)
+        createUser = CreateUserUseCase(userRepository)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        userRepository.getToken()?.let {
+        userRepository.getUserInfo()?.let {
             startActivity(MainActivity.getStartIntent(this))
             finish()
         }
@@ -79,14 +80,23 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     private fun processLoginResult(loginResult: LoginResult) {
-
         GlobalScope.launch(Dispatchers.Main) {
-            val result = withContext(Dispatchers.IO) {
-                addDevice()
-            }
-            when (result) {
-                is Result.Success -> Log.d(TAG, "add device ${result.value}")
-                is Result.Fail -> Log.d(TAG, "add device failed: ${result.exception}")
+            val user = withContext(Dispatchers.IO) {
+                when (val result = createUser(loginResult)) {
+                    is Result.Success -> result.value
+                    is Result.Fail -> null
+                }
+            } ?: return@launch
+
+            withContext(Dispatchers.IO) {
+                when (val result = addDevice(user.token)) {
+                    is Result.Success -> result.value
+                    is Result.Fail -> null
+                }
+            } ?: return@launch
+
+            withContext(Dispatchers.IO) {
+                
             }
 
             // TODO: Better way to clear custom tab
@@ -119,7 +129,6 @@ class OnboardingActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "OnboardingActivity"
         fun getStartIntent(context: Context) = Intent(context, OnboardingActivity::class.java)
     }
 }

@@ -11,9 +11,11 @@ class RemoveDeviceUseCase(
 ) {
 
     suspend operator fun invoke(pubKey: String): Result<Unit> {
-        val token = userRepository.getToken()?.let {
+        val bearer = userRepository.getUserInfo()?.token?.let {
             "Bearer $it"
         } ?: return Result.Fail(UnauthorizedException)
-        return deviceRepository.removeDevice(pubKey, token)
+        return deviceRepository.removeDevice(pubKey, bearer).apply {
+            userRepository.refreshUserInfo()
+        }
     }
 }

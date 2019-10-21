@@ -2,6 +2,7 @@ package org.mozilla.firefox.vpn.user.data
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 
 class UserRepository(private val appContext: Context) {
 
@@ -16,7 +17,6 @@ class UserRepository(private val appContext: Context) {
 
         return if (response.isSuccessful) {
             response.body()?.let {
-                saveToken(it.token)
                 Result.Success(it)
             } ?: Result.Fail(UnknownException("empty response body"))
         } else {
@@ -27,36 +27,44 @@ class UserRepository(private val appContext: Context) {
         }
     }
 
-    suspend fun getUserInfo(): Result<User> {
-        val token = getToken()?.let {
-            "Bearer $it"
-        } ?: return Result.Fail(UnknownException("empty token"))
-
-        val response = guardianService.getUserInfo(token)
-        return if (response.isSuccessful) {
-            response.body()?.let {
-                Result.Success(it)
-            } ?: Result.Fail(UnknownException("empty response body"))
-        } else {
-            when (val code = response.code()) {
-                401 -> Result.Fail(UnauthorizedException)
-                else -> Result.Fail(UnknownException("Unknown status code $code"))
-            }
-        }
-    }
-
-    fun getToken(): String? {
-        val pref = PreferenceManager.getDefaultSharedPreferences(appContext)
-        return pref.getString(PREF_ACCESS_TOKEN, null)
-    }
-
-    private fun saveToken(token: String) {
+    fun createUserInfo(user: UserInfo) {
+        val json = Gson().toJson(user)
         PreferenceManager.getDefaultSharedPreferences(appContext).edit()
-            .putString(PREF_ACCESS_TOKEN, token)
+            .putString(PREF_USER_INFO, json)
             .apply()
     }
 
+    fun getUserInfo() : UserInfo? {
+        return PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREF_USER_INFO, null)?.let {
+            Gson().fromJson(it, UserInfo::class.java)
+        }
+    }
+
+    suspend fun refreshUserInfo(): Result<User> {
+        val userInfo = getUserInfo() ?: return Result.Fail(UnauthorizedException)
+        val token = userInfo.token
+
+        val response = guardianService.getUserInfo("Bearer $token")
+        return if (response.isSuccessful) {
+            response.body()?.let {
+                createUserInfo(userInfo.copy(user = it))
+                Result.Success(it)
+            } ?: Result.Fail(UnknownException("empty response body"))
+        } else {
+            when (val code = response.code()) {
+                401 -> Result.Fail(UnauthorizedException)
+                else -> Result.Fail(UnknownException("Unknown status code $code"))
+            }
+        }
+    }
+
     companion object {
-        private const val PREF_ACCESS_TOKEN = "access_token"
+        private const val PREF_USER_INFO = "user_info"
     }
 }
+
+data class UserInfo(
+    val user: User,
+    val token: String,
+    val latestUpdateTime: Long
+)
