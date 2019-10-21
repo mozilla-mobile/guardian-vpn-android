@@ -16,11 +16,10 @@ class DeviceRepository(
     suspend fun addDevice(name: String, token: String): Result<DeviceInfo> {
         val keyPair = KeyPair()
         val response = guardianService.addDevice(DeviceRequestBody(name, keyPair.publicKey.toBase64()), token)
-        savePrivateKey(keyPair.privateKey.toBase64())
 
         return if (response.isSuccessful) {
             response.body()?.let {
-                saveDevice(it)
+                saveDevice(CurrentDevice(it, keyPair.privateKey.toBase64()))
                 Result.Success(it)
             } ?: Result.Fail(UnknownException("empty response body"))
         } else {
@@ -45,30 +44,24 @@ class DeviceRepository(
         }
     }
 
-    fun getPrivateKey(): String? {
-        return PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREF_PRIVATE_KEY, null)
-    }
-
-    private fun savePrivateKey(privateKey: String) {
-        PreferenceManager.getDefaultSharedPreferences(appContext).edit()
-            .putString(PREF_PRIVATE_KEY, privateKey)
-            .apply()
-    }
-
-    fun getDevice(): DeviceInfo? {
-        val json = PreferenceManager.getDefaultSharedPreferences(appContext)
-            .getString(PREF_DEVICE, null) ?: return null
-        return Gson().fromJson(json, DeviceInfo::class.java)
-    }
-
-    private fun saveDevice(device: DeviceInfo) {
+    private fun saveDevice(device: CurrentDevice) {
         PreferenceManager.getDefaultSharedPreferences(appContext).edit()
             .putString(PREF_DEVICE, Gson().toJson(device))
             .apply()
     }
 
+    fun getDevice(): CurrentDevice? {
+        val json = PreferenceManager.getDefaultSharedPreferences(appContext)
+            .getString(PREF_DEVICE, null) ?: return null
+        return Gson().fromJson(json, CurrentDevice::class.java)
+    }
+
     companion object {
-        private const val PREF_DEVICE = "pref_device_info"
-        private const val PREF_PRIVATE_KEY = "pref_private_key"
+        private const val PREF_DEVICE = "pref_current_device"
     }
 }
+
+data class CurrentDevice(
+    val device: DeviceInfo,
+    val privateKeyBase64: String
+)
