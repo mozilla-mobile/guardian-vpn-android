@@ -3,9 +3,9 @@ package org.mozilla.firefox.vpn.user.domain
 import android.util.Log
 import kotlinx.coroutines.delay
 import org.mozilla.firefox.vpn.user.data.*
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
+import org.mozilla.firefox.vpn.util.TimeFormat
+import org.mozilla.firefox.vpn.util.TimeFormatException
+import org.mozilla.firefox.vpn.util.TimeUtil
 
 class VerifyLoginUseCase(
     private val userRepository: UserRepository
@@ -14,14 +14,9 @@ class VerifyLoginUseCase(
     suspend operator fun invoke(info: LoginInfo): Result<LoginResult> {
         var result = userRepository.verifyLogin(info)
 
-        val utcTimeZone = TimeZone.getTimeZone("UTC")
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
-            timeZone = utcTimeZone
-        }
-
         val expiresDate = try {
-            format.parse(info.expiresOn)
-        } catch (e: ParseException) {
+            TimeUtil.parse(info.expiresOn, TimeFormat.Iso8601)
+        } catch (e: TimeFormatException) {
             return Result.Fail(IllegalTimeFormatException)
         }
 
@@ -30,7 +25,7 @@ class VerifyLoginUseCase(
 
             delay(info.pollInterval * 1000L)
 
-            val currentDate = Calendar.getInstance(utcTimeZone)
+            val currentDate = TimeUtil.now()
             if (currentDate.after(expiresDate)) {
                 return Result.Fail(ExpiredException(currentDate.toString(), expiresDate.toString()))
             }
