@@ -255,6 +255,13 @@ fun <T : Any, R : Any> Result<T>.mapValue(function: (T) -> R): Result<R> {
     }
 }
 
+fun <T : Any> Result<T>.getOrNull(): T? {
+    return when (this) {
+        is Result.Success -> value
+        is Result.Fail -> null
+    }
+}
+
 object UnauthorizedException : RuntimeException()
 object IllegalTimeFormatException : RuntimeException()
 data class ExpiredException(val currentTime: String, val expireTime: String) : RuntimeException()
