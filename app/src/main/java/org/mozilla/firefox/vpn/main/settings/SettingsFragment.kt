@@ -16,13 +16,11 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.user.data.GuardianService
 import org.mozilla.firefox.vpn.user.data.UserRepository
-import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
 
 class SettingsFragment : Fragment() {
 
     private lateinit var settingsViewModel: SettingsViewModel
     private lateinit var userRepository: UserRepository
-    private lateinit var getLoginInfo: GetLoginInfoUseCase
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
@@ -54,7 +52,6 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         userRepository = UserRepository(activity!!.applicationContext)
-        getLoginInfo = GetLoginInfoUseCase(userRepository)
 
         userRepository.getUserInfo()?.let { userInfo ->
             profile_name?.text = userInfo.user.displayName
