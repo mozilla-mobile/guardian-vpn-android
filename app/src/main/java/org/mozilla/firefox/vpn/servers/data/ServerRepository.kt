@@ -1,6 +1,7 @@
 package org.mozilla.firefox.vpn.servers.data
 
-import org.mozilla.firefox.vpn.user.data.*
+import org.mozilla.firefox.vpn.service.*
+import org.mozilla.firefox.vpn.util.Result
 
 class ServerRepository {
 
@@ -11,15 +12,12 @@ class ServerRepository {
 
         return try {
             val response = guardianService.getServers(bearerToken)
-            if (response.isSuccessful) {
-                val serverList = response.body()!!
-                Result.Success(serverList)
-            } else {
-                when (val code = response.code()) {
-                    401 -> Result.Fail(UnauthorizedException)
-                    else -> Result.Fail(RuntimeException("Unknown response code $code"))
+            response.resolveBody()
+                .handleError(401) {
+                    it?.toErrorBody()
+                        ?.toUnauthorizedError()
+                        ?: UnknownErrorBody(it)
                 }
-            }
         } catch (e: Exception) {
             Result.Fail(RuntimeException("Unknown exception $e"))
         }

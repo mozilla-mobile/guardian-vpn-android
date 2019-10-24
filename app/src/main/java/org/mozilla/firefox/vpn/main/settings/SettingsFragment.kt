@@ -14,7 +14,7 @@ import coil.api.load
 import coil.transform.CircleCropTransformation
 import kotlinx.android.synthetic.main.fragment_settings.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.user.data.GuardianService
+import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class SettingsFragment : Fragment() {

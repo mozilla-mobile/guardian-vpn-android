@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.wireguard.crypto.KeyPair
-import org.mozilla.firefox.vpn.user.data.*
-import java.lang.RuntimeException
+import org.mozilla.firefox.vpn.service.*
+import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.onSuccess
 
 class DeviceRepository(
     private val appContext: Context
@@ -17,31 +18,36 @@ class DeviceRepository(
         val keyPair = KeyPair()
         val response = guardianService.addDevice(DeviceRequestBody(name, keyPair.publicKey.toBase64()), token)
 
-        return if (response.isSuccessful) {
-            response.body()?.let {
+        return response.resolveBody()
+            .onSuccess {
                 saveDevice(CurrentDevice(it, keyPair.privateKey.toBase64()))
-                Result.Success(it)
-            } ?: Result.Fail(UnknownException("empty response body"))
-        } else {
-            when (val code = response.code()) {
-                400, 401 -> Result.Fail(RuntimeException("code=$code, msg=${response.errorBody()?.string()}"))
-                else -> Result.Fail(UnknownException("Unknown status code: $code"))
             }
-        }
+            .handleError(400) {
+                it?.toErrorBody()
+                    ?.toDeviceApiError()
+                    ?: UnknownErrorBody(it)
+            }
+            .handleError(401) {
+                it?.toErrorBody()
+                    ?.toUnauthorizedError()
+                    ?: UnknownErrorBody(it)
+            }
     }
 
     suspend fun removeDevice(pubKey: String, token: String): Result<Unit> {
         val response = guardianService.removeDevice(pubKey, token)
 
-        return if (response.isSuccessful) {
-            return Result.Success(Unit)
-        } else {
-            when (val code = response.code()) {
-                400 -> Result.Fail(RuntimeException("code=$code, msg=${response.errorBody()?.string()}"))
-                401 -> Result.Fail(UnauthorizedException)
-                else -> Result.Fail(UnknownException("Unknown status code: $code"))
+        return response.resolveBody()
+            .handleError(400) {
+                it?.toErrorBody()
+                    ?.toDeviceApiError()
+                    ?: UnknownErrorBody(it)
             }
-        }
+            .handleError(401) {
+                it?.toErrorBody()
+                    ?.toUnauthorizedError()
+                    ?: UnknownErrorBody(it)
+            }
     }
 
     private fun saveDevice(device: CurrentDevice) {

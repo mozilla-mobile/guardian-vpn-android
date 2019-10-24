@@ -1,19 +1,21 @@
-package org.mozilla.firefox.vpn.user.data
+package org.mozilla.firefox.vpn.service
 
 import com.google.gson.*
 import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import java.lang.reflect.Type
 
-
 interface GuardianService {
     @POST("api/v1/vpn/login")
-    suspend fun getLoginInfo(): LoginInfo
+    suspend fun getLoginInfo(): Response<LoginInfo>
 
     @GET
     suspend fun verifyLogin(@Url verifyUrl: String): Response<LoginResult>
@@ -52,21 +54,21 @@ interface GuardianService {
 
 fun GuardianService.Companion.newInstance(): GuardianService {
     val client = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            .build()
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
+        .build()
 
     val gson = GsonBuilder()
         .registerTypeAdapter(Versions::class.java, VersionsDeserializer())
         .create()
 
     return Retrofit.Builder()
-            .baseUrl(HOST_GUARDIAN)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(client)
-            .build()
-            .create(GuardianService::class.java)
+        .baseUrl(HOST_GUARDIAN)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(client)
+        .build()
+        .create(GuardianService::class.java)
 }
 
 data class LoginInfo(
@@ -238,31 +240,96 @@ data class Version(
     @SerializedName("message")
     val message: String
 )
+
 data class DeviceRequestBody(
     val name: String,
     val pubkey: String
 )
 
-sealed class Result<out T : Any> {
-    data class Success<out T : Any>(val value: T) : Result<T>()
-    data class Fail(val exception: Exception) : Result<Nothing>()
-}
+data class ErrorBody(
+    @SerializedName("code")
+    val code: Int,
 
-fun <T : Any, R : Any> Result<T>.mapValue(function: (T) -> R): Result<R> {
-    return when (this) {
-        is Result.Success -> Result.Success(function(value))
-        is Result.Fail -> this
+    @SerializedName("errno")
+    val errno: Int,
+
+    @SerializedName("error")
+    val error: String
+)
+
+inline fun <reified T : Any> Response<T>.resolveBody(): Result<T> {
+    return if (this.isSuccessful) {
+        body()?.let { Result.Success(it) } ?: Result.Success(Unit as T)
+    } else {
+        Result.Fail(ErrorCodeException(this.code(), this.errorBody()))
     }
 }
 
-fun <T : Any> Result<T>.getOrNull(): T? {
-    return when (this) {
-        is Result.Success -> value
-        is Result.Fail -> null
+fun <T : Any> Result<T>.handleError(code: Int, function: (response: ResponseBody?) -> Exception): Result<T> {
+    return this.mapError {
+        if (it is ErrorCodeException && it.code == code) {
+            function(it.errorBody)
+        } else {
+            it
+        }
     }
 }
 
-object UnauthorizedException : RuntimeException()
+fun ResponseBody.toErrorBody(): ErrorBody? {
+    return try {
+        Gson().fromJson(string(), ErrorBody::class.java)
+    } catch (e: JsonSyntaxException) {
+        null
+    }
+}
+
+fun ErrorBody.toUnauthorizedError(): UnauthorizedException? {
+    return when (errno) {
+        120 -> InvalidToken
+        121 -> UserNotFound
+        122 -> DeviceNotFound
+        123 -> NoActiveSubscription
+        124 -> LoginTokenNotFound
+        125 -> LoginTokenExpired
+        126 -> LoginTokenUnverified
+        else -> null
+    }
+}
+
+fun ErrorBody.toDeviceApiError(): DeviceApiError? {
+    return when (errno) {
+        100 -> MissingPubKey
+        101 -> MissingName
+        102 -> InvalidPubKey
+        103 -> PubKeyUsed
+        104 -> KeyLimitReached
+        105 -> PubKeyNotFound
+        else -> null
+    }
+}
+
+object EmptyBodyException : RuntimeException()
 object IllegalTimeFormatException : RuntimeException()
+
+open class DeviceApiError : RuntimeException()
+object MissingPubKey : DeviceApiError()
+object MissingName : DeviceApiError()
+object InvalidPubKey : DeviceApiError()
+object PubKeyUsed : DeviceApiError()
+object KeyLimitReached : DeviceApiError()
+object PubKeyNotFound : DeviceApiError()
+
+open class UnauthorizedException : RuntimeException()
+object InvalidToken : UnauthorizedException()
+object UserNotFound : UnauthorizedException()
+object DeviceNotFound : UnauthorizedException()
+object NoActiveSubscription : UnauthorizedException()
+object LoginTokenNotFound : UnauthorizedException()
+object LoginTokenExpired : UnauthorizedException()
+object LoginTokenUnverified : UnauthorizedException()
+
 data class ExpiredException(val currentTime: String, val expireTime: String) : RuntimeException()
-data class UnknownException(val msg: String) : RuntimeException()
+class ErrorCodeException(val code: Int, val errorBody: ResponseBody?) : RuntimeException()
+
+open class UnknownException(val msg: String) : RuntimeException()
+data class UnknownErrorBody(val body: ResponseBody?) : UnknownException("${body?.string()}")

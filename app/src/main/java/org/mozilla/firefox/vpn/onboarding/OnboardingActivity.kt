@@ -18,14 +18,15 @@ import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
 import org.mozilla.firefox.vpn.main.MainActivity
-import org.mozilla.firefox.vpn.user.data.LoginResult
-import org.mozilla.firefox.vpn.user.data.Result
+import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
 import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
 import org.mozilla.firefox.vpn.user.domain.VerifyLoginUseCase
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.onSuccess
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -67,8 +68,10 @@ class OnboardingActivity : AppCompatActivity() {
             prepareCustomTab()
 
             val info = getLoginInfo()
-            launchLoginCustomTab(info.loginUrl)
-            processVerifyResult(verifyLogin(info))
+            info.onSuccess {
+                launchLoginCustomTab(it.loginUrl)
+                processVerifyResult(verifyLogin(it))
+            }
         }
     }
 
