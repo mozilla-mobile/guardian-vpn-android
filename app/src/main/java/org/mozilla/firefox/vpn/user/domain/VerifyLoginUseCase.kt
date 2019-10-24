@@ -2,10 +2,15 @@ package org.mozilla.firefox.vpn.user.domain
 
 import android.util.Log
 import kotlinx.coroutines.delay
+import org.mozilla.firefox.vpn.service.ExpiredException
+import org.mozilla.firefox.vpn.service.IllegalTimeFormatException
+import org.mozilla.firefox.vpn.service.LoginInfo
+import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.data.*
 import org.mozilla.firefox.vpn.util.TimeFormat
 import org.mozilla.firefox.vpn.util.TimeFormatException
 import org.mozilla.firefox.vpn.util.TimeUtil
+import org.mozilla.firefox.vpn.util.Result
 
 class VerifyLoginUseCase(
     private val userRepository: UserRepository

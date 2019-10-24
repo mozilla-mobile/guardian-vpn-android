@@ -1,7 +1,10 @@
 package org.mozilla.firefox.vpn.servers.domain
+import org.mozilla.firefox.vpn.util.Result
 
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
+import org.mozilla.firefox.vpn.service.*
 import org.mozilla.firefox.vpn.user.data.*
+import org.mozilla.firefox.vpn.util.mapValue
 
 class GetServersUseCase(
     private val userRepository: UserRepository,
@@ -9,7 +12,7 @@ class GetServersUseCase(
 ) {
 
     suspend operator fun invoke(filterStrategy: FilterStrategy): Result<ServerList> {
-        val token = userRepository.getUserInfo()?.token ?: return Result.Fail(UnauthorizedException)
+        val token = userRepository.getUserInfo()?.token ?: return Result.Fail(UnauthorizedException())
         return serverRepository.getServers(token).mapValue { filterServers(it, filterStrategy) }
     }
 

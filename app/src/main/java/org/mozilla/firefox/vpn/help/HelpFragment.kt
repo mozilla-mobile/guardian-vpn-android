@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_help.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.user.data.GuardianService
+import org.mozilla.firefox.vpn.service.GuardianService
 
 class HelpFragment : Fragment() {
 

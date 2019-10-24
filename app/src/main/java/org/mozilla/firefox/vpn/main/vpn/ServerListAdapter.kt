@@ -8,7 +8,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_country.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.main.vpn.ServerListAdapter.ServerViewHolder
-import org.mozilla.firefox.vpn.user.data.Country
+import org.mozilla.firefox.vpn.service.Country
 
 class ServerListAdapter(private val items: List<Country>) : RecyclerView.Adapter<ServerViewHolder>() {
 

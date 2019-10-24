@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_devices.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.user.data.DeviceInfo
+import org.mozilla.firefox.vpn.service.DeviceInfo
 
 class DevicesFragment : Fragment() {
 

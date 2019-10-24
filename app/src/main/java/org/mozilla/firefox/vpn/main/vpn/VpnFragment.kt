@@ -30,8 +30,8 @@ import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
-import org.mozilla.firefox.vpn.user.data.Result
 import org.mozilla.firefox.vpn.user.data.UserRepository
+import org.mozilla.firefox.vpn.util.Result
 import java.net.InetAddress
 
 class VpnFragment : Fragment() {

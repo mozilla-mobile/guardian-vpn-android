@@ -9,8 +9,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_device.*
 import kotlinx.android.synthetic.main.item_device.view.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.user.data.DeviceInfo
 import org.mozilla.firefox.vpn.device.ui.DevicesAdapter.DevicesViewHolder
+import org.mozilla.firefox.vpn.service.DeviceInfo
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale

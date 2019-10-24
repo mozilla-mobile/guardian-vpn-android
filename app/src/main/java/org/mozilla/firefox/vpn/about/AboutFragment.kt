@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_about.*
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.user.data.GuardianService
+import org.mozilla.firefox.vpn.service.GuardianService
 
 class AboutFragment : Fragment() {
 

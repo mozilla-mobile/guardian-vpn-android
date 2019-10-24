@@ -1,9 +1,9 @@
 package org.mozilla.firefox.vpn.device.domain
 
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
-import org.mozilla.firefox.vpn.user.data.DeviceInfo
-import org.mozilla.firefox.vpn.user.data.Result
+import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.user.data.UserRepository
+import org.mozilla.firefox.vpn.util.Result
 
 class AddDeviceUseCase(
     private val deviceRepository: DeviceRepository,

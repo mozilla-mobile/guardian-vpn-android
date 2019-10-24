@@ -9,10 +9,10 @@ import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.device.domain.GetDevicesUseCase
 import org.mozilla.firefox.vpn.device.domain.RemoveDeviceUseCase
-import org.mozilla.firefox.vpn.user.data.DeviceInfo
-import org.mozilla.firefox.vpn.user.data.Result
-import org.mozilla.firefox.vpn.user.data.UnauthorizedException
+import org.mozilla.firefox.vpn.service.DeviceInfo
+import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.user.data.UserRepository
+import org.mozilla.firefox.vpn.util.Result
 
 class DevicesViewModel(application: Application) : AndroidViewModel(application) {
 
