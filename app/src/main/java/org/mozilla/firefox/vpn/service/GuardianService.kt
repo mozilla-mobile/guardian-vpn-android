@@ -331,5 +331,7 @@ object LoginTokenUnverified : UnauthorizedException()
 data class ExpiredException(val currentTime: String, val expireTime: String) : RuntimeException()
 class ErrorCodeException(val code: Int, val errorBody: ResponseBody?) : RuntimeException()
 
+object NetworkException : RuntimeException()
+
 open class UnknownException(val msg: String) : RuntimeException()
 data class UnknownErrorBody(val body: ResponseBody?) : UnknownException("${body?.string()}")
