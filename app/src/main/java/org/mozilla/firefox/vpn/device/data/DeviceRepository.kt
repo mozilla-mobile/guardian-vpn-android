@@ -7,6 +7,7 @@ import com.wireguard.crypto.KeyPair
 import org.mozilla.firefox.vpn.service.*
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.onSuccess
+import java.net.UnknownHostException
 
 class DeviceRepository(
     private val appContext: Context
@@ -14,40 +15,58 @@ class DeviceRepository(
 
     private val guardianService = GuardianService.newInstance()
 
+    /**
+     * @return Result.Success(deviceInfo) or Result.Fail(UnauthorizedException|DeviceApiError|NetworkException|Otherwise)
+     */
     suspend fun addDevice(name: String, token: String): Result<DeviceInfo> {
         val keyPair = KeyPair()
         val response = guardianService.addDevice(DeviceRequestBody(name, keyPair.publicKey.toBase64()), token)
 
-        return response.resolveBody()
-            .onSuccess {
-                saveDevice(CurrentDevice(it, keyPair.privateKey.toBase64()))
-            }
-            .handleError(400) {
-                it?.toErrorBody()
-                    ?.toDeviceApiError()
-                    ?: UnknownErrorBody(it)
-            }
-            .handleError(401) {
-                it?.toErrorBody()
-                    ?.toUnauthorizedError()
-                    ?: UnknownErrorBody(it)
-            }
+        return try {
+            response.resolveBody()
+                .onSuccess {
+                    saveDevice(CurrentDevice(it, keyPair.privateKey.toBase64()))
+                }
+                .handleError(400) {
+                    it?.toErrorBody()
+                        ?.toDeviceApiError()
+                        ?: UnknownErrorBody(it)
+                }
+                .handleError(401) {
+                    it?.toErrorBody()
+                        ?.toUnauthorizedError()
+                        ?: UnknownErrorBody(it)
+                }
+        } catch (e: UnknownHostException) {
+            Result.Fail(NetworkException)
+        } catch (e: Exception) {
+            Result.Fail(UnknownException("Unknown exception=$e"))
+        }
     }
 
+    /**
+     * @return Result.Success(Unit) or Result.Fail(UnauthorizedException|DeviceApiError|NetworkException|Otherwise)
+     */
     suspend fun removeDevice(pubKey: String, token: String): Result<Unit> {
         val response = guardianService.removeDevice(pubKey, token)
 
-        return response.resolveBody()
-            .handleError(400) {
-                it?.toErrorBody()
-                    ?.toDeviceApiError()
-                    ?: UnknownErrorBody(it)
-            }
-            .handleError(401) {
-                it?.toErrorBody()
-                    ?.toUnauthorizedError()
-                    ?: UnknownErrorBody(it)
-            }
+        return try {
+            response.resolveBody()
+                .handleError(400) {
+                    it?.toErrorBody()
+                        ?.toDeviceApiError()
+                        ?: UnknownErrorBody(it)
+                }
+                .handleError(401) {
+                    it?.toErrorBody()
+                        ?.toUnauthorizedError()
+                        ?: UnknownErrorBody(it)
+                }
+        } catch (e: UnknownHostException) {
+            Result.Fail(NetworkException)
+        } catch (e: Exception) {
+            Result.Fail(UnknownException("Unknown exception=$e"))
+        }
     }
 
     private fun saveDevice(device: CurrentDevice) {
