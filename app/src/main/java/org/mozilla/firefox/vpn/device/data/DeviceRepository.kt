@@ -1,7 +1,6 @@
 package org.mozilla.firefox.vpn.device.data
 
-import android.content.Context
-import androidx.preference.PreferenceManager
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.wireguard.crypto.KeyPair
 import org.mozilla.firefox.vpn.service.*
@@ -10,7 +9,7 @@ import org.mozilla.firefox.vpn.util.onSuccess
 import java.net.UnknownHostException
 
 class DeviceRepository(
-    private val appContext: Context
+    private val prefs: SharedPreferences
 ) {
 
     private val guardianService = GuardianService.newInstance()
@@ -70,14 +69,13 @@ class DeviceRepository(
     }
 
     private fun saveDevice(device: CurrentDevice) {
-        PreferenceManager.getDefaultSharedPreferences(appContext).edit()
+        prefs.edit()
             .putString(PREF_DEVICE, Gson().toJson(device))
             .apply()
     }
 
     fun getDevice(): CurrentDevice? {
-        val json = PreferenceManager.getDefaultSharedPreferences(appContext)
-            .getString(PREF_DEVICE, null) ?: return null
+        val json = prefs.getString(PREF_DEVICE, null) ?: return null
         return Gson().fromJson(json, CurrentDevice::class.java)
     }
 

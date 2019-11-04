@@ -14,13 +14,17 @@ import coil.api.load
 import coil.transform.CircleCropTransformation
 import kotlinx.android.synthetic.main.fragment_settings.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class SettingsFragment : Fragment() {
 
     private lateinit var settingsViewModel: SettingsViewModel
-    private lateinit var userRepository: UserRepository
+
+    private val userRepository by lazy {
+        activity!!.guardianComponent.userRepo
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
@@ -51,7 +55,6 @@ class SettingsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        userRepository = UserRepository(activity!!.applicationContext)
 
         userRepository.getUserInfo()?.let { userInfo ->
             profile_name?.text = userInfo.user.displayName

@@ -15,11 +15,11 @@ class GuardianComponentImpl(
 ) : GuardianComponent {
 
     override val userRepo: UserRepository by lazy {
-        UserRepository(coreComponent.app)
+        UserRepository(coreComponent.prefs)
     }
 
     override val deviceRepo: DeviceRepository by lazy {
-        DeviceRepository(coreComponent.app)
+        DeviceRepository(coreComponent.prefs)
     }
 
     override val serverRepo: ServerRepository by lazy {

@@ -15,23 +15,22 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
+import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.service.LoginResult
-import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
 import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
 import org.mozilla.firefox.vpn.user.domain.VerifyLoginUseCase
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.onSuccess
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class OnboardingActivity : AppCompatActivity() {
 
-    private lateinit var userRepository: UserRepository
-    private lateinit var deviceRepository: DeviceRepository
+    private val userRepository by lazy { guardianComponent.userRepo }
+    private val deviceRepository by lazy { guardianComponent.deviceRepo }
 
     private lateinit var getLoginInfo: GetLoginInfoUseCase
     private lateinit var verifyLogin: VerifyLoginUseCase
@@ -42,10 +41,6 @@ class OnboardingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
-
-        // TODO: Do not instantiate directly
-        userRepository = UserRepository(applicationContext)
-        deviceRepository = DeviceRepository(applicationContext)
 
         addDevice = AddDeviceUseCase(deviceRepository, userRepository)
         getLoginInfo = GetLoginInfoUseCase(userRepository)

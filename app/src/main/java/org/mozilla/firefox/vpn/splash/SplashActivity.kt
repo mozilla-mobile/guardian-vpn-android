@@ -5,17 +5,19 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_splash.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.device.data.DeviceRepository
+import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.main.domain.AppState
 import org.mozilla.firefox.vpn.main.domain.AppStateUseCase
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
-import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class SplashActivity : AppCompatActivity() {
 
+    private val userRepository by lazy { guardianComponent.userRepo }
+    private val deviceRepository by lazy { guardianComponent.deviceRepo }
+
     private val getAppState: AppStateUseCase by lazy {
-        AppStateUseCase(UserRepository(applicationContext), DeviceRepository(applicationContext))
+        AppStateUseCase(userRepository, deviceRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
