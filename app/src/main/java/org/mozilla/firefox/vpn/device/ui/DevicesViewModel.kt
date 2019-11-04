@@ -1,26 +1,20 @@
 package org.mozilla.firefox.vpn.device.ui
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.device.domain.GetDevicesUseCase
 import org.mozilla.firefox.vpn.device.domain.RemoveDeviceUseCase
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.service.UnauthorizedException
-import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
 
-class DevicesViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val userRepo = UserRepository(application)
-    private val deviceRepo = DeviceRepository(application)
-
-    private val getDevices = GetDevicesUseCase(userRepo)
-    private val removeDevices = RemoveDeviceUseCase(deviceRepo, userRepo)
+class DevicesViewModel(
+    private val getDevices: GetDevicesUseCase,
+    private val removeDevices: RemoveDeviceUseCase
+) : ViewModel() {
 
     val devices: MutableLiveData<List<DeviceInfo>> = MutableLiveData()
     val isAuthorized: MutableLiveData<Boolean> = MutableLiveData(true)
