@@ -7,9 +7,10 @@ import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.onSuccess
 import java.net.UnknownHostException
 
-class UserRepository(private val prefs: SharedPreferences) {
-
-    private val guardianService = GuardianService.newInstance()
+class UserRepository(
+    private val guardianService: GuardianService,
+    private val prefs: SharedPreferences
+) {
 
     /**
      * @return Result.Success(loginInfo) or Result.Fail(NetworkException|Otherwise)

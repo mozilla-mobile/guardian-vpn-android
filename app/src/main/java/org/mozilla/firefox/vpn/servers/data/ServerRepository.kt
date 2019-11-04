@@ -4,9 +4,9 @@ import org.mozilla.firefox.vpn.service.*
 import org.mozilla.firefox.vpn.util.Result
 import java.net.UnknownHostException
 
-class ServerRepository {
-
-    private val guardianService = GuardianService.newInstance()
+class ServerRepository(
+    private val guardianService: GuardianService
+) {
 
     /**
      * @return Result.Success(serverList) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)

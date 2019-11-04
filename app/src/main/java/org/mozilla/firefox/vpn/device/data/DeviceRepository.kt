@@ -9,10 +9,9 @@ import org.mozilla.firefox.vpn.util.onSuccess
 import java.net.UnknownHostException
 
 class DeviceRepository(
+    private val guardianService: GuardianService,
     private val prefs: SharedPreferences
 ) {
-
-    private val guardianService = GuardianService.newInstance()
 
     /**
      * @return Result.Success(deviceInfo) or Result.Fail(UnauthorizedException|DeviceApiError|NetworkException|Otherwise)
