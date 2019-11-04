@@ -35,8 +35,61 @@ jobs:
         destination: reports
     - store_test_results:
         path: app/build/test-results
+  build_release:
+    working_directory: ~/guardian-vpn-android
+    docker:
+    - image: circleci/android:api-29
+    environment:
+    - JVM_OPTS: -Xmx3200m
+    - PREVIEW_APK_PATH: app/build/outputs/apk/preview/release/
+    - UNSIGNED_PREVIEW_APK_NAME: app-preview-release-unsigned.apk
+    - SIGNED_PREVIEW_APK_NAME: app-preview-release-signed.apk
+    - RELEASE_APK_PATH: app/build/outputs/apk/guardian/release/
+    - UNSIGNED_RELEASE_APK_NAME: app-guardian-release-unsigned.apk
+    - SIGNED_RELEASE_APK_NAME: app-guardian-release-signed.apk
+    steps:
+    - checkout
+    - run:
+        name: Pull Submodules
+        command: |
+          git submodule update --init --recursive
+    - restore_cache:
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+    - run:
+        name: Download Dependencies
+        command: ./gradlew androidDependencies
+    - save_cache:
+        paths:
+        - ~/.gradle
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+    - run:
+        name: Run Tests
+        command: ./gradlew lint test
+    - run:
+        name: Build Debug Apk
+        command: ./gradlew assembleRelease
+    - run:
+        name: Sign preview apk with autograph
+        command: |
+            curl -H "Authorization: ${VPN_PREVIEW_KEY}" -F "input=@${PREVIEW_APK_PATH}${UNSIGNED_PREVIEW_APK_NAME}" -o "${PREVIEW_APK_PATH}${SIGNED_PREVIEW_APK_NAME}" $ENDPOINT
+    - run:
+        name: Sign release apk with autograph
+        command: |
+            curl -H "Authorization: ${VPN_KEY}" -F "input=@${RELEASE_APK_PATH}${UNSIGNED_RELEASE_APK_NAME}" -o "${RELEASE_APK_PATH}${SIGNED_RELEASE_APK_NAME}" $ENDPOINT
+    - store_artifacts:
+        path: app/build/outputs/apk
+        destination: apks
 workflows:
   version: 2
   workflow:
     jobs:
-    - build
+      - build
+  build_release:
+    triggers:
+      - schedule:
+          cron: "30 * * * *"
+          filters:
+            branches:
+              only: autograph_sign_on_CI
+    jobs:
+      - build_release
