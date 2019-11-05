@@ -13,7 +13,7 @@ class DevicesComponentImpl(private val guardianComponent: GuardianComponent) : D
 
     override val viewModel: DevicesViewModel
         get() = DevicesViewModel(
-            getDevices = GetDevicesUseCase(guardianComponent.userRepo),
-            removeDevices = RemoveDeviceUseCase(guardianComponent.deviceRepo, guardianComponent.userRepo)
+            getDevicesUseCase = GetDevicesUseCase(guardianComponent.userRepo),
+            removeDevicesUseCase = RemoveDeviceUseCase(guardianComponent.deviceRepo, guardianComponent.userRepo)
         )
 }

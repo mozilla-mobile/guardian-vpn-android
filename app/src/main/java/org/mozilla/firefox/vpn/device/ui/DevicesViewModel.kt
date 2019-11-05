@@ -12,8 +12,8 @@ import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.util.Result
 
 class DevicesViewModel(
-    private val getDevices: GetDevicesUseCase,
-    private val removeDevices: RemoveDeviceUseCase
+    private val getDevicesUseCase: GetDevicesUseCase,
+    private val removeDevicesUseCase: RemoveDeviceUseCase
 ) : ViewModel() {
 
     val devices: MutableLiveData<List<DeviceInfo>> = MutableLiveData()
@@ -26,14 +26,14 @@ class DevicesViewModel(
     }
 
     fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.IO) {
-        when (val result = removeDevices(device.pubKey)) {
+        when (val result = removeDevicesUseCase(device.pubKey)) {
             is Result.Success -> refreshDevices()
             is Result.Fail -> handleFail(result.exception)
         }
     }
 
     private fun refreshDevices() {
-        when (val result = getDevices()) {
+        when (val result = getDevicesUseCase()) {
             is Result.Success -> devices.postValue(result.value)
             is Result.Fail -> handleFail(result.exception)
         }
