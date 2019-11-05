@@ -11,6 +11,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        def circleci_build_number = System.getenv("CIRCLE_BUILD_NUM")
+        if (circleci_build_number?.trim()) {
+            versionCode circleci_build_number.toInteger()
+            versionNameSuffix "(" + circleci_build_number + ")"
+        }
     }
 
     compileOptions {
