@@ -28,9 +28,8 @@ import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
-import org.mozilla.firefox.vpn.servers.data.ServerRepository
+import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
-import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
 import java.net.InetAddress
 
@@ -42,14 +41,19 @@ class VpnFragment : Fragment() {
     private var config: Config? = null
 
     private val deviceRepository: DeviceRepository by lazy {
-        DeviceRepository(activity!!.applicationContext)
+        activity!!.guardianComponent.deviceRepo
+    }
+
+    private val userRepository by lazy {
+        activity!!.guardianComponent.userRepo
+    }
+
+    private val serverRepository by lazy {
+        activity!!.guardianComponent.serverRepo
     }
 
     private val getServerList: GetServersUseCase by lazy {
-        GetServersUseCase(
-            UserRepository(context!!),
-            ServerRepository()
-        )
+        GetServersUseCase(userRepository, serverRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -9,13 +9,23 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_devices.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.device.DevicesComponentImpl
+import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.service.DeviceInfo
+import org.mozilla.firefox.vpn.util.viewModel
 
 class DevicesFragment : Fragment() {
+
+    private val component by lazy {
+        DevicesComponentImpl(activity!!.guardianComponent)
+    }
+
+    private val viewModel by viewModel {
+        component.viewModel
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_devices, container, false)
@@ -30,8 +40,6 @@ class DevicesFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        val viewModel = ViewModelProviders.of(this).get(DevicesViewModel::class.java)
 
         viewModel.devices.observe(viewLifecycleOwner, Observer {
             device_list.adapter = DevicesAdapter(it) { device ->

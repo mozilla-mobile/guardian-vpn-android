@@ -1,16 +1,16 @@
 package org.mozilla.firefox.vpn.user.data
 
-import android.content.Context
-import androidx.preference.PreferenceManager
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import org.mozilla.firefox.vpn.service.*
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.onSuccess
 import java.net.UnknownHostException
 
-class UserRepository(private val appContext: Context) {
-
-    private val guardianService = GuardianService.newInstance()
+class UserRepository(
+    private val guardianService: GuardianService,
+    private val prefs: SharedPreferences
+) {
 
     /**
      * @return Result.Success(loginInfo) or Result.Fail(NetworkException|Otherwise)
@@ -46,13 +46,13 @@ class UserRepository(private val appContext: Context) {
 
     fun createUserInfo(user: UserInfo) {
         val json = Gson().toJson(user)
-        PreferenceManager.getDefaultSharedPreferences(appContext).edit()
+        prefs.edit()
             .putString(PREF_USER_INFO, json)
             .apply()
     }
 
     fun getUserInfo() : UserInfo? {
-        return PreferenceManager.getDefaultSharedPreferences(appContext).getString(PREF_USER_INFO, null)?.let {
+        return prefs.getString(PREF_USER_INFO, null)?.let {
             Gson().fromJson(it, UserInfo::class.java)
         }
     }
