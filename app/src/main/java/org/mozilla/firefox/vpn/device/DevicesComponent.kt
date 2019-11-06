@@ -5,6 +5,7 @@ import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.device.domain.GetDevicesUseCase
 import org.mozilla.firefox.vpn.device.domain.RemoveDeviceUseCase
 import org.mozilla.firefox.vpn.device.ui.DevicesViewModel
+import org.mozilla.firefox.vpn.user.domain.GetUserInfoUseCase
 
 interface DevicesComponent {
     val viewModel: DevicesViewModel
@@ -18,6 +19,7 @@ class DevicesComponentImpl(
         get() = DevicesViewModel(
             getDevicesUseCase = GetDevicesUseCase(userRepo),
             removeDevicesUseCase = RemoveDeviceUseCase(deviceRepo, userRepo),
-            currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo)
+            currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo),
+            getUserInfoUseCase = GetUserInfoUseCase(userRepo)
         )
 }

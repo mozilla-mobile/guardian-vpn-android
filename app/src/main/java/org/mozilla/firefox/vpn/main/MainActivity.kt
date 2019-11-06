@@ -3,7 +3,10 @@ package org.mozilla.firefox.vpn.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import kotlinx.android.synthetic.main.activity_main.*
@@ -54,4 +57,15 @@ class MainActivity : AppCompatActivity() {
     companion object {
         fun getStartIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
+}
+
+fun FragmentActivity.setSupportActionBar(toolbar: Toolbar): ActionBar? {
+    return (this as? AppCompatActivity)?.let {
+        it.setSupportActionBar(toolbar)
+        it.supportActionBar
+    }
+}
+
+fun FragmentActivity.getSupportActionBar(): ActionBar? {
+    return (this as? AppCompatActivity)?.supportActionBar
 }

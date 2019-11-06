@@ -39,6 +39,7 @@
     <string name="label_terms_of_service">Terms of Service</string>
     <string name="label_privacy_policy">Privacy Policy</string>
     <string name="devices_current_device">Current device</string>
+    <string name="devices_count">%1$d of %2$d</string>
     <string name="devices_remove_dialog_title">Remove device?</string>
     <string name="devices_remove_dialog_message">Please confirm you would like to remove %1$s</string>
     <string name="remove">Remove</string>
