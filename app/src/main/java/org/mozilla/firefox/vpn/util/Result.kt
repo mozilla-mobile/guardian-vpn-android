@@ -19,14 +19,14 @@ fun <T : Any> Result<T>.mapError(function: (Exception) -> Exception): Result<T> 
     }
 }
 
-suspend fun <T : Any> Result<T>.onSuccess(function:suspend (T) -> Unit): Result<T> {
+inline fun <T : Any> Result<T>.onSuccess(function: (T) -> Unit): Result<T> {
     when (this) {
         is Result.Success -> function(value)
     }
     return this
 }
 
-fun <T : Any> Result<T>.onError(function: (Exception) -> Unit): Result<T> {
+inline fun <T : Any> Result<T>.onError(function: (Exception) -> Unit): Result<T> {
     when (this) {
         is Result.Fail -> function(exception)
     }
