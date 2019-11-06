@@ -1,129 +1,75 @@
 package org.mozilla.firefox.vpn.onboarding
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.browser.customtabs.CustomTabsClient
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.browser.customtabs.CustomTabsServiceConnection
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.Observer
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.MainActivity
-import org.mozilla.firefox.vpn.service.LoginResult
-import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
-import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
-import org.mozilla.firefox.vpn.user.domain.VerifyLoginUseCase
-import org.mozilla.firefox.vpn.util.Result
-import org.mozilla.firefox.vpn.util.onSuccess
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import org.mozilla.firefox.vpn.util.LoginCustomTab
+import org.mozilla.firefox.vpn.util.observerUntilOnDestroy
+import org.mozilla.firefox.vpn.util.viewModel
 
 class OnboardingActivity : AppCompatActivity() {
 
-    private val userRepository by lazy { guardianComponent.userRepo }
-    private val deviceRepository by lazy { guardianComponent.deviceRepo }
+    private val component by lazy {
+        OnboardingComponentImpl(guardianComponent)
+    }
 
-    private lateinit var getLoginInfo: GetLoginInfoUseCase
-    private lateinit var verifyLogin: VerifyLoginUseCase
-    private lateinit var createUser: CreateUserUseCase
+    private val viewModel by viewModel { component.viewModel }
 
-    private lateinit var addDevice: AddDeviceUseCase
+    private var shouldLaunchMainPage = false
+
+    private lateinit var customTab: LoginCustomTab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
+        customTab = LoginCustomTab(this)
 
-        addDevice = AddDeviceUseCase(deviceRepository, userRepository)
-        getLoginInfo = GetLoginInfoUseCase(userRepository)
-        verifyLogin = VerifyLoginUseCase(userRepository)
-        createUser = CreateUserUseCase(userRepository)
+        viewModel.prepareLoginFlow()
+
+        viewModel.loginInfo.observe(this, Observer {
+            customTab.mayLaunchUrl(it.loginUrl)
+        })
+
+        viewModel.toast.observe(this, Observer {
+            Toast.makeText(this, it.resolve(this), Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.promptLogin.observe(this, Observer {
+            customTab.launchUrl(it)
+        })
+
+        viewModel.launchMainPage.observerUntilOnDestroy(this, Observer {
+            // Originally, after receiving this event, we should launch main activity directly. However,
+            // this will make custom tab being pushed to the background, and after the user leaves the
+            // main activity, he will see the custom tab, which is undesired.
+
+            // To close custom tab first, current approach launches OnboardingActivity again with
+            // FLAG_ACTIVITY_CLEAR_TOP to clear the custom tab, and since onNewIntent() will be called
+            // in this case, we launch main activity there
+
+            shouldLaunchMainPage = true
+            startActivity(getStartIntent(this@OnboardingActivity).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            })
+        })
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        userRepository.getUserInfo()?.let {
+        if (shouldLaunchMainPage) {
             startActivity(MainActivity.getStartIntent(this))
             finish()
         }
     }
 
     fun startLoginFlow() {
-        // TODO: 1. Do not use GlobalScope
-        // TODO: 2. Performance tuning
-        GlobalScope.launch(Dispatchers.IO) {
-            prepareCustomTab()
-
-            val info = getLoginInfo()
-            info.onSuccess {
-                launchLoginCustomTab(it.loginUrl)
-                processVerifyResult(verifyLogin(it))
-            }
-        }
-    }
-
-    private fun processVerifyResult(verifyResult: Result<LoginResult>) {
-        when (verifyResult) {
-            is Result.Success -> processLoginResult(verifyResult.value)
-            is Result.Fail -> Toast.makeText(this, "${verifyResult.exception}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun processLoginResult(loginResult: LoginResult) {
-        GlobalScope.launch(Dispatchers.Main) {
-            val user = withContext(Dispatchers.IO) {
-                when (val result = createUser(loginResult)) {
-                    is Result.Success -> result.value
-                    is Result.Fail -> null
-                }
-            } ?: return@launch
-
-            withContext(Dispatchers.IO) {
-                when (val result = addDevice(user.token)) {
-                    is Result.Success -> result.value
-                    is Result.Fail -> null
-                }
-            } ?: return@launch
-
-            withContext(Dispatchers.IO) {
-                
-            }
-
-            // TODO: Better way to clear custom tab
-            startActivity(getStartIntent(this@OnboardingActivity).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            })
-        }
-    }
-
-    private suspend fun prepareCustomTab(): Unit = suspendCoroutine { cont ->
-        CustomTabsClient.bindCustomTabsService(
-            this,
-            "com.android.chrome",
-            object : CustomTabsServiceConnection() {
-
-                override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
-                    client.warmup(0L)
-                    cont.resume(Unit)
-                }
-
-                override fun onServiceDisconnected(p0: ComponentName) {}
-            }
-        )
-    }
-
-    private fun launchLoginCustomTab(url: String) {
-        CustomTabsIntent.Builder()
-            .build()
-            .launchUrl(this, Uri.parse(url))
+        viewModel.startLoginFlow()
     }
 
     companion object {

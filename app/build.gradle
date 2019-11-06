@@ -69,6 +69,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
     implementation 'io.coil-kt:coil:0.7.0'
 
+    implementation "com.github.hadilq.liveevent:liveevent:1.0.1"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
