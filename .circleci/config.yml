@@ -87,7 +87,7 @@ workflows:
   build_release:
     triggers:
       - schedule:
-          cron: "30 * * * *"
+          cron: "0 2 * * *"
           filters:
             branches:
               only: autograph_sign_on_CI
