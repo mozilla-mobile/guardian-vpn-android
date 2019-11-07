@@ -65,15 +65,10 @@ class DevicesAdapter(
         }
 
         private fun getRelativeTime(iso8601Time: String): String? {
-            val time = try {
-                TimeUtil.parse(iso8601Time, TimeFormat.Iso8601)
-            } catch (e: ParseException) {
-                return null
-            }.time
-
-
-            val now = System.currentTimeMillis()
-            return DateUtils.getRelativeTimeSpanString(time, now, DateUtils.MINUTE_IN_MILLIS).toString()
+            return TimeUtil.parseOrNull(iso8601Time, TimeFormat.Iso8601)?.let {
+                val now = System.currentTimeMillis()
+                DateUtils.getRelativeTimeSpanString(it.time, now, DateUtils.MINUTE_IN_MILLIS).toString()
+            }
         }
     }
 }

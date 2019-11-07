@@ -20,6 +20,14 @@ object TimeUtil {
             throw TimeFormatException(e.message.orEmpty(), e)
         }
     }
+
+    fun parseOrNull(time: String, format: TimeFormat): Date? {
+        return try {
+            parse(time, format)
+        } catch (e: org.mozilla.firefox.vpn.util.TimeFormatException) {
+            null
+        }
+    }
 }
 
 interface TimeFormat {

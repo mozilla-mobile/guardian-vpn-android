@@ -19,11 +19,8 @@ class VerifyLoginUseCase(
     suspend operator fun invoke(info: LoginInfo): Result<LoginResult> {
         var result = userRepository.verifyLogin(info)
 
-        val expiresDate = try {
-            TimeUtil.parse(info.expiresOn, TimeFormat.Iso8601)
-        } catch (e: TimeFormatException) {
-            return Result.Fail(IllegalTimeFormatException)
-        }
+        val expiresDate = TimeUtil.parseOrNull(info.expiresOn, TimeFormat.Iso8601)
+            ?: return Result.Fail(IllegalTimeFormatException)
 
         while (result !is Result.Success) {
             Log.d(TAG, "verify login fail, result=$result")
