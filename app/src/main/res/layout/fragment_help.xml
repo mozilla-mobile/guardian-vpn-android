@@ -13,7 +13,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:title="@string/label_get_help"
-        app:navigationIcon="@drawable/ic_back" />
+        app:navigationIcon="@drawable/ic_back"
+        app:titleTextAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
     <LinearLayout
         android:id="@+id/btn_contact_us"
@@ -33,9 +34,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_contact_us"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/abbey_alpha_80" />
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
         <ImageView
             android:layout_width="24dp"
@@ -74,9 +73,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_help_and_support"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/abbey_alpha_80" />
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
         <ImageView
             android:layout_width="24dp"

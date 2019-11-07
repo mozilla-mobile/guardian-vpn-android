@@ -70,6 +70,7 @@
         android:textColor="@android:color/white"
         android:textSize="15sp"
         android:visibility="gone"
+        android:textAppearance="@style/TextAppearance.Guardian.Text.Title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

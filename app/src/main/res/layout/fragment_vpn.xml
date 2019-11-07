@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="11dp"
             android:text="@string/vpn_title"
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/abbey_alpha_80"
