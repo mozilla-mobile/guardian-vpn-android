@@ -13,6 +13,9 @@ import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.user.domain.GetUserInfoUseCase
 import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.TimeFormat
+import org.mozilla.firefox.vpn.util.TimeFormatException
+import org.mozilla.firefox.vpn.util.TimeUtil
 
 class DevicesViewModel(
     private val getDevicesUseCase: GetDevicesUseCase,
@@ -42,7 +45,10 @@ class DevicesViewModel(
         val current = currentDeviceUseCase()
         when (val result = getDevicesUseCase()) {
             is Result.Success -> {
-                devices.value = DevicesModel(result.value, current)
+                val list = result.value.sortedByDescending {
+                    TimeUtil.parseOrNull(it.createdAt, TimeFormat.Iso8601)?.time ?: Long.MIN_VALUE
+                }
+                devices.value = DevicesModel(list, current)
             }
             is Result.Fail -> handleFail(result.exception)
         }
