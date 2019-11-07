@@ -5,6 +5,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- TextView -->
+        <item name="android:textViewStyle">@style/Widget.Guardian.TextView</item>
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base">
@@ -18,6 +21,27 @@
     <style name="BottomNavigationTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorAccent</item>
         <item name="android:colorForeground">@color/colorPrimaryDark</item>
+    </style>
+
+    <!-- textViewStyle for AppTheme -->
+    <style name="Widget.Guardian.TextView" parent="@android:style/Widget.Material.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Guardian.Text.Body</item>
+    </style>
+
+    <!-- TextAppearance for title -->
+    <style name="TextAppearance.Guardian.Text.Title" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:fontFamily">@font/metropolis_regular</item>
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Text.Title.Bold" parent="TextAppearance.Guardian.Text.Title">
+        <item name="android:fontFamily">@font/metropolis_semibold</item>
+    </style>
+
+    <!-- TextAppearance for body -->
+    <style name="TextAppearance.Guardian.Text.Body" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/inter_regular</item>
     </style>
 
 </resources>
