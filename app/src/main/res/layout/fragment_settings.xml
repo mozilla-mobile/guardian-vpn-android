@@ -24,6 +24,7 @@
         android:gravity="center"
         android:textSize="22sp"
         android:textColor="@color/abbey_alpha_80"
+        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
         app:layout_constraintTop_toBottomOf="@id/profile_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,6 +54,7 @@
         android:gravity="center"
         android:text="@string/action_manage_account"
         android:textSize="15sp"
+        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/profile_email"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,9 +86,7 @@
             android:gravity="center_vertical"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_my_devices"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/abbey_alpha_80" />
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
     </LinearLayout>
 
@@ -126,9 +126,7 @@
             android:gravity="center_vertical"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_get_help"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/abbey_alpha_80" />
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
     </LinearLayout>
 
@@ -168,9 +166,7 @@
             android:gravity="center_vertical"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_about"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/abbey_alpha_80" />
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
     </LinearLayout>
 

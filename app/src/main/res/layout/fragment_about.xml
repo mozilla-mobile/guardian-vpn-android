@@ -14,7 +14,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:title="@string/label_about"
-        app:navigationIcon="@drawable/ic_back" />
+        app:navigationIcon="@drawable/ic_back"
+        app:titleTextAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
     <TextView
         android:id="@+id/label_guardian_vpn"
@@ -23,9 +24,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/label_guardian_vpn"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/abbey_alpha_80"
+        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -51,9 +50,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/label_version"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:textColor="@color/abbey_alpha_80"
+        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
         app:layout_constraintTop_toBottomOf="@id/guardian_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -101,9 +98,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_terms_of_service"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/abbey_alpha_80" />
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
         <ImageView
             android:layout_width="24dp"
@@ -142,9 +137,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_privacy_policy"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/abbey_alpha_80" />
+            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
 
         <ImageView
             android:layout_width="24dp"
