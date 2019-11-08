@@ -22,9 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:textSize="22sp"
-        android:textColor="@color/abbey_alpha_80"
-        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
+        android:textAppearance="@style/TextAppearance.Guardian.Title10"
         app:layout_constraintTop_toBottomOf="@id/profile_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,8 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:textSize="15sp"
-        android:textColor="@color/abbey_alpha_60"
+        android:textAppearance="@style/TextAppearance.Guardian.Body10"
         app:layout_constraintTop_toBottomOf="@id/profile_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,8 +50,7 @@
         android:background="@drawable/selector_bg_primary_button"
         android:gravity="center"
         android:text="@string/action_manage_account"
-        android:textSize="15sp"
-        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/profile_email"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +82,7 @@
             android:gravity="center_vertical"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_my_devices"
-            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
     </LinearLayout>
 
@@ -126,7 +122,7 @@
             android:gravity="center_vertical"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_get_help"
-            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
     </LinearLayout>
 
@@ -166,7 +162,7 @@
             android:gravity="center_vertical"
             android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_about"
-            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
     </LinearLayout>
 
@@ -178,9 +174,8 @@
         android:gravity="center"
         android:foreground="?attr/selectableItemBackground"
         android:text="@string/action_sign_out"
-        android:textSize="15sp"
-        android:textStyle="bold"
         android:textColor="@color/carnation"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

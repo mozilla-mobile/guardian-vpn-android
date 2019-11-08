@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:title="@string/label_about"
         app:navigationIcon="@drawable/ic_back"
-        app:titleTextAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+        app:titleTextAppearance="@style/TextAppearance.Guardian.Header20" />
 
     <TextView
         android:id="@+id/label_guardian_vpn"
@@ -24,7 +24,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/label_guardian_vpn"
-        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -36,8 +36,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/guardian_description"
-        android:textSize="13sp"
         android:textColor="@color/abbey_alpha_60"
+        android:textAppearance="@style/TextAppearance.Guardian.Byline10"
         app:layout_constraintTop_toBottomOf="@id/label_guardian_vpn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -50,7 +50,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="@string/label_version"
-        android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toBottomOf="@id/guardian_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -61,8 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:textSize="13sp"
         android:textColor="@color/abbey_alpha_60"
+        android:textAppearance="@style/TextAppearance.Guardian.Byline10"
         app:layout_constraintTop_toBottomOf="@id/label_version"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +98,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_terms_of_service"
-            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
         <ImageView
             android:layout_width="24dp"
@@ -137,7 +137,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_privacy_policy"
-            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
         <ImageView
             android:layout_width="24dp"

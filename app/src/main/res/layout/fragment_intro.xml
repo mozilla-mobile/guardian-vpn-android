@@ -52,7 +52,7 @@
         android:text="@string/action_skip"
         android:textAllCaps="true"
         android:textColor="@color/science_blue"
-        android:textSize="15sp"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintBottom_toBottomOf="@id/btn_close"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btn_close" />
@@ -68,9 +68,8 @@
         android:gravity="center"
         android:text="@string/action_auth"
         android:textColor="@android:color/white"
-        android:textSize="15sp"
         android:visibility="gone"
-        android:textAppearance="@style/TextAppearance.Guardian.Text.Title"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
