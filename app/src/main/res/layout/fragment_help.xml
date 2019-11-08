@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:title="@string/label_get_help"
         app:navigationIcon="@drawable/ic_back"
-        app:titleTextAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+        app:titleTextAppearance="@style/TextAppearance.Guardian.Header20" />
 
     <LinearLayout
         android:id="@+id/btn_contact_us"
@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_contact_us"
-            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
         <ImageView
             android:layout_width="24dp"
@@ -73,7 +73,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_help_and_support"
-            android:textAppearance="@style/TextAppearance.Guardian.Text.Title.Bold" />
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
         <ImageView
             android:layout_width="24dp"
