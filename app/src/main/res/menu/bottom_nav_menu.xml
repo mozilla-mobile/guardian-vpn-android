@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/vpn"
-        android:icon="@drawable/ic_vpn_unconnected"
+        android:icon="@drawable/ic_vpn_disconnected"
         android:title="@string/label_vpn" />
 
     <item
