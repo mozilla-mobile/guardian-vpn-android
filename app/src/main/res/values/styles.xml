@@ -28,15 +28,69 @@
         <item name="android:textAppearance">@style/TextAppearance.Guardian.Text.Body</item>
     </style>
 
-    <!-- TextAppearance for title -->
-    <style name="TextAppearance.Guardian.Text.Title" parent="TextAppearance.AppCompat.Caption">
+    <!-- Font family -->
+    <style name="TextAppearance.Guardian.Metropolis.Regular" parent="TextAppearance.AppCompat.Caption">
         <item name="android:fontFamily">@font/metropolis_regular</item>
+    </style>
+    <style name="TextAppearance.Guardian.Metropolis.SemiBold" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:fontFamily">@font/metropolis_semibold</item>
+    </style>
+    <style name="TextAppearance.Guardian.Inter.Regular" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+    <style name="TextAppearance.Guardian.Inter.SemiBold" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/inter_semibold</item>
+    </style>
+
+    <!-- TextAppearance defined in Guardian -->
+    <style name="TextAppearance.Guardian.Title10" parent="TextAppearance.Guardian.Metropolis.Regular">
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Title20" parent="TextAppearance.Guardian.Metropolis.SemiBold">
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Byline10" parent="TextAppearance.Guardian.Inter.Regular">
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Byline20" parent="TextAppearance.Guardian.Inter.SemiBold">
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Header10" parent="TextAppearance.Guardian.Metropolis.Regular">
         <item name="android:textColor">@color/abbey_alpha_80</item>
         <item name="android:textSize">15sp</item>
     </style>
 
-    <style name="TextAppearance.Guardian.Text.Title.Bold" parent="TextAppearance.Guardian.Text.Title">
-        <item name="android:fontFamily">@font/metropolis_semibold</item>
+    <style name="TextAppearance.Guardian.Header20" parent="TextAppearance.Guardian.Metropolis.SemiBold">
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Caption10" parent="TextAppearance.Guardian.Inter.Regular">
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Caption20" parent="TextAppearance.Guardian.Inter.SemiBold">
+        <item name="android:textColor">@color/abbey_alpha_80</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Body10" parent="TextAppearance.Guardian.Inter.Regular">
+        <item name="android:textColor">@color/abbey_alpha_60</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="TextAppearance.Guardian.Body20" parent="TextAppearance.Guardian.Inter.SemiBold">
+        <item name="android:textColor">@color/abbey_alpha_60</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <!-- TextAppearance for body -->
