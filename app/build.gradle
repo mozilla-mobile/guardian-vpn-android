@@ -1,4 +1,8 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'com.github.triplet.play' version '2.3.0'
+}
+
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
@@ -8,7 +12,7 @@ android {
         applicationId "org.mozilla.firefox.vpn"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
+        versionCode 189
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -50,6 +54,15 @@ android {
     androidExtensions {
         experimental = true
     }
+}
+
+// Configuration for com.github.triplet.play deployment
+play {
+    track = 'internal' // or alpha or beta...
+    serviceAccountCredentials = file(System.getenv("PRIVATE_KEY") ?: "build/private_key.json")
+    artifactDir = file(System.getenv("SIGNED_APK_DIR") ?: "build/outputs/apk/")
+    defaultToAppBundles = false // Use App Bundle instead of APK
+    resolutionStrategy = "ignore" //If the deployment fails due to an API error, don't fail the CI Build
 }
 
 dependencies {
