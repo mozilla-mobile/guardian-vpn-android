@@ -15,7 +15,9 @@
         app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:itemIconTint="@color/item_bottom_nav"
+        app:itemTextColor="@color/item_bottom_nav" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_container"
