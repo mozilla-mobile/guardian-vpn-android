@@ -1,2 +1,5 @@
 # guardian-vpn-android
 VPN Clients for the Project Guardian's Android VPN product
+
+## Build
+$ git submodule update --init --recursive
