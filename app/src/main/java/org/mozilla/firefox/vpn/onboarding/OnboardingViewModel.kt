@@ -80,7 +80,7 @@ class OnboardingViewModel(
     private suspend fun processVerifyResult(verifyResult: Result<LoginResult>) {
         when (verifyResult) {
             is Result.Success -> processLoginResult(verifyResult.value)
-            is Result.Fail -> toast.value = StringResource("${verifyResult.exception}")
+            is Result.Fail -> toast.postValue(StringResource("${verifyResult.exception}"))
         }
     }
 
