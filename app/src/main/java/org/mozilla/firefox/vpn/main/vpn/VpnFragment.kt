@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.wireguard.android.backend.GoBackend
 import com.wireguard.android.model.Tunnel
@@ -25,17 +25,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.viewModel
 import java.net.InetAddress
 
 class VpnFragment : Fragment() {
 
-    private lateinit var vpnViewModel: VpnViewModel
     private lateinit var behavior: BottomSheetBehavior<View>
     private var pendingTunnel: Tunnel? = null
     private var config: Config? = null
@@ -56,6 +56,20 @@ class VpnFragment : Fragment() {
         GetServersUseCase(userRepository, serverRepository)
     }
 
+    private val vpnManager by lazy {
+        val appContext = activity!!.applicationContext
+        VpnManager(
+            appContext,
+            PreferenceManager.getDefaultSharedPreferences(appContext)
+        )
+    }
+
+    private val component by lazy {
+        VpnComponentImpl(context!!.coreComponent, context!!.guardianComponent)
+    }
+
+    private val vpnViewModel by viewModel { component.viewModel }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,22 +77,16 @@ class VpnFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        vpnViewModel = ViewModelProviders.of(this).get(VpnViewModel::class.java)
         return inflater.inflate(R.layout.fragment_vpn, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // TODO: Refactor and check whether config is null
-
-        val tunnelManager = (activity?.application as GuardianApp).tunnelManager
-        val tunnel = tunnelManager.create(config, "aaa")
-
         vpn_switch.setOnCheckedChangeListener { _, isChecked ->
             GlobalScope.launch(Dispatchers.IO) {
                 if (isChecked) {
-                    val intent = GoBackend.VpnService.prepare(context)
+                    val intent = GoBackend.VpnService.prepare(context?.applicationContext)
                     if (intent != null) {
                         withContext(Dispatchers.Main){
                             vpn_switch.isChecked = false
@@ -87,15 +95,15 @@ class VpnFragment : Fragment() {
                         }
                     } else {
                         switchState(Tunnel.State.UP)
-                        tunnel.state = Tunnel.State.UP
+                        vpnManager.connect("aaa", config!!)
                     }
                 } else {
                     switchState(Tunnel.State.DOWN)
-                    tunnel.state = Tunnel.State.DOWN
+                    vpnManager.disconnect()
                 }
             }
         }
-        vpn_switch.isChecked = tunnel.state == Tunnel.State.UP
+        vpn_switch.isChecked = vpnManager.isConnected()
 
         behavior = BottomSheetBehavior.from(bottom_sheet)
 
