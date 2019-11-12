@@ -1,12 +1,9 @@
 package org.mozilla.firefox.vpn.main.settings
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -16,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.service.GuardianService
-import org.mozilla.firefox.vpn.user.data.UserRepository
+import org.mozilla.firefox.vpn.util.launchUrl
 
 class SettingsFragment : Fragment() {
 
@@ -37,7 +34,7 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(R.id.action_settings_main_to_devices)
         }
         btn_manage_account.setOnClickListener {
-            launchUrl(context!!, GuardianService.HOST_FXA)
+            launchUrl(GuardianService.HOST_FXA)
         }
         btn_get_help.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_help)
@@ -45,12 +42,6 @@ class SettingsFragment : Fragment() {
         btn_about.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_about)
         }
-    }
-
-    private fun launchUrl(context: Context, url: String) {
-        CustomTabsIntent.Builder().apply {
-            enableUrlBarHiding()
-        }.build().launchUrl(context, url.toUri())
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

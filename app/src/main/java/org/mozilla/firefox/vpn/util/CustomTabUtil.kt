@@ -7,6 +7,8 @@ import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 
@@ -79,4 +81,10 @@ class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycle
         private const val TAG = "LoginCustomTab"
         private val customTabCandidates = listOf("org.mozilla.fenix", "com.android.chrome")
     }
+}
+
+fun Fragment.launchUrl(url: String) {
+    CustomTabsIntent.Builder().apply {
+        enableUrlBarHiding()
+    }.build().launchUrl(context, url.toUri())
 }
