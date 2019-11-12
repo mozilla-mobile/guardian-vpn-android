@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_about.*
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.service.GuardianService
+import org.mozilla.firefox.vpn.util.launchUrl
 
 class AboutFragment : Fragment() {
 
@@ -26,14 +25,10 @@ class AboutFragment : Fragment() {
         }
         version_text.text = BuildConfig.VERSION_NAME
         btn_terms.setOnClickListener {
-            CustomTabsIntent.Builder().apply {
-                enableUrlBarHiding()
-            }.build().launchUrl(context, GuardianService.HOST_TERMS.toUri())
+            launchUrl(GuardianService.HOST_TERMS)
         }
         btn_policy.setOnClickListener {
-            CustomTabsIntent.Builder().apply {
-                enableUrlBarHiding()
-            }.build().launchUrl(context, GuardianService.HOST_PRIVACY.toUri())
+            launchUrl(GuardianService.HOST_PRIVACY)
         }
     }
 }

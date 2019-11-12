@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_help.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.service.GuardianService
+import org.mozilla.firefox.vpn.util.launchUrl
 
 class HelpFragment : Fragment() {
 
@@ -24,14 +23,10 @@ class HelpFragment : Fragment() {
             findNavController().popBackStack()
         }
         btn_contact_us.setOnClickListener {
-            CustomTabsIntent.Builder().apply {
-                enableUrlBarHiding()
-            }.build().launchUrl(context, GuardianService.HOST_CONTACT.toUri())
+            launchUrl(GuardianService.HOST_CONTACT)
         }
         btn_help_and_support.setOnClickListener {
-            CustomTabsIntent.Builder().apply {
-                enableUrlBarHiding()
-            }.build().launchUrl(context, GuardianService.HOST_SUPPORT.toUri())
+            launchUrl(GuardianService.HOST_SUPPORT)
         }
     }
 }
