@@ -86,7 +86,7 @@ class VpnFragment : Fragment() {
         vpn_switch.setOnCheckedChangeListener { _, isChecked ->
             GlobalScope.launch(Dispatchers.IO) {
                 if (isChecked) {
-                    val intent = GoBackend.VpnService.prepare(context?.applicationContext)
+                    val intent = GoBackend.VpnService.prepare(context)
                     if (intent != null) {
                         withContext(Dispatchers.Main){
                             vpn_switch.isChecked = false
