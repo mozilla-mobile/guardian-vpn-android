@@ -51,6 +51,11 @@
                 android:id="@+id/vpn_state_offline" />
 
             <include
+                layout="@layout/layout_vpn_disconnecting"
+                android:id="@+id/vpn_state_disconnecting"
+                android:visibility="gone" />
+
+            <include
                 layout="@layout/layout_vpn_connecting"
                 android:id="@+id/vpn_state_connecting"
                 android:visibility="gone" />

@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 
 inline fun <reified VM : ViewModel> AppCompatActivity.viewModel(crossinline provider: () -> VM): Lazy<VM> {
     return lazy {
@@ -14,7 +13,7 @@ inline fun <reified VM : ViewModel> AppCompatActivity.viewModel(crossinline prov
                 return viewModel as T1
             }
         }
-        ViewModelProviders.of(this, factory).get(VM::class.java)
+        ViewModelProvider(this, factory).get(VM::class.java)
     }
 }
 
@@ -26,6 +25,6 @@ inline fun <reified VM : ViewModel> Fragment.viewModel(crossinline provider: () 
                 return viewModel as T1
             }
         }
-        ViewModelProviders.of(this, factory).get(VM::class.java)
+        ViewModelProvider(this, factory).get(VM::class.java)
     }
 }
