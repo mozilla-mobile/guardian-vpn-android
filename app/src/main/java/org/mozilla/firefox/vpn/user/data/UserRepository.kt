@@ -3,8 +3,7 @@ package org.mozilla.firefox.vpn.user.data
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import org.mozilla.firefox.vpn.service.*
-import org.mozilla.firefox.vpn.util.Result
-import org.mozilla.firefox.vpn.util.onSuccess
+import org.mozilla.firefox.vpn.util.*
 import java.net.UnknownHostException
 
 class UserRepository(
@@ -90,3 +89,25 @@ data class UserInfo(
     val token: String,
     val latestUpdateTime: Long
 )
+
+val UserInfo.isSubscribed: Boolean
+    get() {
+        val subscription = this.user.subscription
+        val now = TimeUtil.now()
+        val renewDate = try {
+            TimeUtil.parse(subscription.vpn.renewsOn, TimeFormat.Iso8601)
+        } catch (e: TimeFormatException) {
+            GLog.e("[isSubscribed] illegal renewDate format: $e")
+            return false
+        }
+        GLog.i("[isSubscribed] current=$now")
+        GLog.i("[isSubscribed] renewOn=$renewDate")
+
+        return subscription.vpn.active && now.before(renewDate)
+    }
+
+
+val UserInfo.isDeviceLimitReached: Boolean
+    get() {
+        return user.devices.size >= user.maxDevices
+    }
