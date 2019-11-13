@@ -34,7 +34,7 @@ class VpnManager(
     private var tunnel: Tunnel? = null
 
     fun isGranted(): Boolean {
-        return GoBackend.VpnService.prepare(appContext) != null
+        return GoBackend.VpnService.prepare(appContext) == null
     }
 
     fun connect(name: String, config: Config) {

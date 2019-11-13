@@ -2,6 +2,7 @@ package org.mozilla.firefox.vpn.main.vpn
 
 import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
+import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 
 interface VpnComponent {
     val viewModel: VpnViewModel
@@ -17,6 +18,6 @@ class VpnComponentImpl(
             vpnManager = VpnManager(app, prefs),
             userRepository = userRepo,
             deviceRepository = deviceRepo,
-            serverRepository = serverRepo
+            getServersUseCase = GetServersUseCase(userRepo, serverRepo)
         )
 }
