@@ -1,6 +1,7 @@
 package org.mozilla.firefox.vpn
 
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
+import org.mozilla.firefox.vpn.main.vpn.VpnManager
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.newInstance
@@ -10,11 +11,12 @@ interface GuardianComponent {
     val userRepo: UserRepository
     val deviceRepo: DeviceRepository
     val serverRepo: ServerRepository
+    val vpnManager: VpnManager
 }
 
 class GuardianComponentImpl(
     private val coreComponent: CoreComponent
-) : GuardianComponent {
+) : GuardianComponent, CoreComponent by coreComponent {
 
     private val service = GuardianService.newInstance()
 
@@ -29,4 +31,6 @@ class GuardianComponentImpl(
     override val serverRepo: ServerRepository by lazy {
         ServerRepository(service)
     }
+
+    override val vpnManager = VpnManager(app, prefs)
 }
