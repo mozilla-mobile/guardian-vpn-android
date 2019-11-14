@@ -66,7 +66,7 @@ class VpnFragment : Fragment() {
     }
 
     private fun observeState() {
-        vpnViewModel.uiState.observe(this, Observer { state ->
+        vpnViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is VpnViewModel.UIState.RequestPermission -> requestPermission()
                 is VpnViewModel.UIState.Connecting -> showConnectingState()
@@ -117,7 +117,7 @@ class VpnFragment : Fragment() {
     }
 
     private fun observeServers() {
-        vpnViewModel.servers.observe(this, Observer { servers ->
+        vpnViewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
                 server_list.adapter = ServerListAdapter(it)
                 city_name.text = it[0].name
