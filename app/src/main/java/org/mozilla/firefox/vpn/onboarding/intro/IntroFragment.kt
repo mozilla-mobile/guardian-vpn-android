@@ -26,8 +26,7 @@ class IntroFragment : Fragment() {
         initRecyclerView()
         btn_close.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_entrance))
         btn_skip.setOnClickListener{
-            val activity = activity as? OnboardingActivity ?: return@setOnClickListener
-            activity.startLoginFlow()
+            intro_list.smoothScrollToPosition(adapter.itemCount - 1)
         }
         btn_auth.setOnClickListener{
             val activity = activity as? OnboardingActivity ?: return@setOnClickListener
