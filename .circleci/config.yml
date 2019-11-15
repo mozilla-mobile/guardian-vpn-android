@@ -90,6 +90,6 @@ workflows:
           cron: "0 2 * * *"
           filters:
             branches:
-              only: autograph_sign_on_CI
+              only: master
     jobs:
       - build_release
