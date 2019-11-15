@@ -8,9 +8,9 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_country.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.main.vpn.ServerListAdapter.ServerViewHolder
-import org.mozilla.firefox.vpn.service.Country
+import org.mozilla.firefox.vpn.servers.data.ServerInfo
 
-class ServerListAdapter(private val items: List<Country>) : RecyclerView.Adapter<ServerViewHolder>() {
+class ServerListAdapter(private val items: List<ServerInfo>) : RecyclerView.Adapter<ServerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerViewHolder =
         ServerViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_country, parent, false))
@@ -21,8 +21,8 @@ class ServerListAdapter(private val items: List<Country>) : RecyclerView.Adapter
 
     class ServerViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(item: Country) {
-            country_name.text = item.name
+        fun bind(item: ServerInfo) {
+            country_name.text = item.country.name
         }
     }
 }
