@@ -9,11 +9,9 @@ import com.wireguard.crypto.Key
 import com.wireguard.crypto.KeyPair
 import kotlinx.coroutines.Dispatchers
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
-import org.mozilla.firefox.vpn.servers.data.SelectedServer
 import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SetSelectedServerUseCase
-import org.mozilla.firefox.vpn.service.Server
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
 import java.net.InetAddress
@@ -38,7 +36,9 @@ class VpnViewModel(
         }
     }
 
-    private var config: Config? = null
+    private val config: Config? by lazy {
+        prepareConfig()
+    }
 
     init {
         if (vpnManager.isConnected()) {
@@ -48,7 +48,7 @@ class VpnViewModel(
         }
     }
 
-    private fun prepareConfig(server: Server): Config? {
+    private fun prepareConfig(): Config? {
         val currentDevice = deviceRepository.getDevice() ?: return null
         val device = currentDevice.device
         val privateKey = currentDevice.privateKeyBase64
@@ -65,7 +65,7 @@ class VpnViewModel(
 
             val peers = ArrayList<Peer>(1)
             peers.add(Peer.Builder().apply {
-                setPublicKey(Key.fromBase64(server.publicKey))
+                setPublicKey(Key.fromBase64("Wy2FhqDJcZU03O/D9IUG/U5BL0PLbF06nvsfgIwrmGk="))
                 parseEndpoint("185.232.22.58:32768")
                 setPersistentKeepalive(60)
                 parseAllowedIPs("0.0.0.0/0")
@@ -91,7 +91,6 @@ class VpnViewModel(
                 }
             }
             is Action.Disconnect -> disconnectVpn()
-            is Action.Switch -> switchServer(action.server)
         }
     }
 
@@ -112,10 +111,6 @@ class VpnViewModel(
         _uiState.value = UIState.Disconnected
     }
 
-    private fun switchServer(server: SelectedServer) {
-        prepareConfig(server.server.server)
-    }
-
     sealed class UIState {
         object Connecting : UIState()
         object Disconnecting : UIState()
@@ -123,12 +118,11 @@ class VpnViewModel(
         object Connected : UIState()
         object Disconnected : UIState()
         object RequestPermission : UIState()
-        class UpdateServer(val server: SelectedServer) : UIState()
     }
 
     sealed class Action {
         object Connect : Action()
         object Disconnect : Action()
-        class Switch(val server: SelectedServer) : Action()
+        object Switch : Action()
     }
 }
