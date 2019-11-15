@@ -48,7 +48,12 @@ class SettingsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         userRepository.getUserInfo()?.let { userInfo ->
-            profile_name?.text = userInfo.user.displayName
+            val userName = userInfo.user.displayName
+            profile_name?.text = if (userName.isNotEmpty()) {
+                userName
+            } else {
+                getString(R.string.settings_default_user_name)
+            }
             profile_email?.text = userInfo.user.email
             profile_image?.load(userInfo.user.avatar) {
                 crossfade(true)
