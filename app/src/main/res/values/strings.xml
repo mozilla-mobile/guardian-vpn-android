@@ -45,5 +45,6 @@
     <string name="devices_remove_dialog_title">Remove device?</string>
     <string name="devices_remove_dialog_message">Please confirm you would like to remove %1$s</string>
     <string name="remove">Remove</string>
+    <string name="settings_default_user_name">User</string>
 
 </resources>
