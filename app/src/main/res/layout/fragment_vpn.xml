@@ -34,7 +34,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/vpn_control_board"
+            android:id="@+id/vpn_state_panel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -89,7 +89,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:background="@drawable/bg_country_switch"
-            app:layout_constraintTop_toBottomOf="@id/vpn_control_board"
+            app:layout_constraintTop_toBottomOf="@id/vpn_state_panel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 

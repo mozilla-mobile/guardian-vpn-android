@@ -88,6 +88,7 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.VISIBLE
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
+        updateStatePanelElevation(true)
     }
 
     private fun showConnectedState() {
@@ -97,6 +98,7 @@ class VpnFragment : Fragment() {
         vpn_state_online.visibility = View.VISIBLE
         vpn_state_switching.visibility = View.GONE
         vpn_switch.isChecked = true
+        updateStatePanelElevation(true)
     }
 
     private fun showDisconnectingState() {
@@ -105,6 +107,7 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.GONE
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
+        updateStatePanelElevation(false)
     }
 
     private fun showDisconnectedState() {
@@ -114,6 +117,16 @@ class VpnFragment : Fragment() {
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
         vpn_switch.isChecked = false
+        updateStatePanelElevation(false)
+    }
+
+    private fun updateStatePanelElevation(isSecure: Boolean) {
+        val elevation = vpn_state_panel.context.resources.getDimensionPixelSize(if (isSecure) {
+            R.dimen.vpn_panel_elevation_secure
+        } else {
+            R.dimen.vpn_panel_elevation_insecure
+        })
+        vpn_state_panel.cardElevation = elevation.toFloat()
     }
 
     private fun observeServers() {
