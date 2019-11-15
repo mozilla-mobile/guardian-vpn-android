@@ -10,11 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_fpn"
-        app:layout_constraintVertical_bias="0.2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/entrance_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/entrance_title"
@@ -24,6 +24,7 @@
         android:text="@string/entrance_title"
         android:textAppearance="@style/TextAppearance.Guardian.Title10"
         app:layout_constraintTop_toBottomOf="@id/app_icon"
+        app:layout_constraintBottom_toTopOf="@id/entrance_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -36,6 +37,7 @@
         android:text="@string/entrance_description"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
         app:layout_constraintTop_toBottomOf="@id/entrance_title"
+        app:layout_constraintBottom_toTopOf="@id/btn_auth"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
