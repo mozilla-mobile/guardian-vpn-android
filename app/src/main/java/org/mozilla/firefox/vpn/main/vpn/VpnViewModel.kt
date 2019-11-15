@@ -9,7 +9,11 @@ import com.wireguard.crypto.Key
 import com.wireguard.crypto.KeyPair
 import kotlinx.coroutines.Dispatchers
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
+import org.mozilla.firefox.vpn.servers.data.SelectedServer
+import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
+import org.mozilla.firefox.vpn.servers.domain.SetSelectedServerUseCase
+import org.mozilla.firefox.vpn.service.Server
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
 import java.net.InetAddress
@@ -18,24 +22,23 @@ class VpnViewModel(
     private val vpnManager: VpnManager,
     private val userRepository: UserRepository,
     private val deviceRepository: DeviceRepository,
-    private val getServersUseCase: GetServersUseCase
+    private val getServersUseCase: GetServersUseCase,
+    private val setSelectedServerUseCase: SetSelectedServerUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableLiveData<UIState> = MutableLiveData()
     val uiState: LiveData<UIState> = _uiState
 
     val servers = liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-        val result = getServersUseCase.invoke(GetServersUseCase.FilterStrategy.ByCountry)
+        val result = getServersUseCase(FilterStrategy.ByCountry)
         if (result is Result.Success) {
-            emit(result.value.countries)
+            emit(result.value)
         } else {
             emit(null)
         }
     }
 
-    private val config: Config? by lazy {
-        prepareConfig()
-    }
+    private var config: Config? = null
 
     init {
         if (vpnManager.isConnected()) {
@@ -45,7 +48,7 @@ class VpnViewModel(
         }
     }
 
-    private fun prepareConfig(): Config? {
+    private fun prepareConfig(server: Server): Config? {
         val currentDevice = deviceRepository.getDevice() ?: return null
         val device = currentDevice.device
         val privateKey = currentDevice.privateKeyBase64
@@ -62,7 +65,7 @@ class VpnViewModel(
 
             val peers = ArrayList<Peer>(1)
             peers.add(Peer.Builder().apply {
-                setPublicKey(Key.fromBase64("Wy2FhqDJcZU03O/D9IUG/U5BL0PLbF06nvsfgIwrmGk="))
+                setPublicKey(Key.fromBase64(server.publicKey))
                 parseEndpoint("185.232.22.58:32768")
                 setPersistentKeepalive(60)
                 parseAllowedIPs("0.0.0.0/0")
@@ -88,6 +91,7 @@ class VpnViewModel(
                 }
             }
             is Action.Disconnect -> disconnectVpn()
+            is Action.Switch -> switchServer(action.server)
         }
     }
 
@@ -108,18 +112,23 @@ class VpnViewModel(
         _uiState.value = UIState.Disconnected
     }
 
+    private fun switchServer(server: SelectedServer) {
+        prepareConfig(server.server.server)
+    }
+
     sealed class UIState {
         object Connecting : UIState()
         object Disconnecting : UIState()
         object Switching : UIState()
         object Connected : UIState()
         object Disconnected : UIState()
-        object RequestPermission: UIState()
+        object RequestPermission : UIState()
+        class UpdateServer(val server: SelectedServer) : UIState()
     }
 
     sealed class Action {
         object Connect : Action()
         object Disconnect : Action()
-        object Switch : Action()
+        class Switch(val server: SelectedServer) : Action()
     }
 }

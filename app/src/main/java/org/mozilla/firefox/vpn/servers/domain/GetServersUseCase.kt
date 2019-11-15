@@ -1,9 +1,10 @@
 package org.mozilla.firefox.vpn.servers.domain
-import org.mozilla.firefox.vpn.util.Result
 
+import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
-import org.mozilla.firefox.vpn.service.*
-import org.mozilla.firefox.vpn.user.data.*
+import org.mozilla.firefox.vpn.service.UnauthorizedException
+import org.mozilla.firefox.vpn.user.data.UserRepository
+import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapValue
 
 class GetServersUseCase(
@@ -11,47 +12,38 @@ class GetServersUseCase(
     private val serverRepository: ServerRepository
 ) {
 
-    suspend operator fun invoke(filterStrategy: FilterStrategy): Result<ServerList> {
+    suspend operator fun invoke(filterStrategy: FilterStrategy): Result<List<ServerInfo>> {
         val token = userRepository.getUserInfo()?.token ?: return Result.Fail(UnauthorizedException())
         return serverRepository.getServers(token).mapValue { filterServers(it, filterStrategy) }
     }
 
-    private fun filterServers(
-        serverList: ServerList,
-        filterStrategy: FilterStrategy
-    ): ServerList {
+    private fun filterServers(servers: List<ServerInfo>, filterStrategy: FilterStrategy): List<ServerInfo> {
+        return when (filterStrategy) {
+            FilterStrategy.ByCountry -> filterCountry(servers)
+            FilterStrategy.ByCity -> filterCity(servers)
+            else -> servers
+        }
+    }
 
-        val filterCountries = mutableListOf<Country>()
-        serverList.countries.forEach { country ->
-            val filteredCities = mutableListOf<City>()
-            filterCities(country, filterStrategy).forEach {
-                val filteredCity = it.copy(servers = filterServers(it, filterStrategy))
-                filteredCities.add(filteredCity)
+    private fun filterCountry(serverList: List<ServerInfo>): List<ServerInfo> {
+        return serverList
+            .groupBy { it.country }
+            .flatMap { listOf(it.value.first()) }
+    }
+
+    private fun filterCity(serverList: List<ServerInfo>): List<ServerInfo> {
+        return serverList
+            .groupBy { it.country }
+            .flatMap { countryList ->
+                countryList.value
+                    .groupBy { it.city }
+                    .flatMap { listOf(it.value.first()) }
             }
-
-            val filteredCountry = country.copy(cities = filteredCities)
-            filterCountries.add(filteredCountry)
-        }
-        return ServerList(filterCountries)
     }
+}
 
-    private fun filterCities(country: Country, filterStrategy: FilterStrategy): List<City> {
-        return when (filterStrategy) {
-            FilterStrategy.ByCountry -> country.cities.subList(0, 1)
-            else -> country.cities
-        }
-    }
-
-    private fun filterServers(city: City, filterStrategy: FilterStrategy): List<Server> {
-        return when (filterStrategy) {
-            FilterStrategy.All -> city.servers
-            else -> city.servers.subList(0, 1)
-        }
-    }
-
-    enum class FilterStrategy {
-        ByCity,
-        ByCountry,
-        All,
-    }
+enum class FilterStrategy {
+    ByCity,
+    ByCountry,
+    All,
 }

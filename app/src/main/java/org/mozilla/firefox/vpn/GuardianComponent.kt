@@ -29,7 +29,7 @@ class GuardianComponentImpl(
     }
 
     override val serverRepo: ServerRepository by lazy {
-        ServerRepository(service)
+        ServerRepository(service, prefs)
     }
 
     override val vpnManager = VpnManager(app, prefs)

@@ -133,7 +133,7 @@ class VpnFragment : Fragment() {
         vpnViewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
                 server_list.adapter = ServerListAdapter(it)
-                city_name.text = it[0].name
+                city_name.text = it[0].country.name
             }
         })
     }
