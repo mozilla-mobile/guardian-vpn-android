@@ -13,10 +13,10 @@
     <string name="intro_title_2">No activity logs</string>
     <string name="intro_title_3">Servers in 40+ countries</string>
     <string name="intro_title_4">Connect up to 5 devices</string>
-    <string name="intro_description_1">No one will see your location or activity,\neven on unsecure Wi-Fi networks.</string>
-    <string name="intro_description_2">We\'re Mozilla. We don\'t log your activity\nand we\'re always on your side.</string>
-    <string name="intro_description_3">Stand up to tech bullies and protect your\naccess to the web.</string>
-    <string name="intro_description_4">Stream, download and game. We won\'t\nrestrict your bandwidth.</string>
+    <string name="intro_description_1">No one will see your location or activity, even on insecure Wi-Fi networks.</string>
+    <string name="intro_description_2">We\'re Mozilla. We don\'t log your activity and we\'re always on your side.</string>
+    <string name="intro_description_3">Stand up to tech bullies and protect your access to the web.</string>
+    <string name="intro_description_4">Stream, download and game. We won\'t restrict your bandwidth.</string>
     <string name="vpn_title">Private Network</string>
     <string name="vpn_state_offline">VPN is off</string>
     <string name="vpn_state_offline_hint">Turn it on to protect your entire device</string>
