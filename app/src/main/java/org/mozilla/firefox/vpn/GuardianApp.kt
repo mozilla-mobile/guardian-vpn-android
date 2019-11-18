@@ -2,6 +2,7 @@ package org.mozilla.firefox.vpn
 
 import android.app.Application
 import android.content.Context
+import org.mozilla.firefox.vpn.util.EmojiUtil
 
 class GuardianApp : Application() {
 
@@ -15,6 +16,7 @@ class GuardianApp : Application() {
         super.onCreate()
 
         guardianComponent = GuardianComponentImpl(coreComponent)
+        EmojiUtil.initEmoji(this)
     }
 }
 
