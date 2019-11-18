@@ -1,6 +1,5 @@
 package org.mozilla.firefox.vpn.onboarding
 
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
@@ -25,71 +24,36 @@ class OnboardingViewModel(
 ) : ViewModel() {
 
     val toast = LiveEvent<StringResource>()
-    val loginInfo = LiveEvent<LoginInfo>()
     val launchMainPage = LiveEvent<Unit>()
-
-    private val loginFlowStarted = LiveEvent<Boolean>()
+    val promptLogin = LiveEvent<String>()
 
     private var verificationJob: Job? = null
 
-    val promptLogin = object : MediatorLiveData<String>() {
-        private var info: LoginInfo? = null
-        private var isStarted = false
-
-        init {
-            addSource(loginInfo) {
-                info = it
-                notifyIfNeeded()
-            }
-
-            addSource(loginFlowStarted) {
-                isStarted = true
-                notifyIfNeeded()
-            }
-        }
-
-        private fun notifyIfNeeded() {
-            info?.takeIf { isStarted }?.let {
-                value = it.loginUrl
-                verifyLogin(it)
-            }
-        }
-    }
-
-    fun prepareLoginFlow() = viewModelScope.launch(Dispatchers.Main) {
-        val info = getLoginInfo()
-
-        info.onSuccess {
-            loginInfo.value = it
-        }
-    }
-
     fun startLoginFlow() {
-        viewModelScope.launch(Dispatchers.Main) { loginFlowStarted.value = true }
+        viewModelScope.launch(Dispatchers.Main) { getLoginInfo().onSuccess { login(it) } }
     }
 
     fun cancelLoginFlow() {
-        verificationJob?.cancel("cancel verification by cancelLoginFlow()")
+        verificationJob?.cancel("verification cancelled")
     }
 
     private suspend fun getLoginInfo() = withContext(Dispatchers.IO) {
         loginInfoUseCase()
     }
 
-    private fun verifyLogin(info: LoginInfo) {
-        verificationJob = viewModelScope
-            .launch(Dispatchers.IO) { processVerifyResult(verifyLoginUseCase(info)) }
-            .addCompletionHandler { verificationJob = null }
+    private suspend fun login(info: LoginInfo) = withContext(Dispatchers.Main) {
+        promptLogin.value = info.loginUrl
+        verificationJob = verifyLogin(info).addCompletionHandler { verificationJob = null }
     }
 
-    private suspend fun processVerifyResult(verifyResult: Result<LoginResult>) {
-        when (verifyResult) {
-            is Result.Success -> processLoginResult(verifyResult.value)
-            is Result.Fail -> toast.postValue(StringResource("${verifyResult.exception}"))
+    private suspend fun verifyLogin(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
+        when (val result = verifyLoginUseCase(info)) {
+            is Result.Success -> onLoginSuccess(result.value)
+            is Result.Fail -> toast.postValue(StringResource("${result.exception}"))
         }
     }
 
-    private suspend fun processLoginResult(
+    private suspend fun onLoginSuccess(
         loginResult: LoginResult
     ) = withContext(Dispatchers.IO) {
 

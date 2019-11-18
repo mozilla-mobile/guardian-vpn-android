@@ -31,12 +31,6 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_onboarding)
         customTab = LoginCustomTab(this)
 
-        viewModel.prepareLoginFlow()
-
-        viewModel.loginInfo.observe(this, Observer {
-            customTab.mayLaunchUrl(it.loginUrl)
-        })
-
         viewModel.toast.observe(this, Observer {
             Toast.makeText(this, it.resolve(this), Toast.LENGTH_SHORT).show()
         })
