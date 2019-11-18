@@ -100,6 +100,7 @@
                 android:layout_marginStart="16dp"
                 android:gravity="center"
                 android:textSize="15sp"
+                android:textAppearance="@style/TextAppearance.Guardian.Twemoji"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

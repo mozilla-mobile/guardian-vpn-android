@@ -134,7 +134,7 @@ class VpnFragment : Fragment() {
         vpnViewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
                 server_list.adapter = ServerListAdapter(it)
-                EmojiUtil.loadEmoji(country_emoji, EmojiUtil.localeEmoji(it[0].country.code))
+                country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(it[0].country.code))
                 country_name.text = it[0].country.name
             }
         })

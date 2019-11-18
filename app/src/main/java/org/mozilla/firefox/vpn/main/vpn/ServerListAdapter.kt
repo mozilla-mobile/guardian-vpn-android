@@ -23,7 +23,7 @@ class ServerListAdapter(private val items: List<ServerInfo>) : RecyclerView.Adap
     class ServerViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(item: ServerInfo) {
-            EmojiUtil.loadEmoji(country_emoji, EmojiUtil.localeEmoji(item.country.code))
+            country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(item.country.code))
             country_name.text = item.country.name
         }
     }
