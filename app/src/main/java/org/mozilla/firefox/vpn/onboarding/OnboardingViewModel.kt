@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
@@ -13,10 +15,7 @@ import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
 import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
 import org.mozilla.firefox.vpn.user.domain.VerifyLoginUseCase
-import org.mozilla.firefox.vpn.util.Result
-import org.mozilla.firefox.vpn.util.StringResource
-import org.mozilla.firefox.vpn.util.onError
-import org.mozilla.firefox.vpn.util.onSuccess
+import org.mozilla.firefox.vpn.util.*
 
 class OnboardingViewModel(
     private val loginInfoUseCase: GetLoginInfoUseCase,
@@ -30,6 +29,8 @@ class OnboardingViewModel(
     val launchMainPage = LiveEvent<Unit>()
 
     private val loginFlowStarted = LiveEvent<Boolean>()
+
+    private var verificationJob: Job? = null
 
     val promptLogin = object : MediatorLiveData<String>() {
         private var info: LoginInfo? = null
@@ -63,8 +64,12 @@ class OnboardingViewModel(
         }
     }
 
-    fun startLoginFlow() = viewModelScope.launch(Dispatchers.Main) {
-        loginFlowStarted.value = true
+    fun startLoginFlow() {
+        viewModelScope.launch(Dispatchers.Main) { loginFlowStarted.value = true }
+    }
+
+    fun cancelLoginFlow() {
+        verificationJob?.cancel("cancel verification by cancelLoginFlow()")
     }
 
     private suspend fun getLoginInfo() = withContext(Dispatchers.IO) {
@@ -72,9 +77,9 @@ class OnboardingViewModel(
     }
 
     private fun verifyLogin(info: LoginInfo) {
-        viewModelScope.launch(Dispatchers.IO) {
-            processVerifyResult(verifyLoginUseCase(info))
-        }
+        verificationJob = viewModelScope
+            .launch(Dispatchers.IO) { processVerifyResult(verifyLoginUseCase(info)) }
+            .addCompletionHandler { verificationJob = null }
     }
 
     private suspend fun processVerifyResult(verifyResult: Result<LoginResult>) {
@@ -103,5 +108,4 @@ class OnboardingViewModel(
             launchMainPage.value = Unit
         }
     }
-
 }

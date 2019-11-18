@@ -8,7 +8,6 @@ import org.mozilla.firefox.vpn.service.LoginInfo
 import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.data.*
 import org.mozilla.firefox.vpn.util.TimeFormat
-import org.mozilla.firefox.vpn.util.TimeFormatException
 import org.mozilla.firefox.vpn.util.TimeUtil
 import org.mozilla.firefox.vpn.util.Result
 
