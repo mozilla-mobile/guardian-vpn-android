@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.item_country.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.main.vpn.ServerListAdapter.ServerViewHolder
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
+import org.mozilla.firefox.vpn.util.EmojiUtil
 
 class ServerListAdapter(private val items: List<ServerInfo>) : RecyclerView.Adapter<ServerViewHolder>() {
 
@@ -22,6 +23,7 @@ class ServerListAdapter(private val items: List<ServerInfo>) : RecyclerView.Adap
     class ServerViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(item: ServerInfo) {
+            EmojiUtil.loadEmoji(country_emoji, EmojiUtil.localeEmoji(item.country.code))
             country_name.text = item.country.name
         }
     }

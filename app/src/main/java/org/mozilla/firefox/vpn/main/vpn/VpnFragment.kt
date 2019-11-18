@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_vpn.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
+import org.mozilla.firefox.vpn.util.EmojiUtil
 import org.mozilla.firefox.vpn.util.viewModel
 
 class VpnFragment : Fragment() {
@@ -133,7 +134,8 @@ class VpnFragment : Fragment() {
         vpnViewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
                 server_list.adapter = ServerListAdapter(it)
-                city_name.text = it[0].country.name
+                EmojiUtil.loadEmoji(country_emoji, EmojiUtil.localeEmoji(it[0].country.code))
+                country_name.text = it[0].country.name
             }
         })
     }
