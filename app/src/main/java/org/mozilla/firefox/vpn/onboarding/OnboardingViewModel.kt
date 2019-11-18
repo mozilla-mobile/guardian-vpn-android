@@ -93,13 +93,7 @@ class OnboardingViewModel(
         loginResult: LoginResult
     ) = withContext(Dispatchers.IO) {
 
-        val user = when (val result = createUserUseCase(loginResult)) {
-            is Result.Success -> result.value
-            is Result.Fail -> {
-                toast.postValue(StringResource("create user failed: ${result.exception}"))
-                return@withContext
-            }
-        }
+        val user = createUserUseCase(loginResult)
 
         addDeviceUseCase(user.token)
             .onError { toast.postValue(StringResource("add device failed: $it")) }
