@@ -56,6 +56,10 @@ class UserRepository(
         }
     }
 
+    fun removeUserInfo(info: UserInfo) {
+        prefs.edit().remove(PREF_USER_INFO).apply()
+    }
+
     /**
      * @return Result.Success(user) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
      */
