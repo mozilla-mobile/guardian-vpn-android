@@ -61,8 +61,9 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/btn_manage_account"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +81,6 @@
             android:layout_marginStart="16dp"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_my_devices"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
@@ -101,8 +101,9 @@
         android:id="@+id/btn_get_help"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/divider_1"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +121,6 @@
             android:layout_marginStart="16dp"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_get_help"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
@@ -141,8 +141,9 @@
         android:id="@+id/btn_about"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/divider_2"
         app:layout_constraintStart_toStartOf="parent"
@@ -160,7 +161,6 @@
             android:layout_marginStart="16dp"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:foreground="?attr/selectableItemBackground"
             android:text="@string/label_about"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
