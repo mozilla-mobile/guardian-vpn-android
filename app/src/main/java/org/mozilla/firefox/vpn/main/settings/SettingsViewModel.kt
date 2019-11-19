@@ -8,10 +8,11 @@ import com.hadilq.liveevent.LiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.main.settings.domain.SignOutUseCase
+import org.mozilla.firefox.vpn.user.data.UserInfo
 import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class SettingsViewModel(
-    private val userRepository: UserRepository,
+    userRepository: UserRepository,
     private val signOutUseCase: SignOutUseCase
 ) : ViewModel() {
 
@@ -20,7 +21,14 @@ class SettingsViewModel(
     }
     val text: LiveData<String> = _text
 
+    private val _showUserInfo = MutableLiveData<UserInfo>()
+    val showUserInfo: LiveData<UserInfo> = _showUserInfo
+
     val gotoMainPage = LiveEvent<Unit>()
+
+    init {
+        userRepository.getUserInfo()?.let { _showUserInfo.value = it }
+    }
 
     fun signOut() {
         viewModelScope.launch(Dispatchers.Main) {

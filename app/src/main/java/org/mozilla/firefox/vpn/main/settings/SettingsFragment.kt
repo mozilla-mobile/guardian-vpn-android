@@ -19,10 +19,6 @@ import org.mozilla.firefox.vpn.util.viewModel
 
 class SettingsFragment : Fragment() {
 
-    private val userRepository by lazy {
-        activity!!.guardianComponent.userRepo
-    }
-
     private val component by lazy {
         SettingsComponentImpl(activity!!.guardianComponent)
     }
@@ -51,16 +47,7 @@ class SettingsFragment : Fragment() {
             viewModel.signOut()
         }
 
-        viewModel.gotoMainPage.observe(viewLifecycleOwner, Observer {
-            startActivity(OnboardingActivity.getStartIntent(view.context))
-            activity?.finish()
-        })
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        userRepository.getUserInfo()?.let { userInfo ->
+        viewModel.showUserInfo.observe(viewLifecycleOwner, Observer { userInfo ->
             val userName = userInfo.user.displayName
             profile_name?.text = if (userName.isNotEmpty()) {
                 userName
@@ -72,6 +59,11 @@ class SettingsFragment : Fragment() {
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
-        }
+        })
+
+        viewModel.gotoMainPage.observe(viewLifecycleOwner, Observer {
+            startActivity(OnboardingActivity.getStartIntent(view.context))
+            activity?.finish()
+        })
     }
 }
