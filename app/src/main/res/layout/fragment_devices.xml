@@ -14,6 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:title="@string/label_my_devices"
+        app:titleTextColor="@color/gray50"
         app:titleTextAppearance="@style/TextAppearance.Guardian.Header20"
         app:navigationIcon="@drawable/ic_back" />
 

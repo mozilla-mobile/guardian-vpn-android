@@ -22,11 +22,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
+        android:text="@string/settings_default_user_name"
+        android:textColor="@color/gray50"
         android:textAppearance="@style/TextAppearance.Guardian.Title10"
         app:layout_constraintTop_toBottomOf="@id/profile_image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/settings_default_user_name" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/profile_email"
@@ -34,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center"
+        android:textColor="@color/gray40"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
         app:layout_constraintTop_toBottomOf="@id/profile_name"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,8 +52,8 @@
         android:background="@drawable/selector_bg_primary_button"
         android:gravity="center"
         android:text="@string/action_manage_account"
-        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toBottomOf="@id/profile_email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -82,6 +84,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:text="@string/label_my_devices"
+            android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
     </LinearLayout>
@@ -92,7 +95,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="56dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/abbey_alpha_10"
+        android:background="@color/gray10"
         app:layout_constraintTop_toBottomOf="@id/btn_my_devices"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -122,6 +125,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:text="@string/label_get_help"
+            android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
     </LinearLayout>
@@ -132,7 +136,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="56dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/abbey_alpha_10"
+        android:background="@color/gray10"
         app:layout_constraintTop_toBottomOf="@id/btn_get_help"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -162,6 +166,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:text="@string/label_about"
+            android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
     </LinearLayout>

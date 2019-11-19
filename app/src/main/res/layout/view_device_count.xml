@@ -6,4 +6,5 @@
     android:layout_height="match_parent"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
+    android:textColor="@color/gray40"
     android:textAppearance="@style/TextAppearance.Guardian.Body10" />

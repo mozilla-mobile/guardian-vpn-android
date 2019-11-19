@@ -59,7 +59,7 @@ class DevicesAdapter(
                 delete.visibility = View.INVISIBLE
             } else {
                 time.text = getRelativeTime(device.createdAt)
-                time.setTextColor(ContextCompat.getColor(itemView.context, R.color.abbey_alpha_60))
+                time.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray40))
                 delete.visibility = View.VISIBLE
             }
         }

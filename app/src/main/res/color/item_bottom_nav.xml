@@ -7,6 +7,6 @@
 
     <item
         android:state_checked="false"
-        android:color="@color/abbey_alpha_60" />
+        android:color="@color/gray40" />
 
 </selector>

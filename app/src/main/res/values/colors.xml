@@ -11,14 +11,15 @@
     <color name="colorPrimaryDark">#990C0C0D</color>
     <color name="colorAccent">#0060DF</color>
 
+    <color name="gray50">#CC0C0C0D</color>
+    <color name="gray40">#990C0C0D</color>
+    <color name="gray30">#660C0C0D</color>
+    <color name="gray10">#1A0C0C0D</color>
+
     <color name="haiti">#20123A</color>
     <color name="meteorite">#321C64</color>
     <color name="catalina_blue">#073072</color>
     <color name="science_blue">#0060DF</color>
-    <color name="abbey_alpha_80">#CC0C0C0D</color>
-    <color name="abbey_alpha_60">#990C0C0D</color>
-    <color name="abbey_alpha_40">#660C0C0D</color>
-    <color name="abbey_alpha_10">#1A0C0C0D</color>
     <color name="turquoise">#3FE1B0</color>
     <color name="turquoise_alpha_40">#663FE1B0</color>
     <color name="shamrock">#2AC3A2</color>
