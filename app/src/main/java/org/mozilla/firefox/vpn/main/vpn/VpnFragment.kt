@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.wireguard.android.backend.GoBackend
 import kotlinx.android.synthetic.main.fragment_vpn.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
@@ -72,7 +71,7 @@ class VpnFragment : Fragment() {
     }
 
     private fun requestPermission() {
-        val intent = GoBackend.VpnService.prepare(context)
+        val intent = android.net.VpnService.prepare(context)
         startActivityForResult(intent, 0)
     }
 

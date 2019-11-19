@@ -1,52 +1,44 @@
 package org.mozilla.firefox.vpn.main.vpn
 
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
-import android.content.SharedPreferences
-import android.os.AsyncTask
-import android.os.Handler
-import android.os.Looper
+import android.content.Intent
+import android.net.VpnService.Builder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
-import com.wireguard.android.backend.GoBackend
-import com.wireguard.android.model.Tunnel
-import com.wireguard.android.model.TunnelManager
-import com.wireguard.android.util.AsyncWorker
+import com.wireguard.android.backend.Tunnel
+import com.wireguard.android.backend.TunnelManager
 import com.wireguard.config.Config
-import org.mozilla.firefox.vpn.backend.FileConfigStore
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 
 class VpnManager(
-    private val appContext: Context,
-    prefs: SharedPreferences
+    private val appContext: Context
 ): VpnStateProvider {
 
     private val _stateObservable = MutableLiveData<VpnState>()
     override val stateObservable: LiveData<VpnState> = _stateObservable.map { it }
 
-    private val tunnelManager = TunnelManager(
-        appContext,
-        prefs,
-        GoBackend(
-            appContext,
+    private val tunnelManager = TunnelManager(appContext, object: TunnelManager.VpnBuilderProvider{
+        override fun patchBuilder(builder: Builder): Builder {
+            val configureIntent = Intent()
             // TODO: Fix this weird dependency
-            ComponentName(appContext, MainActivity::class.java)
-        ),
-        FileConfigStore(),
-        AsyncWorker(AsyncTask.SERIAL_EXECUTOR, Handler(Looper.getMainLooper()))
-    )
-
-    private var tunnel: Tunnel? = null
+            configureIntent.component = ComponentName(appContext, MainActivity::class.java)
+            configureIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            builder.setConfigureIntent(PendingIntent.getActivity(appContext, 0, configureIntent, 0))
+            return builder
+        }
+    })
 
     private val connectTransition = listOf(VpnState.Connecting, VpnState.Connected)
     private val disconnectTransition = listOf(VpnState.Disconnecting, VpnState.Disconnected)
     private val switchTransition = listOf(VpnState.Switching, VpnState.Connected)
 
     fun isGranted(): Boolean {
-        return GoBackend.VpnService.prepare(appContext) == null
+        return tunnelManager.isGranted()
     }
 
     fun connect(config: Config) {
@@ -55,18 +47,16 @@ class VpnManager(
         } else {
             connectTransition.dispatch()
         }
-        tunnel = tunnelManager.create(config, TUNNEL_NAME)
-        tunnel?.state = Tunnel.State.UP
+        tunnelManager.tunnelUp(Tunnel(TUNNEL_NAME, config))
     }
 
     fun disconnect() {
         disconnectTransition.dispatch()
-        tunnel?.state = Tunnel.State.DOWN
-        tunnel = null
+        tunnelManager.tunnelDown()
     }
 
     fun isConnected(): Boolean {
-        return tunnel?.state == Tunnel.State.UP
+        return tunnelManager.isConnected()
     }
 
     override fun getState(): VpnState {
