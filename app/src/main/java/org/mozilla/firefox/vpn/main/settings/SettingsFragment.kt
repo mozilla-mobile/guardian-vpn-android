@@ -14,6 +14,7 @@ import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.util.launchUrl
+import org.mozilla.firefox.vpn.util.viewModel
 
 class SettingsFragment : Fragment() {
 
@@ -22,6 +23,12 @@ class SettingsFragment : Fragment() {
     private val userRepository by lazy {
         activity!!.guardianComponent.userRepo
     }
+
+    private val component by lazy {
+        SettingsComponentImpl(activity!!.guardianComponent)
+    }
+
+    private val viewModel by viewModel { component.viewModel }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
@@ -41,6 +48,9 @@ class SettingsFragment : Fragment() {
         }
         btn_about.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_about)
+        }
+        btn_sign_out.setOnClickListener {
+            settingsViewModel.signOut()
         }
     }
 
