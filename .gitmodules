@@ -2,3 +2,7 @@
 	path = modules/libwg
 	url = git@github.com:mozilla-services/guardian-vpn-android.git
 	branch = max/dev/libwg
+[submodule "modules/wireguard"]
+	path = modules/wireguard
+	url = git@git.zx2c4.com:wireguard-android
+	branch = ml/libwg
