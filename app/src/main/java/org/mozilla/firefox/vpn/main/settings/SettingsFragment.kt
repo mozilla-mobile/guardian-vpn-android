@@ -47,7 +47,7 @@ class SettingsFragment : Fragment() {
             viewModel.signOut()
         }
 
-        viewModel.showUserInfo.observe(viewLifecycleOwner, Observer { userInfo ->
+        viewModel.userInfo.observe(viewLifecycleOwner, Observer { userInfo ->
             val userName = userInfo.user.displayName
             profile_name?.text = if (userName.isNotEmpty()) {
                 userName
