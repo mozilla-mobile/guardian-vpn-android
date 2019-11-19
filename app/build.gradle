@@ -54,6 +54,9 @@ android {
 
 dependencies {
     implementation project(':libwg')
+    implementation project(':crypto')
+    implementation project(':config')
+
     implementation "net.sourceforge.streamsupport:android-retrofuture:$streamsupportVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

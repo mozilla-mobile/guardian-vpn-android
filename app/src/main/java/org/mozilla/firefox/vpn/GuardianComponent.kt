@@ -33,7 +33,7 @@ class GuardianComponentImpl(
         ServerRepository(service, prefs)
     }
 
-    override val vpnManager = VpnManager(app, prefs)
+    override val vpnManager = VpnManager(app)
 
     override val userStateResolver: UserStateResolver by lazy {
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }
