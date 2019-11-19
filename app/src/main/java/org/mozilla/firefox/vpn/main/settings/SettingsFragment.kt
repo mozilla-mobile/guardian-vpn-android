@@ -5,26 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import coil.api.load
 import coil.transform.CircleCropTransformation
 import kotlinx.android.synthetic.main.fragment_settings.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.guardianComponent
+import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.util.launchUrl
+import org.mozilla.firefox.vpn.util.viewModel
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var settingsViewModel: SettingsViewModel
-
-    private val userRepository by lazy {
-        activity!!.guardianComponent.userRepo
+    private val component by lazy {
+        SettingsComponentImpl(activity!!.guardianComponent)
     }
 
+    private val viewModel by viewModel { component.viewModel }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
@@ -42,12 +43,11 @@ class SettingsFragment : Fragment() {
         btn_about.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_about)
         }
-    }
+        btn_sign_out.setOnClickListener {
+            viewModel.signOut()
+        }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        userRepository.getUserInfo()?.let { userInfo ->
+        viewModel.showUserInfo.observe(viewLifecycleOwner, Observer { userInfo ->
             val userName = userInfo.user.displayName
             profile_name?.text = if (userName.isNotEmpty()) {
                 userName
@@ -59,6 +59,11 @@ class SettingsFragment : Fragment() {
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
-        }
+        })
+
+        viewModel.gotoMainPage.observe(viewLifecycleOwner, Observer {
+            startActivity(OnboardingActivity.getStartIntent(view.context))
+            activity?.finish()
+        })
     }
 }
