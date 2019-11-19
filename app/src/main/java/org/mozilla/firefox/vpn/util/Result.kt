@@ -5,14 +5,14 @@ sealed class Result<out T : Any> {
     data class Fail(val exception: Exception) : Result<Nothing>()
 }
 
-fun <T : Any, R : Any> Result<T>.mapValue(function: (T) -> R): Result<R> {
+inline fun <T : Any, R : Any> Result<T>.mapValue(function: (T) -> R): Result<R> {
     return when (this) {
         is Result.Success -> Result.Success(function(value))
         is Result.Fail -> this
     }
 }
 
-fun <T : Any> Result<T>.mapError(function: (Exception) -> Exception): Result<T> {
+inline fun <T : Any> Result<T>.mapError(function: (Exception) -> Exception): Result<T> {
     return when (this) {
         is Result.Success -> this
         is Result.Fail -> Result.Fail(function(exception))

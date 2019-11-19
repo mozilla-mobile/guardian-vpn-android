@@ -1,10 +1,11 @@
 package org.mozilla.firefox.vpn.onboarding
 
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
@@ -13,10 +14,7 @@ import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
 import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
 import org.mozilla.firefox.vpn.user.domain.VerifyLoginUseCase
-import org.mozilla.firefox.vpn.util.Result
-import org.mozilla.firefox.vpn.util.StringResource
-import org.mozilla.firefox.vpn.util.onError
-import org.mozilla.firefox.vpn.util.onSuccess
+import org.mozilla.firefox.vpn.util.*
 
 class OnboardingViewModel(
     private val loginInfoUseCase: GetLoginInfoUseCase,
@@ -26,75 +24,40 @@ class OnboardingViewModel(
 ) : ViewModel() {
 
     val toast = LiveEvent<StringResource>()
-    val loginInfo = LiveEvent<LoginInfo>()
     val launchMainPage = LiveEvent<Unit>()
+    val promptLogin = LiveEvent<String>()
 
-    private val loginFlowStarted = LiveEvent<Boolean>()
+    private var verificationJob: Job? = null
 
-    val promptLogin = object : MediatorLiveData<String>() {
-        private var info: LoginInfo? = null
-        private var isStarted = false
-
-        init {
-            addSource(loginInfo) {
-                info = it
-                notifyIfNeeded()
-            }
-
-            addSource(loginFlowStarted) {
-                isStarted = true
-                notifyIfNeeded()
-            }
-        }
-
-        private fun notifyIfNeeded() {
-            info?.takeIf { isStarted }?.let {
-                value = it.loginUrl
-                verifyLogin(it)
-            }
-        }
+    fun startLoginFlow() {
+        viewModelScope.launch(Dispatchers.Main) { getLoginInfo().onSuccess { login(it) } }
     }
 
-    fun prepareLoginFlow() = viewModelScope.launch(Dispatchers.Main) {
-        val info = getLoginInfo()
-
-        info.onSuccess {
-            loginInfo.value = it
-        }
-    }
-
-    fun startLoginFlow() = viewModelScope.launch(Dispatchers.Main) {
-        loginFlowStarted.value = true
+    fun cancelLoginFlow() {
+        verificationJob?.cancel("verification cancelled")
     }
 
     private suspend fun getLoginInfo() = withContext(Dispatchers.IO) {
         loginInfoUseCase()
     }
 
-    private fun verifyLogin(info: LoginInfo) {
-        viewModelScope.launch(Dispatchers.IO) {
-            processVerifyResult(verifyLoginUseCase(info))
+    private suspend fun login(info: LoginInfo) = withContext(Dispatchers.Main) {
+        promptLogin.value = info.loginUrl
+        verificationJob = verifyLogin(info).addCompletionHandler { verificationJob = null }
+    }
+
+    private suspend fun verifyLogin(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
+        when (val result = verifyLoginUseCase(info)) {
+            is Result.Success -> onLoginSuccess(result.value)
+            is Result.Fail -> toast.postValue(StringResource("${result.exception}"))
         }
     }
 
-    private suspend fun processVerifyResult(verifyResult: Result<LoginResult>) {
-        when (verifyResult) {
-            is Result.Success -> processLoginResult(verifyResult.value)
-            is Result.Fail -> toast.postValue(StringResource("${verifyResult.exception}"))
-        }
-    }
-
-    private suspend fun processLoginResult(
+    private suspend fun onLoginSuccess(
         loginResult: LoginResult
     ) = withContext(Dispatchers.IO) {
 
-        val user = when (val result = createUserUseCase(loginResult)) {
-            is Result.Success -> result.value
-            is Result.Fail -> {
-                toast.postValue(StringResource("create user failed: ${result.exception}"))
-                return@withContext
-            }
-        }
+        val user = createUserUseCase(loginResult)
 
         addDeviceUseCase(user.token)
             .onError { toast.postValue(StringResource("add device failed: $it")) }
@@ -103,5 +66,4 @@ class OnboardingViewModel(
             launchMainPage.value = Unit
         }
     }
-
 }

@@ -22,6 +22,7 @@ class OnboardingActivity : AppCompatActivity() {
     private val viewModel by viewModel { component.viewModel }
 
     private var shouldLaunchMainPage = false
+    private var isCustomTabLaunched = false
 
     private lateinit var customTab: LoginCustomTab
 
@@ -30,17 +31,12 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_onboarding)
         customTab = LoginCustomTab(this)
 
-        viewModel.prepareLoginFlow()
-
-        viewModel.loginInfo.observe(this, Observer {
-            customTab.mayLaunchUrl(it.loginUrl)
-        })
-
         viewModel.toast.observe(this, Observer {
             Toast.makeText(this, it.resolve(this), Toast.LENGTH_SHORT).show()
         })
 
         viewModel.promptLogin.observe(this, Observer {
+            isCustomTabLaunched = true
             customTab.launchUrl(it)
         })
 
@@ -58,6 +54,13 @@ class OnboardingActivity : AppCompatActivity() {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             })
         })
+    }
+
+    override fun onResume() {
+        if (isCustomTabLaunched) {
+            viewModel.cancelLoginFlow()
+        }
+        super.onResume()
     }
 
     override fun onNewIntent(intent: Intent?) {
