@@ -13,8 +13,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:title="@string/label_get_help"
-        app:navigationIcon="@drawable/ic_back"
-        app:titleTextAppearance="@style/TextAppearance.Guardian.Header20" />
+        app:titleTextColor="@color/gray50"
+        app:titleTextAppearance="@style/TextAppearance.Guardian.Header20"
+        app:navigationIcon="@drawable/ic_back" />
 
     <LinearLayout
         android:id="@+id/btn_contact_us"
@@ -34,6 +35,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_contact_us"
+            android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
         <ImageView
@@ -50,7 +52,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/abbey_alpha_10"
+        android:background="@color/gray10"
         app:layout_constraintTop_toBottomOf="@id/btn_contact_us"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -73,6 +75,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_help_and_support"
+            android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
         <ImageView
