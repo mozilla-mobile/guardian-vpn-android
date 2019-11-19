@@ -27,12 +27,14 @@ class VpnViewModel(
     private val _uiState: MutableLiveData<UIState> = MutableLiveData()
     val uiState: LiveData<UIState> = _uiState
 
-    val servers = liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-        val result = getServersUseCase(FilterStrategy.ByCountry)
-        if (result is Result.Success) {
-            emit(result.value)
-        } else {
-            emit(null)
+    val servers by lazy {
+        liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
+            val result = getServersUseCase(FilterStrategy.ByCountry)
+            if (result is Result.Success) {
+                emit(result.value)
+            } else {
+                emit(null)
+            }
         }
     }
 
