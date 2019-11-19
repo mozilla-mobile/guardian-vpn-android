@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.device.ui
 
+import android.os.SystemClock
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,6 @@ import org.mozilla.firefox.vpn.device.ui.DevicesAdapter.DevicesViewHolder
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.util.TimeFormat
 import org.mozilla.firefox.vpn.util.TimeUtil
-import java.text.ParseException
 
 class DevicesAdapter(
     private val devicesModel: DevicesModel,
@@ -66,7 +66,7 @@ class DevicesAdapter(
 
         private fun getRelativeTime(iso8601Time: String): String? {
             return TimeUtil.parseOrNull(iso8601Time, TimeFormat.Iso8601)?.let {
-                val now = System.currentTimeMillis()
+                val now = SystemClock.elapsedRealtime()
                 DateUtils.getRelativeTimeSpanString(it.time, now, DateUtils.MINUTE_IN_MILLIS).toString()
             }
         }
