@@ -55,7 +55,7 @@ class DevicesAdapter(
             val isCurrentDevice = currentDevice?.device == device
             if (isCurrentDevice) {
                 time.text = itemView.context.getString(R.string.devices_current_device)
-                time.setTextColor(ContextCompat.getColor(itemView.context, R.color.science_blue))
+                time.setTextColor(ContextCompat.getColor(itemView.context, R.color.blue50))
                 delete.visibility = View.INVISIBLE
             } else {
                 time.text = getRelativeTime(device.createdAt)

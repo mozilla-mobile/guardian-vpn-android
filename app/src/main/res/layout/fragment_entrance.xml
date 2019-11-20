@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="@string/action_learn_more"
-        android:textColor="@color/science_blue"
+        android:textColor="@color/blue50"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
