@@ -3,7 +3,7 @@
 
     <item
         android:state_checked="true"
-        android:color="@color/science_blue" />
+        android:color="@color/blue50" />
 
     <item
         android:state_checked="false"

@@ -5,7 +5,7 @@
     android:id="@+id/splash_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/meteorite">
+    android:background="@color/purple90">
 
     <ImageView
         android:id="@+id/app_icon"

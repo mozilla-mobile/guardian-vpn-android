@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Name that color -->
-    <!-- http://chir.ag/projects/name-that-color/ -->
-
-    <!-- Alpha value reference -->
-    <!-- https://stackoverflow.com/a/17239853 -->
+    <!-- Guardian Colors & Text Styles -->
+    <!-- https://www.figma.com/file/cZer95BXfCrPVZjpJakyMC/Colors-%26-Text-Styles -->
 
     <color name="colorPrimary">#E5E5E5</color>
     <color name="colorPrimaryDark">#990C0C0D</color>
     <color name="colorAccent">#0060DF</color>
 
-    <color name="gray50">#CC0C0C0D</color>
-    <color name="gray40">#990C0C0D</color>
-    <color name="gray30">#660C0C0D</color>
-    <color name="gray10">#1A0C0C0D</color>
+    <color name="white80">#CCFFFFFF</color>
 
-    <color name="haiti">#20123A</color>
-    <color name="meteorite">#321C64</color>
-    <color name="catalina_blue">#073072</color>
-    <color name="science_blue">#0060DF</color>
-    <color name="turquoise">#3FE1B0</color>
-    <color name="turquoise_alpha_40">#663FE1B0</color>
-    <color name="shamrock">#2AC3A2</color>
-    <color name="shamrock_alpha_40">#662AC3A2</color>
-    <color name="athens_gray">#F9F9FA</color>
-    <color name="silver">#C4C4C4</color>
-    <color name="white_alpha_80">#CCFFFFFF</color>
-    <color name="carnation">#FF4F5E</color>
-    <color name="pippin">#FFDFE7</color>
+    <color name="gray50">#3D3D3D</color>
+    <color name="gray40">#6D6D6E</color>
+    <color name="gray30">#9E9E9E</color>
+    <color name="gray20">#C4C4C4</color>
+    <color name="gray10">#E7E7E7</color>
+    <color name="gray5">#F9F9FA</color>
+
+    <color name="red50">#FF4F5E</color>
+    <color name="red5">#FFDFE7</color>
+
+    <color name="yellow50">#FFA436</color>
+
+    <color name="blue80">#073072</color>
+    <color name="blue50">#0060DF</color>
+
+    <color name="green50">#3FE1B0</color>
+    <color name="green50_alpha_40">#663FE1B0</color>
+
+    <color name="violet90">#20123A</color>
+
+    <color name="purple90">#321C64</color>
 </resources>

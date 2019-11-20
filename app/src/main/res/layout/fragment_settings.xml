@@ -179,7 +179,7 @@
         android:gravity="center"
         android:foreground="?attr/selectableItemBackground"
         android:text="@string/action_sign_out"
-        android:textColor="@color/carnation"
+        android:textColor="@color/red50"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -12,7 +12,7 @@
 
     <style name="AppTheme" parent="AppTheme.Base">
         <item name="android:windowTranslucentStatus">true</item>-->
-        <item name="android:windowBackground">@color/athens_gray</item>
+        <item name="android:windowBackground">@color/gray5</item>
     </style>
 
     <style name="AppTheme.Splash" parent="AppTheme">

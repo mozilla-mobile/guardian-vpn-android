@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/meteorite">
+    android:background="@color/purple90">
 
     <ImageView
         android:id="@+id/vpn_state_image"
@@ -36,7 +36,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="96dp"
         android:text="@string/vpn_state_connecting_hint"
-        android:textColor="@color/white_alpha_80"
+        android:textColor="@color/white80"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
         app:layout_constraintTop_toBottomOf="@id/vpn_state_title"
         app:layout_constraintBottom_toBottomOf="parent"

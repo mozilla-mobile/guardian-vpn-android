@@ -6,7 +6,7 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/athens_gray"
+    android:background="@color/gray5"
     app:layout_behavior="@string/bottom_sheet_behavior"
     app:behavior_peekHeight="0dp">
 
