@@ -6,23 +6,50 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_device.*
 import kotlinx.android.synthetic.main.item_device.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
-import org.mozilla.firefox.vpn.device.ui.DevicesAdapter.DevicesViewHolder
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.util.TimeFormat
 import org.mozilla.firefox.vpn.util.TimeUtil
 
 class DevicesAdapter(
-    private val devicesModel: DevicesModel,
+    private val uiModel: DevicesUiModel,
     private val onDeleteClicked: (DeviceInfo) -> Unit
-) : RecyclerView.Adapter<DevicesViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DevicesViewHolder {
+    private var items: List<DeviceListItem>
+
+    init {
+        items = uiModel.toDeviceList()
+    }
+
+    fun setData(uiModel: DevicesUiModel) {
+        val newList = uiModel.toDeviceList()
+        getDiffResult(items, newList).dispatchUpdatesTo(this)
+        items = newList
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_LIMIT_REACH -> createLimitReachViewHolder(parent)
+            else -> createDeviceViewHolder(parent)
+        }
+    }
+
+    private fun createLimitReachViewHolder(parent: ViewGroup): LimitReachHolder {
+        val itemView = LayoutInflater
+            .from(parent.context)
+            .inflate(R.layout.item_device_limit_reached, parent, false)
+
+        return LimitReachHolder(itemView)
+    }
+
+    private fun createDeviceViewHolder(parent: ViewGroup): DevicesViewHolder {
         val itemView = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.item_device, parent, false)
@@ -30,19 +57,88 @@ class DevicesAdapter(
         val holder = DevicesViewHolder(itemView)
 
         holder.itemView.delete.setOnClickListener {
-            if (holder.adapterPosition != RecyclerView.NO_POSITION) {
-                onDeleteClicked(devicesModel.devices[holder.adapterPosition])
-            }
+            onDeleteClicked(holder)
         }
 
         return holder
     }
 
-    override fun getItemCount(): Int = devicesModel.devices.size
+    private fun onDeleteClicked(holder: DevicesViewHolder) {
+        if (holder.adapterPosition == RecyclerView.NO_POSITION) {
+            return
+        }
 
-    override fun onBindViewHolder(holder: DevicesViewHolder, position: Int) {
-        holder.bind(devicesModel.devices[position], devicesModel.currentDevice)
+        val item = items[holder.adapterPosition]
+        if (item is DeviceListItem.Device) {
+            onDeleteClicked(item.deviceInfo)
+        }
     }
+
+    override fun getItemCount(): Int = items.size
+
+    override fun getItemViewType(position: Int) = items[position].type
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is DevicesViewHolder -> bindDeviceItem(items[position], holder)
+        }
+    }
+
+    private fun bindDeviceItem(item: DeviceListItem, holder: DevicesViewHolder) {
+        if (item is DeviceListItem.Device) {
+            holder.bind(item.deviceInfo, uiModel.currentDevice)
+        }
+    }
+
+    private fun DevicesUiModel.toDeviceList(): List<DeviceListItem> {
+        val list = mutableListOf<DeviceListItem>()
+        if (isLimitReached) {
+            list.add(DeviceListItem.LimitReach())
+            list.addAll(devices.map { DeviceListItem.Device(it) })
+        } else {
+            list.addAll(devices.map { DeviceListItem.Device(it) })
+        }
+        return list
+    }
+
+    private fun getDiffResult(
+        oldList: List<DeviceListItem>,
+        newList: List<DeviceListItem>
+    ): DiffUtil.DiffResult {
+
+        return DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val newItem = newList[newItemPosition]
+                val oldItem = oldList[oldItemPosition]
+
+                if (newItem.type != oldItem.type) {
+                    return false
+                }
+
+                if (newItem.type == TYPE_LIMIT_REACH && oldItem.type == TYPE_LIMIT_REACH) {
+                    return true
+                }
+
+                val newDevice = newItem as DeviceListItem.Device
+                val oldDevice = oldItem as DeviceListItem.Device
+                return newDevice.deviceInfo.name == oldDevice.deviceInfo.name
+            }
+
+            override fun getOldListSize(): Int {
+                return oldList.size
+            }
+
+            override fun getNewListSize(): Int {
+                return newList.size
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return true
+            }
+        })
+    }
+
+    class LimitReachHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class DevicesViewHolder(
         override val containerView: View
@@ -70,5 +166,15 @@ class DevicesAdapter(
                 DateUtils.getRelativeTimeSpanString(it.time, now, DateUtils.MINUTE_IN_MILLIS).toString()
             }
         }
+    }
+
+    sealed class DeviceListItem(val type: Int) {
+        class Device(val deviceInfo: DeviceInfo) : DeviceListItem(TYPE_DEVICE)
+        class LimitReach : DeviceListItem(TYPE_LIMIT_REACH)
+    }
+
+    companion object {
+        private const val TYPE_LIMIT_REACH = 0
+        private const val TYPE_DEVICE = 1
     }
 }

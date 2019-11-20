@@ -52,11 +52,15 @@ class DevicesFragment : Fragment() {
         initActionBar()
 
         viewModel.devices.observe(viewLifecycleOwner, Observer {
-            device_list.adapter = DevicesAdapter(it) { device ->
-                val context = activity ?: return@DevicesAdapter
-                showDeleteDialog(context, device) {
-                    viewModel.deleteDevice(device)
+            if (device_list.adapter == null) {
+                device_list.adapter = DevicesAdapter(it) { device ->
+                    val context = activity ?: return@DevicesAdapter
+                    showDeleteDialog(context, device) {
+                        viewModel.deleteDevice(device)
+                    }
                 }
+            } else {
+                (device_list.adapter as? DevicesAdapter)?.setData(it)
             }
         })
 
