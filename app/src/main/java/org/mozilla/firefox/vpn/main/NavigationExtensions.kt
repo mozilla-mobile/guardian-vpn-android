@@ -4,6 +4,8 @@ import android.content.Intent
 import android.util.SparseArray
 import androidx.core.util.forEach
 import androidx.core.util.set
+import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -227,3 +229,20 @@ private fun FragmentManager.isOnBackStack(backStackName: String): Boolean {
 }
 
 private fun getFragmentTag(index: Int) = "bottomNavigation#$index"
+
+fun BottomNavigationView.setItemLocked(itemId: Int, locked: Boolean) {
+    if (locked) {
+        selectedItemId = itemId
+        menu.forEach { it.isEnabled = it.itemId == itemId }
+    } else {
+        menu.forEach { it.isEnabled = true }
+    }
+}
+
+fun BottomNavigationView.isLocked(itemId: Int): Boolean {
+    return menu.children.singleOrNull { it.isEnabled }?.itemId == itemId
+}
+
+fun NavController?.isAtDestination(destId: Int): Boolean {
+    return this?.currentDestination?.id == destId
+}
