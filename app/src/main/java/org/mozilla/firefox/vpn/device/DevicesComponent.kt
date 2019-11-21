@@ -1,6 +1,8 @@
 package org.mozilla.firefox.vpn.device
 
 import org.mozilla.firefox.vpn.GuardianComponent
+import org.mozilla.firefox.vpn.UserStates
+import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.device.domain.GetDevicesUseCase
 import org.mozilla.firefox.vpn.device.domain.RemoveDeviceUseCase
@@ -18,8 +20,10 @@ class DevicesComponentImpl(
     override val viewModel: DevicesViewModel
         get() = DevicesViewModel(
             getDevicesUseCase = GetDevicesUseCase(userRepo),
-            removeDevicesUseCase = RemoveDeviceUseCase(deviceRepo, userRepo),
+            removeDevicesUseCase = RemoveDeviceUseCase(deviceRepo, userRepo, userStateResolver),
             currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo),
-            getUserInfoUseCase = GetUserInfoUseCase(userRepo)
+            getUserInfoUseCase = GetUserInfoUseCase(userRepo),
+            addDeviceUseCase = AddDeviceUseCase(deviceRepo, userRepo, userStateResolver),
+            userStates = UserStates(userStateResolver)
         )
 }
