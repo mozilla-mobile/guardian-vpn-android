@@ -8,19 +8,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.UserStates
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
-import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
-import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
-import org.mozilla.firefox.vpn.device.domain.GetDevicesUseCase
-import org.mozilla.firefox.vpn.device.domain.RemoveDeviceUseCase
+import org.mozilla.firefox.vpn.device.domain.*
 import org.mozilla.firefox.vpn.isDeviceLimitReached
 import org.mozilla.firefox.vpn.service.DeviceInfo
-import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.shouldRegisterDevice
 import org.mozilla.firefox.vpn.user.domain.GetUserInfoUseCase
 import org.mozilla.firefox.vpn.util.Result
-import org.mozilla.firefox.vpn.util.TimeFormat
-import org.mozilla.firefox.vpn.util.TimeUtil
-import org.mozilla.firefox.vpn.util.findAvailableModelName
 
 class DevicesViewModel(
     private val getDevicesUseCase: GetDevicesUseCase,
@@ -28,6 +21,7 @@ class DevicesViewModel(
     private val currentDeviceUseCase: CurrentDeviceUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val addDeviceUseCase: AddDeviceUseCase,
+    private val getDeviceCountUseCase: GetDeviceCountUseCase,
     private val userStates: UserStates
 ) : ViewModel() {
 
@@ -37,21 +31,19 @@ class DevicesViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            getUserInfoUseCase(true)
             refreshDevices()
         }
     }
 
     fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.IO) {
-        when (val result = removeDevicesUseCase(device.pubKey)) {
+        when (removeDevicesUseCase(device.pubKey)) {
             is Result.Success -> onDeviceDeleted()
-            is Result.Fail -> handleFail(result.exception)
         }
+        refreshDevices()
     }
 
     private suspend fun onDeviceDeleted() {
-        if (userStates.state.shouldRegisterDevice()) {
-            registerNewDevice()
-        }
         refreshDevices()
     }
 
@@ -61,48 +53,26 @@ class DevicesViewModel(
     }
 
     private suspend fun refreshDevices() = withContext(Dispatchers.Main) {
-        when (val result = getDevicesUseCase()) {
-            is Result.Success -> notifyDevicesChanged(result.value)
-            is Result.Fail -> handleFail(result.exception)
+        if (userStates.state.shouldRegisterDevice()) {
+            registerNewDevice()
         }
 
-        getUserInfoUseCase()?.let {
-            deviceCount.value = it.user.devices.size to it.user.maxDevices
+        when (val result = getDevicesUseCase()) {
+            is Result.Success -> notifyDevicesChanged(result.value)
+            is Result.Fail -> notifyDevicesChanged(emptyList())
         }
+
+        notifyDeviceCountChanged()
     }
 
     private suspend fun notifyDevicesChanged(list: List<DeviceInfo>) {
-        val sorted = list.sortedByDescending {
-            TimeUtil.parseOrNull(it.createdAt, TimeFormat.Iso8601)?.time ?: Long.MIN_VALUE
-        }.toMutableList()
-
+        val current = currentDeviceUseCase()
         val limitReached = userStates.state.isDeviceLimitReached()
-
-        val current = if (limitReached) {
-            val info = createDummyDevice(list)
-            sorted.add(0, info)
-            CurrentDevice(info, "")
-        } else {
-            currentDeviceUseCase()
-        }
-
-        devices.value = DevicesUiModel(sorted, current, limitReached)
+        devices.value = DevicesUiModel(list, current, limitReached)
     }
 
-    private fun createDummyDevice(existDevices: List<DeviceInfo>): DeviceInfo {
-        val name = findAvailableModelName(existDevices)
-        return DeviceInfo(name, "", "", "", "")
-    }
-
-    private fun handleFail(exception: Exception) {
-        when (exception) {
-            is UnauthorizedException -> handleUnauthorizedException()
-        }
-    }
-
-    private fun handleUnauthorizedException() {
-        isAuthorized.value = false
-        devices.value = DevicesUiModel(emptyList(), null, false)
+    private fun notifyDeviceCountChanged() {
+        deviceCount.value = getDeviceCountUseCase()
     }
 }
 
