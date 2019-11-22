@@ -18,7 +18,7 @@ import org.mozilla.firefox.vpn.util.TimeFormat
 import org.mozilla.firefox.vpn.util.TimeUtil
 
 class DevicesAdapter(
-    private val uiModel: DevicesUiModel,
+    private var uiModel: DevicesUiModel,
     private val onDeleteClicked: (DeviceInfo) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -29,6 +29,7 @@ class DevicesAdapter(
     }
 
     fun setData(uiModel: DevicesUiModel) {
+        this.uiModel = uiModel
         val newList = uiModel.toDeviceList()
         getDiffResult(items, newList).dispatchUpdatesTo(this)
         items = newList
@@ -121,7 +122,7 @@ class DevicesAdapter(
 
                 val newDevice = newItem as DeviceListItem.Device
                 val oldDevice = oldItem as DeviceListItem.Device
-                return newDevice.deviceInfo.name == oldDevice.deviceInfo.name
+                return newDevice.deviceInfo == oldDevice.deviceInfo
             }
 
             override fun getOldListSize(): Int {
