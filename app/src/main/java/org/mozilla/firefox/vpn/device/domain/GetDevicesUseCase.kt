@@ -3,8 +3,6 @@ package org.mozilla.firefox.vpn.device.domain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.UserStateResolver
-import org.mozilla.firefox.vpn.device.data.CurrentDevice
-import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.isDeviceLimitReached
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.service.UnauthorizedException
