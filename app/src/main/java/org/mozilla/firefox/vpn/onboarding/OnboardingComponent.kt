@@ -18,7 +18,7 @@ class OnboardingComponentImpl(
         get() = OnboardingViewModel(
             loginInfoUseCase = GetLoginInfoUseCase(userRepo),
             verifyLoginUseCase = VerifyLoginUseCase(userRepo),
-            createUserUseCase = CreateUserUseCase(userRepo),
-            addDeviceUseCase = AddDeviceUseCase(deviceRepo, userRepo)
+            createUserUseCase = CreateUserUseCase(userRepo, userStateResolver),
+            addDeviceUseCase = AddDeviceUseCase(deviceRepo, userRepo, userStateResolver)
         )
 }

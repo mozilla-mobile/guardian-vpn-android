@@ -8,13 +8,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import kotlinx.android.synthetic.main.activity_main.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.UserStates
+import org.mozilla.firefox.vpn.guardianComponent
+import org.mozilla.firefox.vpn.isDeviceLimitReached
 
 class MainActivity : AppCompatActivity() {
 
     private var currentNavController: LiveData<NavController>? = null
+
+    private val userStates: UserStates by lazy {
+        UserStates(guardianComponent.userStateResolver)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +31,10 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
+
+        userStates.stateObservable.observe(this, Observer {
+            nav_view.setItemLocked(R.id.settings, it.isDeviceLimitReached())
+        })
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -31,6 +43,18 @@ class MainActivity : AppCompatActivity() {
         // and its selectedItemId, we can proceed with setting up the
         // BottomNavigationBar with Navigation
         setupBottomNavigationBar()
+    }
+
+    override fun onBackPressed() {
+        if (nav_view.isLocked(R.id.settings) && isOnMainSetting()) {
+            finish()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun isOnMainSetting(): Boolean {
+        return currentNavController?.value?.currentDestination?.id == R.id.settings_main
     }
 
     /**

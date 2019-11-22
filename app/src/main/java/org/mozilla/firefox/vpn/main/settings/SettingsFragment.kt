@@ -61,6 +61,10 @@ class SettingsFragment : Fragment() {
             }
         })
 
+        viewModel.showDeviceLimitReached.observe(viewLifecycleOwner, Observer {
+            device_warning.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
+        })
+
         viewModel.gotoMainPage.observe(viewLifecycleOwner, Observer {
             startActivity(OnboardingActivity.getStartIntent(view.context))
             activity?.finish()

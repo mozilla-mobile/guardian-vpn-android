@@ -12,6 +12,7 @@ interface GuardianComponent {
     val deviceRepo: DeviceRepository
     val serverRepo: ServerRepository
     val vpnManager: VpnManager
+    val userStateResolver: UserStateResolver
 }
 
 class GuardianComponentImpl(
@@ -33,4 +34,8 @@ class GuardianComponentImpl(
     }
 
     override val vpnManager = VpnManager(app, prefs)
+
+    override val userStateResolver: UserStateResolver by lazy {
+        UserStateResolver(userRepo, deviceRepo).apply { refresh() }
+    }
 }

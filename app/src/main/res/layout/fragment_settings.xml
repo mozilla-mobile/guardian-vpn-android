@@ -75,6 +75,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center_vertical"
+            android:layout_weight="0"
             android:src="@drawable/ic_device" />
 
         <TextView
@@ -82,10 +83,20 @@
             android:layout_height="56dp"
             android:layout_marginStart="16dp"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/label_my_devices"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
+
+        <ImageView
+            android:id="@+id/device_warning"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0"
+            android:visibility="invisible"
+            android:src="@drawable/ic_error" />
 
     </LinearLayout>
 
