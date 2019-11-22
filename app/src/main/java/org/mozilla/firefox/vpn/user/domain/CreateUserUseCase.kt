@@ -14,7 +14,7 @@ class CreateUserUseCase(
         return UserInfo(
             user = loginResult.user,
             token = loginResult.token,
-            latestUpdateTime = SystemClock.elapsedRealtime()
+            latestUpdateTime = System.currentTimeMillis()
         ).apply {
             userRepository.createUserInfo(this)
             userStateResolver.refresh()
