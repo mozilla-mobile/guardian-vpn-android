@@ -1,29 +1,32 @@
 package org.mozilla.firefox.vpn.splash
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_splash.*
-import org.mozilla.firefox.vpn.*
+import androidx.lifecycle.Observer
+import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
+import org.mozilla.firefox.vpn.util.viewModel
 
 class SplashActivity : AppCompatActivity() {
 
-    private val userStates: UserStates by lazy {
-        UserStates(guardianComponent.userStateResolver)
+    private val component by lazy {
+        SplashComponentImpl(guardianComponent)
     }
+
+    private val viewModel by viewModel { component.viewModel }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
-        splash_root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
-        when (userStates.state) {
-            UserState.Login -> startActivity(OnboardingActivity.getStartIntent(this))
-            else -> startActivity(MainActivity.getStartIntent(this))
-        }
+        viewModel.showOnboarding.observe(this, Observer {
+            startActivity(OnboardingActivity.getStartIntent(this@SplashActivity))
+            finish()
+        })
 
-        finish()
+        viewModel.showMainPage.observe(this, Observer {
+            startActivity(MainActivity.getStartIntent(this@SplashActivity))
+            finish()
+        })
     }
 }
