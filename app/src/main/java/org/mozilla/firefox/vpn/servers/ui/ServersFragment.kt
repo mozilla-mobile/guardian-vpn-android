@@ -10,14 +10,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_servers.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.util.viewModel
 
 class ServersFragment : BottomSheetDialogFragment() {
 
     private val component by lazy {
-        ServersComponentImpl(context!!.coreComponent, context!!.guardianComponent)
+        ServersComponentImpl(context!!.guardianComponent)
     }
 
     private val viewModel by viewModel { component.viewModel }
