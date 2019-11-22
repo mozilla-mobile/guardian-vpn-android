@@ -11,21 +11,20 @@ import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class SplashViewModel(
     private val userRepository: UserRepository,
-    private val userStates: UserStates
+    userStates: UserStates
 ) : ViewModel() {
 
     val showOnboarding = MutableLiveData<Unit>()
     val showMainPage = MutableLiveData<Unit>()
 
     init {
-        when (userStates.state) {
-            UserState.Login -> showOnboarding.value = Unit
-            else -> enterMainPage()
-        }
-    }
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepository.refreshUserInfo()
 
-    private fun enterMainPage() = viewModelScope.launch(Dispatchers.IO) {
-        userRepository.refreshUserInfo()
-        showMainPage.postValue(Unit)
+            when (userStates.state) {
+                UserState.Login -> showOnboarding.postValue(Unit)
+                else -> showMainPage.postValue(Unit)
+            }
+        }
     }
 }
