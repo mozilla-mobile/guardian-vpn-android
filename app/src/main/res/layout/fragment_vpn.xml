@@ -1,152 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_fpn"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/title" />
 
-        <ImageView
-            android:id="@+id/app_icon"
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:text="@string/vpn_title"
+        android:textColor="@color/gray50"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
+        app:layout_constraintTop_toTopOf="@id/app_icon"
+        app:layout_constraintBottom_toBottomOf="@id/app_icon"
+        app:layout_constraintStart_toEndOf="@id/app_icon"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/vpn_state_panel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp"
+        app:layout_constraintTop_toBottomOf="@id/app_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <include
+            layout="@layout/layout_vpn_offline"
+            android:id="@+id/vpn_state_offline" />
+
+        <include
+            layout="@layout/layout_vpn_disconnecting"
+            android:id="@+id/vpn_state_disconnecting"
+            android:visibility="gone" />
+
+        <include
+            layout="@layout/layout_vpn_connecting"
+            android:id="@+id/vpn_state_connecting"
+            android:visibility="gone" />
+
+        <include
+            layout="@layout/layout_vpn_online"
+            android:id="@+id/vpn_state_online"
+            android:visibility="gone" />
+
+        <include
+            layout="@layout/layout_vpn_switching"
+            android:id="@+id/vpn_state_switching"
+            android:visibility="gone" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/vpn_switch"
+            android:layout_width="44dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="48dp"
+            android:layout_gravity="center_horizontal|bottom"
+            app:thumbTint="@color/switch_thumb"
+            app:trackTint="@color/switch_track" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/vpn_server_switch"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/bg_country_switch"
+        app:layout_constraintTop_toBottomOf="@id/vpn_state_panel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/country_emoji"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_fpn"
-            app:layout_constraintHorizontal_chainStyle="packed"
+            android:layout_marginStart="16dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:textAppearance="@style/TextAppearance.Guardian.Twemoji"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/title" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="11dp"
-            android:text="@string/vpn_title"
-            android:textColor="@color/gray50"
-            android:textAppearance="@style/TextAppearance.Guardian.Header20"
-            app:layout_constraintTop_toTopOf="@id/app_icon"
-            app:layout_constraintBottom_toBottomOf="@id/app_icon"
-            app:layout_constraintStart_toEndOf="@id/app_icon"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/vpn_state_panel"
+            android:id="@+id/country_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="12dp"
+            android:textColor="@color/gray50"
+            android:textAppearance="@style/TextAppearance.Guardian.Body10"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/country_emoji"
+            app:layout_constraintEnd_toStartOf="@id/switch_arrows_image"
+            tools:text="Toronto"/>
+
+        <ImageView
+            android:id="@+id/switch_arrows_image"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginEnd="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="1dp"
-            app:layout_constraintTop_toBottomOf="@id/app_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <include
-                layout="@layout/layout_vpn_offline"
-                android:id="@+id/vpn_state_offline" />
-
-            <include
-                layout="@layout/layout_vpn_disconnecting"
-                android:id="@+id/vpn_state_disconnecting"
-                android:visibility="gone" />
-
-            <include
-                layout="@layout/layout_vpn_connecting"
-                android:id="@+id/vpn_state_connecting"
-                android:visibility="gone" />
-
-            <include
-                layout="@layout/layout_vpn_online"
-                android:id="@+id/vpn_state_online"
-                android:visibility="gone" />
-
-            <include
-                layout="@layout/layout_vpn_switching"
-                android:id="@+id/vpn_state_switching"
-                android:visibility="gone" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/vpn_switch"
-                android:layout_width="44dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="48dp"
-                android:layout_gravity="center_horizontal|bottom"
-                app:thumbTint="@color/switch_thumb"
-                app:trackTint="@color/switch_track" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/vpn_server_switch"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:background="@drawable/bg_country_switch"
-            app:layout_constraintTop_toBottomOf="@id/vpn_state_panel"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <TextView
-                android:id="@+id/country_emoji"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="16dp"
-                android:gravity="center"
-                android:textSize="15sp"
-                android:textAppearance="@style/TextAppearance.Guardian.Twemoji"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/country_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="12dp"
-                android:textColor="@color/gray50"
-                android:textAppearance="@style/TextAppearance.Guardian.Body10"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/country_emoji"
-                app:layout_constraintEnd_toStartOf="@id/switch_arrows_image"
-                tools:text="Toronto"/>
-
-            <ImageView
-                android:id="@+id/switch_arrows_image"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_switch_arrows"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/vpn_country_switch_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="11dp"
-            android:text="@string/vpn_country_switch_hint"
-            android:textColor="@color/gray40"
-            android:textAppearance="@style/TextAppearance.Guardian.Caption10"
-            app:layout_constraintTop_toBottomOf="@id/vpn_server_switch"
-            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_switch_arrows"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/bottom_sheet_servers" />
+    <TextView
+        android:id="@+id/vpn_country_switch_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="11dp"
+        android:text="@string/vpn_country_switch_hint"
+        android:textColor="@color/gray40"
+        android:textAppearance="@style/TextAppearance.Guardian.Caption10"
+        app:layout_constraintTop_toBottomOf="@id/vpn_server_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

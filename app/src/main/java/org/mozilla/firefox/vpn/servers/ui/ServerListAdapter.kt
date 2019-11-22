@@ -1,4 +1,4 @@
-package org.mozilla.firefox.vpn.main.vpn
+package org.mozilla.firefox.vpn.servers.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_country.*
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.main.vpn.ServerListAdapter.ServerViewHolder
+import org.mozilla.firefox.vpn.servers.ui.ServerListAdapter.ServerViewHolder
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.util.EmojiUtil
 

@@ -8,6 +8,7 @@
 
         <!-- TextView -->
         <item name="android:textViewStyle">@style/Widget.Guardian.TextView</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base">
@@ -24,7 +25,15 @@
         <item name="android:colorForeground">@color/colorPrimaryDark</item>
     </style>
 
-    <!-- textViewStyle for AppTheme -->
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetModalStyle</item>
+    </style>
+
+    <style name="BottomSheetModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_sheet</item>
+    </style>
+
+    <!-- TextViewStyle for AppTheme -->
     <style name="Widget.Guardian.TextView" parent="@android:style/Widget.Material.TextView">
         <item name="android:textAppearance">@style/TextAppearance.Guardian.Text.Body</item>
     </style>
