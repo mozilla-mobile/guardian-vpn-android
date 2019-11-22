@@ -9,25 +9,24 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.wireguard.android.backend.GoBackend
-import kotlinx.android.synthetic.main.bottom_sheet_servers.*
 import kotlinx.android.synthetic.main.fragment_vpn.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
+import org.mozilla.firefox.vpn.servers.ui.ServersFragment
 import org.mozilla.firefox.vpn.util.EmojiUtil
 import org.mozilla.firefox.vpn.util.viewModel
 
 class VpnFragment : Fragment() {
-
-    private lateinit var behavior: BottomSheetBehavior<View>
 
     private val component by lazy {
         VpnComponentImpl(context!!.coreComponent, context!!.guardianComponent)
     }
 
     private val vpnViewModel by viewModel { component.viewModel }
+
+    private val serversFragment = ServersFragment.newInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_vpn, container, false)
@@ -46,14 +45,8 @@ class VpnFragment : Fragment() {
             }
         }
 
-        behavior = BottomSheetBehavior.from(bottom_sheet)
-
         vpn_server_switch.setOnClickListener {
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        }
-
-        btn_cancel.setOnClickListener {
-            behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            serversFragment.show(childFragmentManager, serversFragment.tag)
         }
     }
 
@@ -133,7 +126,6 @@ class VpnFragment : Fragment() {
     private fun observeServers() {
         vpnViewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
-                server_list.adapter = ServerListAdapter(it)
                 country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(it[0].country.code))
                 country_name.text = it[0].country.name
             }
