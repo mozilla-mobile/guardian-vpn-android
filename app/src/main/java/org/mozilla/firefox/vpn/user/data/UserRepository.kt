@@ -72,6 +72,7 @@ class UserRepository(
             response.resolveBody()
                 .onSuccess { createUserInfo(userInfo.copy(user = it)) }
                 .handleError(401) {
+                    removeUserInfo()
                     it?.toErrorBody()
                         ?.toUnauthorizedError()
                         ?: UnknownErrorBody(it)
