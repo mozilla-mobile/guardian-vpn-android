@@ -163,7 +163,7 @@ class DevicesAdapter(
 
         private fun getRelativeTime(iso8601Time: String): String? {
             return TimeUtil.parseOrNull(iso8601Time, TimeFormat.Iso8601)?.let {
-                val now = SystemClock.elapsedRealtime()
+                val now = System.currentTimeMillis()
                 DateUtils.getRelativeTimeSpanString(it.time, now, DateUtils.MINUTE_IN_MILLIS).toString()
             }
         }
