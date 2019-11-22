@@ -18,11 +18,11 @@ class UserStateResolver(
     private val userRepository: UserRepository,
     private val deviceRepository: DeviceRepository
 ) {
-    private val refresh = MutableLiveData<UserState>()
-    val stateObservable: LiveData<UserState> = refresh.map { it }
+    private val _stateObservable = MutableLiveData<UserState>()
+    val stateObservable: LiveData<UserState> = _stateObservable.map { it }
 
     fun refresh(): UserState {
-        return resolve().apply { refresh.postValue(this) }
+        return resolve().apply { _stateObservable.postValue(this) }
     }
 
     fun resolve(): UserState {
