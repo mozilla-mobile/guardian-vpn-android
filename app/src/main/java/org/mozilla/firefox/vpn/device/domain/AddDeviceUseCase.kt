@@ -7,7 +7,6 @@ import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.findAvailableModelName
-import kotlin.math.max
 
 class AddDeviceUseCase(
     private val deviceRepository: DeviceRepository,
