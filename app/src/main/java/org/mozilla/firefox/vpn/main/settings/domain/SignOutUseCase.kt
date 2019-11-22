@@ -12,7 +12,7 @@ class SignOutUseCase(
 
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
         val userInfo = userRepository.getUserInfo() ?: return@withContext
-        userRepository.removeUserInfo(userInfo)
+        userRepository.removeUserInfo()
 
         removeDeviceAsync("Bearer ${userInfo.token}")
     }

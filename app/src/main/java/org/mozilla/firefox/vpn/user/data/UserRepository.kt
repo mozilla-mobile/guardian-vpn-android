@@ -56,7 +56,7 @@ class UserRepository(
         }
     }
 
-    fun removeUserInfo(info: UserInfo) {
+    fun removeUserInfo() {
         prefs.edit().remove(PREF_USER_INFO).apply()
     }
 
