@@ -19,7 +19,7 @@ class AddDeviceUseCase(
         val devices = userInfo.user.devices
         val deviceName = findAvailableModelName(devices)
 
-        return deviceRepository.addDevice(deviceName, "Bearer $token").apply {
+        return deviceRepository.registerDevice(deviceName, "Bearer $token").apply {
             userRepository.refreshUserInfo()
             userStateResolver.refresh()
         }

@@ -20,7 +20,7 @@ class SignOutUseCase(
     private suspend fun removeDeviceAsync(token: String) {
         CoroutineScope(coroutineContext + NonCancellable).launch {
             deviceRepository.getDevice()?.let {
-                deviceRepository.removeDevice(it.device.pubKey, token)
+                deviceRepository.unregisterDevice(it.device.pubKey, token)
             }
         }
     }
