@@ -16,7 +16,7 @@ class RemoveDeviceUseCase(
         val bearer = userRepository.getUserInfo()?.token?.let {
             "Bearer $it"
         } ?: return Result.Fail(UnauthorizedException())
-        return deviceRepository.removeDevice(pubKey, bearer).apply {
+        return deviceRepository.unregisterDevice(pubKey, bearer).apply {
             userRepository.refreshUserInfo()
             userStateResolver.refresh()
         }
