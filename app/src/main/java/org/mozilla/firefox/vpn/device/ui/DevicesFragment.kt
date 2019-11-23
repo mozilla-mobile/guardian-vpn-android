@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -51,7 +50,8 @@ class DevicesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         initActionBar()
 
-        viewModel.devices.observe(viewLifecycleOwner, Observer {
+        viewModel.devicesUiModel.observe(viewLifecycleOwner, Observer {
+            it ?: return@Observer
             if (device_list.adapter == null) {
                 device_list.adapter = DevicesAdapter(it) { device ->
                     val context = activity ?: return@DevicesAdapter
@@ -62,17 +62,8 @@ class DevicesFragment : Fragment() {
             } else {
                 (device_list.adapter as? DevicesAdapter)?.setData(it)
             }
-        })
 
-        viewModel.deviceCount.observe(viewLifecycleOwner, Observer {
-            deviceCountView.text = getString(R.string.devices_count, it.first, it.second)
-        })
-
-        viewModel.isAuthorized.observe(viewLifecycleOwner, Observer { isAuthorized ->
-            val context = activity ?: return@Observer
-            if (!isAuthorized) {
-                Toast.makeText(context, "unauthorized!!!!", Toast.LENGTH_SHORT).show()
-            }
+            deviceCountView.text = getString(R.string.devices_count, it.devices.size, it.maxDevices)
         })
     }
 
