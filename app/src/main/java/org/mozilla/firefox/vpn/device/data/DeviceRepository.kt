@@ -79,6 +79,10 @@ class DeviceRepository(
         return Gson().fromJson(json, CurrentDevice::class.java)
     }
 
+    fun removeDevice() {
+        prefs.edit().remove(PREF_DEVICE).apply()
+    }
+
     companion object {
         private const val PREF_DEVICE = "pref_current_device"
     }

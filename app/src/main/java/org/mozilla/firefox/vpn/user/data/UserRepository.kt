@@ -63,16 +63,20 @@ class UserRepository(
     /**
      * @return Result.Success(user) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
      */
-    suspend fun refreshUserInfo(): Result<User> {
+    suspend fun refreshUserInfo(): Result<UserInfo> {
         val userInfo = getUserInfo() ?: return Result.Fail(UnauthorizedException())
         val token = userInfo.token
 
         return try {
             val response = guardianService.getUserInfo("Bearer $token")
             response.resolveBody()
-                .onSuccess { createUserInfo(userInfo.copy(user = it)) }
+                .mapValue {
+                    userInfo.copy(
+                        user = it,
+                        latestUpdateTime = System.currentTimeMillis()
+                    ).apply { createUserInfo(this) }
+                }
                 .handleError(401) {
-                    removeUserInfo()
                     it?.toErrorBody()
                         ?.toUnauthorizedError()
                         ?: UnknownErrorBody(it)
@@ -116,3 +120,19 @@ val UserInfo.isDeviceLimitReached: Boolean
     get() {
         return user.devices.size >= user.maxDevices
     }
+
+suspend fun <T : Any> Result<T>.checkAuth(
+    authorized: (suspend (value: T) -> Unit)? = null,
+    unauthorized: (suspend () -> Unit)? = null,
+    onError: (suspend (e: Exception) -> Unit)? = null
+) {
+    this.onSuccess { authorized?.invoke(it) }
+        .onError {
+            when (it) {
+                is UnauthorizedException -> {
+                    unauthorized?.invoke()
+                }
+                else -> onError?.invoke(it)
+            }
+        }
+}
