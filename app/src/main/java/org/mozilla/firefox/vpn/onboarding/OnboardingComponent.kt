@@ -19,6 +19,6 @@ class OnboardingComponentImpl(
             loginInfoUseCase = GetLoginInfoUseCase(userRepo),
             verifyLoginUseCase = VerifyLoginUseCase(userRepo),
             createUserUseCase = CreateUserUseCase(userRepo, userStateResolver),
-            addDeviceUseCase = AddDeviceUseCase(deviceRepo, userRepo, userStateResolver)
+            addDeviceUseCase = AddDeviceUseCase(deviceRepo, userRepo)
         )
 }
