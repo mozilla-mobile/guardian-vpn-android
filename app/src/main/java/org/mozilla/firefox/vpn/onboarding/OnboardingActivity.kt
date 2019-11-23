@@ -31,6 +31,8 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_onboarding)
         customTab = LoginCustomTab(this)
 
+        viewModel.isLoggedOut = isLoggedOut()
+
         viewModel.toast.observe(this, Observer {
             Toast.makeText(this, it.resolve(this), Toast.LENGTH_SHORT).show()
         })
@@ -75,7 +77,15 @@ class OnboardingActivity : AppCompatActivity() {
         viewModel.startLoginFlow()
     }
 
+    private fun isLoggedOut() = intent.getBooleanExtra(EXTRA_LOGOUT, false)
+
     companion object {
+        private const val EXTRA_LOGOUT = "logout"
+
         fun getStartIntent(context: Context) = Intent(context, OnboardingActivity::class.java)
+
+        fun getLogoutIntent(context: Context) = getStartIntent(context).apply {
+            putExtra(EXTRA_LOGOUT, true)
+        }
     }
 }
