@@ -19,6 +19,8 @@ import org.mozilla.firefox.vpn.isDeviceLimitReached
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
+import org.mozilla.firefox.vpn.*
+import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,7 +43,12 @@ class MainActivity : AppCompatActivity() {
         } // Else, need to wait for onRestoreInstanceState
 
         userStates.stateObservable.observe(this, Observer {
-            nav_view.setItemLocked(R.id.settings, it.isDeviceLimitReached())
+            if (it is UserState.Login) {
+                startActivity(OnboardingActivity.getLogoutIntent(this))
+                finish()
+            } else {
+                nav_view.setItemLocked(R.id.settings, it.isDeviceLimitReached())
+            }
         })
 
         vpnStateProvider.stateObservable.observe(this, Observer {

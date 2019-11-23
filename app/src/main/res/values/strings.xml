@@ -9,6 +9,7 @@
     <string name="action_skip">skip</string>
     <string name="action_manage_account">Manage account</string>
     <string name="action_sign_out">Sign out</string>
+    <string name="onboarding_logged_out">Logged out and device removed</string>
     <string name="intro_title_1">Device level encryption</string>
     <string name="intro_title_2">No activity logs</string>
     <string name="intro_title_3">Servers in 40+ countries</string>

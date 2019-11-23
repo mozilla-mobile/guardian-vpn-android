@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
 import org.mozilla.firefox.vpn.service.LoginInfo
 import org.mozilla.firefox.vpn.service.LoginResult
@@ -29,6 +30,14 @@ class OnboardingViewModel(
 
     private var verificationJob: Job? = null
 
+    var isLoggedOut: Boolean = false
+        set(value) {
+            if (value) {
+                toast.postValue(StringResource(R.string.onboarding_logged_out))
+            }
+            field = value
+        }
+
     fun startLoginFlow() {
         viewModelScope.launch(Dispatchers.Main) { getLoginInfo().onSuccess { login(it) } }
     }
@@ -49,7 +58,7 @@ class OnboardingViewModel(
     private suspend fun verifyLogin(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
         when (val result = verifyLoginUseCase(info)) {
             is Result.Success -> onLoginSuccess(result.value)
-            is Result.Fail -> toast.postValue(StringResource("${result.exception}"))
+            is Result.Fail -> GLog.d(TAG, "verify login failed: ${result.exception}")
         }
     }
 
@@ -57,13 +66,17 @@ class OnboardingViewModel(
         loginResult: LoginResult
     ) = withContext(Dispatchers.IO) {
 
-        val user = createUserUseCase(loginResult)
+        createUserUseCase(loginResult)
 
-        addDeviceUseCase(user.token)
-            .onError { toast.postValue(StringResource("add device failed: $it")) }
+        addDeviceUseCase()
+            .onError { GLog.d(TAG, "add device failed: $it") }
 
         withContext(Dispatchers.Main) {
             launchMainPage.value = Unit
         }
+    }
+
+    companion object {
+        private const val TAG = "OnboardingViewModel"
     }
 }
