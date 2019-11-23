@@ -20,7 +20,12 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel.showOnboarding.observe(this, Observer {
-            startActivity(OnboardingActivity.getStartIntent(this@SplashActivity))
+            startActivity(OnboardingActivity.getStartIntent(this))
+            finish()
+        })
+
+        viewModel.showLoggedOutOnboarding.observe(this, Observer {
+            startActivity(OnboardingActivity.getLogoutIntent(this))
             finish()
         })
 
