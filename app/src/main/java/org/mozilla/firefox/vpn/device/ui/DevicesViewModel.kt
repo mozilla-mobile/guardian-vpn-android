@@ -31,12 +31,12 @@ class DevicesViewModel(
     private val refreshUserInfoUseCase: RefreshUserInfoUseCase
 ) : ViewModel() {
 
-    private val refreshExplicitly = MutableLiveData<DevicesUiModel>()
+    private val refreshExplicitly = MutableLiveData<DevicesUiState>()
     private val refreshPeriodically = liveData(Dispatchers.IO, 0L) {
         while (true) {
             refreshUserInfoUseCase().checkAuth(
                 authorized = {
-                    emit(buildDevicesUiModel())
+                    emit(DevicesUiState.StateLoaded(buildDevicesUiModel()))
                 },
                 unauthorized = {
                     logoutUseCase()
@@ -47,9 +47,28 @@ class DevicesViewModel(
         }
     }
 
-    val devicesUiModel = MediatorLiveData<DevicesUiModel>().apply {
+    init {
+        loadDevicesList()
+    }
+
+    val devicesUiModel = MediatorLiveData<DevicesUiState>().apply {
         addSource(refreshExplicitly) { value = it }
         addSource(refreshPeriodically) { value = it }
+    }
+
+    fun loadDevicesList() {
+        refreshExplicitly.value = DevicesUiState.StateLoading
+        viewModelScope.launch(Dispatchers.IO) {
+            refreshUserInfoUseCase().checkAuth(
+                authorized = {
+                    refreshExplicitly.postValue(DevicesUiState.StateLoaded(buildDevicesUiModel()))
+                },
+                unauthorized = {
+                    logoutUseCase()
+                    notifyUserStateUseCase()
+                }
+            )
+        }
     }
 
     fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.IO) {
@@ -77,7 +96,7 @@ class DevicesViewModel(
     }
 
     private suspend fun refreshDevices() = withContext(Dispatchers.Main) {
-        refreshExplicitly.value = buildDevicesUiModel()
+        refreshExplicitly.value = DevicesUiState.StateLoaded(buildDevicesUiModel())
     }
 
     private suspend fun buildDevicesUiModel(): DevicesUiModel {
@@ -100,6 +119,12 @@ class DevicesViewModel(
     companion object {
         private const val POLL_INTERVAL = 2000L
     }
+}
+
+sealed class DevicesUiState {
+    object StateLoading : DevicesUiState()
+    data class StateLoaded(val uiModel: DevicesUiModel) : DevicesUiState()
+    object StateError : DevicesUiState()
 }
 
 data class DevicesUiModel(
