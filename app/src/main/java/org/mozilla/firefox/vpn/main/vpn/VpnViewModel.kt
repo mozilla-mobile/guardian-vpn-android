@@ -103,7 +103,7 @@ class VpnViewModel(
 
     private fun connectVpn() {
         _uiState.value = UIState.Connecting
-        vpnManager.connect("aaa", config!!)
+        vpnManager.connect(config!!)
         _uiState.value = UIState.Connected
     }
 
