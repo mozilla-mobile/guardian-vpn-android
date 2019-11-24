@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -15,6 +16,9 @@ import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.UserStates
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.isDeviceLimitReached
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +26,10 @@ class MainActivity : AppCompatActivity() {
 
     private val userStates: UserStates by lazy {
         UserStates(guardianComponent.userStateResolver)
+    }
+
+    private val vpnStateProvider: VpnStateProvider by lazy {
+        VpnManagerStateProvider(guardianComponent.vpnManager)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +43,17 @@ class MainActivity : AppCompatActivity() {
         userStates.stateObservable.observe(this, Observer {
             nav_view.setItemLocked(R.id.settings, it.isDeviceLimitReached())
         })
+
+        vpnStateProvider.stateObservable.observe(this, Observer {
+            when (it) {
+                VpnState.Connected -> updateVpnIcon(R.drawable.ic_vpn_connected)
+                VpnState.Disconnected -> updateVpnIcon(R.drawable.ic_vpn_disconnected)
+            }
+        })
+    }
+
+    private fun updateVpnIcon(resId: Int) {
+        nav_view.menu.findItem(R.id.vpn).icon = ContextCompat.getDrawable(this, resId)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
