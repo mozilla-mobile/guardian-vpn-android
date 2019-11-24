@@ -25,6 +25,7 @@ class OnboardingViewModel(
 ) : ViewModel() {
 
     val toast = LiveEvent<StringResource>()
+    val showLoggedOutMessage = LiveEvent<StringResource>()
     val launchMainPage = LiveEvent<Unit>()
     val promptLogin = LiveEvent<String>()
 
@@ -33,7 +34,7 @@ class OnboardingViewModel(
     var isLoggedOut: Boolean = false
         set(value) {
             if (value) {
-                toast.postValue(StringResource(R.string.onboarding_logged_out))
+                showLoggedOutMessage.postValue(StringResource(R.string.onboarding_logged_out))
             }
             field = value
         }

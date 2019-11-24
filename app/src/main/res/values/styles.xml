@@ -68,8 +68,9 @@
         <item name="android:textSize">13sp</item>
     </style>
 
-    <style name="TextAppearance.Guardian.Byline20" parent="TextAppearance.Guardian.Inter.SemiBold">
+    <style name="TextAppearance.Guardian.Byline20" parent="TextAppearance.Guardian.Inter.Regular">
         <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearance.Guardian.Header10" parent="TextAppearance.Guardian.Metropolis.Regular">
