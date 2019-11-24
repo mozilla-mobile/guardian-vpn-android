@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import kotlinx.android.synthetic.main.activity_onboarding.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.MainActivity
+import org.mozilla.firefox.vpn.ui.GuardianSnackbar
 import org.mozilla.firefox.vpn.util.LoginCustomTab
 import org.mozilla.firefox.vpn.util.observerUntilOnDestroy
 import org.mozilla.firefox.vpn.util.viewModel
@@ -35,6 +37,19 @@ class OnboardingActivity : AppCompatActivity() {
 
         viewModel.toast.observe(this, Observer {
             Toast.makeText(this, it.resolve(this), Toast.LENGTH_SHORT).show()
+        })
+
+        viewModel.showLoggedOutMessage.observe(this, Observer {
+            val message= it.resolve(this) ?: return@Observer
+            val sb = GuardianSnackbar.make(
+                container,
+                GuardianSnackbar.Config(
+                    style = GuardianSnackbar.Style.Red,
+                    text = message
+                ),
+                GuardianSnackbar.LENGTH_LONG
+            )
+            sb.show()
         })
 
         viewModel.promptLogin.observe(this, Observer {
