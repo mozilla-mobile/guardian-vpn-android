@@ -15,6 +15,7 @@ import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.getSupportActionBar
 import org.mozilla.firefox.vpn.main.setSupportActionBar
 import org.mozilla.firefox.vpn.service.DeviceInfo
+import org.mozilla.firefox.vpn.ui.GuardianSnackbar
 import org.mozilla.firefox.vpn.util.viewModel
 
 class DevicesFragment : Fragment() {
@@ -52,19 +53,49 @@ class DevicesFragment : Fragment() {
 
         viewModel.devicesUiModel.observe(viewLifecycleOwner, Observer {
             it ?: return@Observer
-            if (device_list.adapter == null) {
-                device_list.adapter = DevicesAdapter(it) { device ->
-                    val context = activity ?: return@DevicesAdapter
-                    showDeleteDialog(context, device) {
-                        viewModel.deleteDevice(device)
-                    }
-                }
-            } else {
-                (device_list.adapter as? DevicesAdapter)?.setData(it)
+            when (it) {
+                is DevicesUiState.StateLoading -> showLoading()
+                is DevicesUiState.StateLoaded -> showData(it.uiModel)
+                is DevicesUiState.StateError -> showError()
             }
-
-            deviceCountView.text = getString(R.string.devices_count, it.devices.size, it.maxDevices)
         })
+    }
+
+    private fun showLoading() {
+        loading_view.visibility = View.VISIBLE
+        device_list.visibility = View.INVISIBLE
+    }
+
+    private fun showData(uiModel: DevicesUiModel) {
+        loading_view.visibility = View.INVISIBLE
+        device_list.visibility = View.VISIBLE
+
+        if (device_list.adapter == null) {
+            device_list.adapter = DevicesAdapter(uiModel) { device ->
+                val context = activity ?: return@DevicesAdapter
+                showDeleteDialog(context, device) {
+                    viewModel.deleteDevice(device)
+                }
+            }
+        } else {
+            (device_list.adapter as? DevicesAdapter)?.setData(uiModel)
+        }
+
+        deviceCountView.text = getString(R.string.devices_count, uiModel.devices.size, uiModel.maxDevices)
+    }
+
+    private fun showError() {
+        loading_view.visibility = View.INVISIBLE
+        device_list.visibility = View.INVISIBLE
+        GuardianSnackbar.make(
+            root_view.findViewById(android.R.id.content),
+            GuardianSnackbar.Config(
+                style = GuardianSnackbar.Style.Red,
+                text = "Something wrong.",
+                textAction = GuardianSnackbar.TextAction("Try again") { viewModel.loadDevicesList() }
+            ),
+            GuardianSnackbar.LENGTH_INDEFINITE
+        ).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
