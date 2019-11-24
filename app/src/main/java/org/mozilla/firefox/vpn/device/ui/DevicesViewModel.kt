@@ -47,13 +47,15 @@ class DevicesViewModel(
         }
     }
 
-    init {
-        loadDevicesList()
-    }
+    private val deletingDevices = mutableListOf<DeviceInfo>()
 
     val devicesUiModel = MediatorLiveData<DevicesUiState>().apply {
         addSource(refreshExplicitly) { value = it }
         addSource(refreshPeriodically) { value = it }
+    }
+
+    init {
+        loadDevicesList()
     }
 
     fun loadDevicesList() {
@@ -71,19 +73,36 @@ class DevicesViewModel(
         }
     }
 
-    fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.IO) {
-        removeDevicesUseCase(device.pubKey).checkAuth(
-            unauthorized = {
-                logoutUseCase()
+    fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.Main.immediate){
+        addDeletingDevice(device)
+
+        withContext(Dispatchers.IO) {
+            refreshExplicitly.postValue(DevicesUiState.StateLoaded(buildDevicesUiModel()))
+
+            removeDevicesUseCase(device.pubKey).checkAuth(
+                authorized = {
+                    removeDeletingDevice(device)
+                },
+                unauthorized = {
+                    logoutUseCase()
+                }
+            )
+            notifyUserStateUseCase()
+
+            if (userStates.state.shouldRegisterDevice()) {
+                registerNewDevice()
             }
-        )
-        notifyUserStateUseCase()
 
-        if (userStates.state.shouldRegisterDevice()) {
-            registerNewDevice()
+            refreshDevices()
         }
+    }
 
-        refreshDevices()
+    private suspend fun addDeletingDevice(device: DeviceInfo) = withContext(Dispatchers.Main) {
+        deletingDevices.add(device)
+    }
+
+    private suspend fun removeDeletingDevice(device: DeviceInfo) = withContext(Dispatchers.Main) {
+        deletingDevices.remove(device)
     }
 
     private suspend fun registerNewDevice() {
@@ -103,6 +122,8 @@ class DevicesViewModel(
         val devices = when (val result = getDevicesUseCase()) {
             is Result.Success -> result.value
             is Result.Fail -> emptyList()
+        }.map {
+            DeviceItemUiModel(it, deletingDevices.contains(it))
         }
 
         val current = currentDeviceUseCase()
@@ -117,7 +138,7 @@ class DevicesViewModel(
     }
 
     companion object {
-        private const val POLL_INTERVAL = 2000L
+        private const val POLL_INTERVAL = 5000L
     }
 }
 
@@ -128,8 +149,13 @@ sealed class DevicesUiState {
 }
 
 data class DevicesUiModel(
-    val devices: List<DeviceInfo>,
+    val devices: List<DeviceItemUiModel>,
     val currentDevice: CurrentDevice?,
     val isLimitReached: Boolean,
     val maxDevices: Int
+)
+
+data class DeviceItemUiModel(
+    val info: DeviceInfo,
+    val isLoading: Boolean = false
 )

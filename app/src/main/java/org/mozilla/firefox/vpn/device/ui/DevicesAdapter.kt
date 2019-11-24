@@ -1,6 +1,5 @@
 package org.mozilla.firefox.vpn.device.ui
 
-import android.os.SystemClock
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -71,7 +70,7 @@ class DevicesAdapter(
 
         val item = items[holder.adapterPosition]
         if (item is DeviceListItem.Device) {
-            onDeleteClicked(item.deviceInfo)
+            onDeleteClicked(item.uiModel.info)
         }
     }
 
@@ -87,7 +86,7 @@ class DevicesAdapter(
 
     private fun bindDeviceItem(item: DeviceListItem, holder: DevicesViewHolder) {
         if (item is DeviceListItem.Device) {
-            holder.bind(item.deviceInfo, uiModel.currentDevice)
+            holder.bind(item.uiModel, uiModel.currentDevice)
         }
     }
 
@@ -120,9 +119,9 @@ class DevicesAdapter(
                     return true
                 }
 
-                val newDevice = newItem as DeviceListItem.Device
-                val oldDevice = oldItem as DeviceListItem.Device
-                return newDevice.deviceInfo == oldDevice.deviceInfo
+                val newDevice = (newItem as DeviceListItem.Device).uiModel.info
+                val oldDevice = (oldItem as DeviceListItem.Device).uiModel.info
+                return newDevice == oldDevice
             }
 
             override fun getOldListSize(): Int {
@@ -134,6 +133,11 @@ class DevicesAdapter(
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val newItem = newList[newItemPosition]
+                val oldItem = oldList[oldItemPosition]
+                if (newItem is DeviceListItem.Device && oldItem is DeviceListItem.Device) {
+                    return newItem == oldItem
+                }
                 return true
             }
         })
@@ -145,7 +149,8 @@ class DevicesAdapter(
         override val containerView: View
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(device: DeviceInfo, currentDevice: CurrentDevice?) {
+        fun bind(deviceUiMode: DeviceItemUiModel, currentDevice: CurrentDevice?) {
+            val device = deviceUiMode.info
             title.text = device.name
             time.text = getRelativeTime(device.createdAt)
 
@@ -154,10 +159,20 @@ class DevicesAdapter(
                 time.text = itemView.context.getString(R.string.devices_current_device)
                 time.setTextColor(ContextCompat.getColor(itemView.context, R.color.blue50))
                 delete.visibility = View.INVISIBLE
+                loading.visibility = View.INVISIBLE
             } else {
                 time.text = getRelativeTime(device.createdAt)
                 time.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray40))
-                delete.visibility = View.VISIBLE
+
+                if (deviceUiMode.isLoading) {
+                    loading.visibility = View.VISIBLE
+                    delete.visibility = View.INVISIBLE
+                    item_holder.alpha = 0.25f
+                } else {
+                    loading.visibility = View.INVISIBLE
+                    delete.visibility = View.VISIBLE
+                    item_holder.alpha = 1f
+                }
             }
         }
 
@@ -170,7 +185,7 @@ class DevicesAdapter(
     }
 
     sealed class DeviceListItem(val type: Int) {
-        class Device(val deviceInfo: DeviceInfo) : DeviceListItem(TYPE_DEVICE)
+        data class Device(val uiModel: DeviceItemUiModel) : DeviceListItem(TYPE_DEVICE)
         class LimitReach : DeviceListItem(TYPE_LIMIT_REACH)
     }
 
