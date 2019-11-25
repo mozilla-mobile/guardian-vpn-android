@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.main.vpn
 
+import android.app.Application
 import androidx.lifecycle.*
 import com.wireguard.config.Config
 import com.wireguard.config.InetNetwork
@@ -8,6 +9,7 @@ import com.wireguard.config.Peer
 import com.wireguard.crypto.Key
 import com.wireguard.crypto.KeyPair
 import kotlinx.coroutines.Dispatchers
+import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
@@ -17,12 +19,13 @@ import org.mozilla.firefox.vpn.util.Result
 import java.net.InetAddress
 
 class VpnViewModel(
+    application: Application,
     private val vpnManager: VpnManager,
     private val userRepository: UserRepository,
     private val deviceRepository: DeviceRepository,
     private val getServersUseCase: GetServersUseCase,
     private val setSelectedServerUseCase: SetSelectedServerUseCase
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _uiState: MutableLiveData<UIState> = MutableLiveData()
     val uiState: LiveData<UIState> = _uiState
@@ -60,6 +63,7 @@ class VpnViewModel(
             setKeyPair(KeyPair(Key.fromBase64(privateKey)))
             addAddress(InetNetwork.parse(ipv4Address))
             addDnsServer(InetAddress.getByAddress(byteArrayOf(1, 1, 1, 1)))
+            excludeApplication(getApplication<GuardianApp>().packageName)
         }.build()
 
         return Config.Builder().apply {

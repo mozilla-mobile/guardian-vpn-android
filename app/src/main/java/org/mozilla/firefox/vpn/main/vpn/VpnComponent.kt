@@ -16,6 +16,7 @@ class VpnComponentImpl(
 
     override val viewModel: VpnViewModel
         get() = VpnViewModel(
+            application = app,
             vpnManager = vpnManager,
             userRepository = userRepo,
             deviceRepository = deviceRepo,
