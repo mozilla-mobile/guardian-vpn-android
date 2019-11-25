@@ -28,8 +28,8 @@ class UserRepository(
      * @return Result.Success(loginResult) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
      */
     suspend fun verifyLogin(info: LoginInfo): Result<LoginResult> {
-        val response = guardianService.verifyLogin(info.verificationUrl)
         return try {
+            val response = guardianService.verifyLogin(info.verificationUrl)
             response.resolveBody()
                 .handleError(401) {
                     it?.toErrorBody()
@@ -67,8 +67,8 @@ class UserRepository(
         val userInfo = getUserInfo() ?: return Result.Fail(UnauthorizedException())
         val token = userInfo.token
 
-        val response = guardianService.getUserInfo("Bearer $token")
         return try {
+            val response = guardianService.getUserInfo("Bearer $token")
             response.resolveBody()
                 .onSuccess { createUserInfo(userInfo.copy(user = it)) }
                 .handleError(401) {
