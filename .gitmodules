@@ -5,4 +5,4 @@
 [submodule "modules/wireguard"]
 	path = modules/wireguard
 	url = git@git.zx2c4.com:wireguard-android
-	branch = ml/libwg
+	branch = rc/libwg_statistic
