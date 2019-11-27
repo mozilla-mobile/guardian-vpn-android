@@ -36,6 +36,9 @@ class DevicesViewModel(
         while (true) {
             refreshUserInfoUseCase().checkAuth(
                 authorized = {
+                    if (userStates.state.shouldRegisterDevice()) {
+                        registerNewDevice()
+                    }
                     emit(DevicesUiState.StateLoaded(buildDevicesUiModel()))
                 },
                 unauthorized = {
@@ -88,10 +91,6 @@ class DevicesViewModel(
                 }
             )
             notifyUserStateUseCase()
-
-            if (userStates.state.shouldRegisterDevice()) {
-                registerNewDevice()
-            }
 
             refreshDevices()
         }
