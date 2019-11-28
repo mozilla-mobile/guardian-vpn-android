@@ -98,7 +98,9 @@ class VpnFragment : Fragment() {
         vpn_state_switching.visibility = View.GONE
         vpnSwitch.setCheckedSilently(true)
         updateStatePanelElevation(true)
-        serversFragment.dismissAllowingStateLoss()
+        if (serversFragment.isVisible) {
+            serversFragment.dismissAllowingStateLoss()
+        }
     }
 
     private fun showDisconnectingState() {
