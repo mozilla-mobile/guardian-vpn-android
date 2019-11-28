@@ -3,6 +3,8 @@ package org.mozilla.firefox.vpn.main.vpn
 import android.app.Application
 import androidx.lifecycle.*
 import com.wireguard.config.Config
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.domain.*
@@ -71,11 +73,15 @@ class VpnViewModel(
     }
 
     private fun connectVpn() {
-        vpnManager.connect(config!!)
+        viewModelScope.launch(Dispatchers.Main.immediate) {
+            vpnManager.connect(config!!)
+        }
     }
 
     private fun disconnectVpn() {
-        vpnManager.disconnect()
+        viewModelScope.launch(Dispatchers.Main.immediate) {
+            vpnManager.disconnect()
+        }
     }
 
     sealed class UIState {
