@@ -1,10 +1,12 @@
 package org.mozilla.firefox.vpn.service
 
+import android.os.Build
 import com.google.gson.*
 import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
@@ -54,6 +56,14 @@ interface GuardianService {
 
 fun GuardianService.Companion.newInstance(): GuardianService {
     val client = OkHttpClient.Builder()
+        .addInterceptor {
+            val original = it.request()
+            val request = original.newBuilder()
+                .header("User-Agent", getUserAgent())
+                .method(original.method(), original.body())
+                .build()
+            it.proceed(request)
+        }
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
@@ -69,6 +79,12 @@ fun GuardianService.Companion.newInstance(): GuardianService {
         .client(client)
         .build()
         .create(GuardianService::class.java)
+}
+
+private fun getUserAgent(): String {
+    val os = "Android ${Build.VERSION.RELEASE}"
+    val abi = Build.SUPPORTED_ABIS.firstOrNull()?.let { it } ?: "no-support-abi"
+    return "Guardian / ${BuildConfig.VERSION_NAME}_${BuildConfig.VERSION_CODE} ($os; $abi)"
 }
 
 data class LoginInfo(
