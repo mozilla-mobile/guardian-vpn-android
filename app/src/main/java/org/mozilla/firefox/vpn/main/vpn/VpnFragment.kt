@@ -98,6 +98,7 @@ class VpnFragment : Fragment() {
         vpn_state_switching.visibility = View.GONE
         vpnSwitch.setCheckedSilently(true)
         updateStatePanelElevation(true)
+        serversFragment.dismissAllowingStateLoss()
     }
 
     private fun showDisconnectingState() {
@@ -129,10 +130,10 @@ class VpnFragment : Fragment() {
     }
 
     private fun observeServers() {
-        vpnViewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
+        vpnViewModel.selectedServer.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
-                country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(it[0].country.code))
-                country_name.text = it[0].country.name
+                country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(it.country.code))
+                country_name.text = it.city.name
             }
         })
     }
