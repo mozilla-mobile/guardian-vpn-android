@@ -11,7 +11,7 @@ interface SelectedServerNotifier {
 
 class SelectedServerProvider(private val serverRepo: ServerRepository) : SelectedServerNotifier {
     private val _stateObservable = MutableLiveData<ServerInfo>()
-    val observable: LiveData<ServerInfo?> = _stateObservable
+    val observable: LiveData<ServerInfo> = _stateObservable
 
     val selectedServer: ServerInfo?
         get() {

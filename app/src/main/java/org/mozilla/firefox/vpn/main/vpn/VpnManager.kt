@@ -57,18 +57,8 @@ class VpnManager(
     }
 
     suspend fun connect(config: Config) = withContext(Dispatchers.Main.immediate) {
-        val isConnected = isConnected()
-        val isSwitching = isConnected && tunnelManager.currentTunnel?.config?.let {
-            it != config
-        } ?: false
-
         when {
-            isSwitching -> {
-                connectRequest.value = ConnectRequest.Switch
-                val tunnel = Tunnel(TUNNEL_NAME, config)
-                tunnelManager.tunnelUp(tunnel)
-            }
-            isConnected -> connectRequest.value = ConnectRequest.ForceConnected
+            isConnected() -> connectRequest.value = ConnectRequest.ForceConnected
             else -> {
                 connectRequest.value = ConnectRequest.Connect
                 val tunnel = Tunnel(TUNNEL_NAME, config)
@@ -77,13 +67,19 @@ class VpnManager(
         }
     }
 
+    suspend fun switch(config: Config) = withContext(Dispatchers.Main.immediate) {
+        connectRequest.value = ConnectRequest.Switch
+        val tunnel = Tunnel(TUNNEL_NAME, config)
+        tunnelManager.tunnelUp(tunnel)
+    }
+
     suspend fun disconnect() = withContext(Dispatchers.Main.immediate) {
         tunnelManager.tunnelDown()
         connectRequest.value = ConnectRequest.Disconnect
     }
 
     suspend fun shutdownConnection() = withContext(Dispatchers.Main.immediate) {
-        disconnect()
+        tunnelManager.tunnelDown()
         connectRequest.value = ConnectRequest.ForceDisconnect
     }
 
@@ -99,6 +95,10 @@ class VpnManager(
         }
     }
 
+    fun getDuration(): Long {
+        return tunnelManager.upDuration
+    }
+
     private fun monitorConnectedState(): LiveData<VpnState> {
         return liveData(Dispatchers.IO, 0) {
             emit(VpnState.Connecting)
@@ -107,7 +107,7 @@ class VpnManager(
                 emit(VpnState.Connected)
                 connectRequest.postValue(ConnectRequest.ForceConnected)
             } else {
-                connectRequest.postValue(ConnectRequest.ForceDisconnect)
+                shutdownConnection()
             }
         }
     }
@@ -120,7 +120,7 @@ class VpnManager(
                 emit(VpnState.Connected)
                 connectRequest.postValue(ConnectRequest.ForceConnected)
             } else {
-                connectRequest.postValue(ConnectRequest.ForceDisconnect)
+                shutdownConnection()
             }
         }
     }
