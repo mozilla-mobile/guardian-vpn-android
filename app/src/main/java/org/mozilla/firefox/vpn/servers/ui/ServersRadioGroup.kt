@@ -1,0 +1,82 @@
+package org.mozilla.firefox.vpn.servers.ui
+
+import android.content.Context
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import kotlinx.android.synthetic.main.view_servers_radio_group.view.*
+import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.servers.data.CountryInfo
+import org.mozilla.firefox.vpn.servers.data.ServerInfo
+
+class ServersRadioGroup : RadioGroup {
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    private val radioButtonTextPadding = resources.getDimensionPixelSize(R.dimen.radio_button_text_padding)
+    private val radioButtonVerticalPadding = resources.getDimensionPixelSize(R.dimen.radio_button_vertical_padding)
+    private val radioButtonLeftMargin = resources.getDimensionPixelSize(R.dimen.radio_button_left_margin)
+
+    private var lastAddedCountry: String = ""
+    private var listener: OnServerCheckListener? = null
+
+    init {
+        LayoutInflater.from(context).inflate(R.layout.view_servers_radio_group, this, true)
+    }
+
+    fun setOnServerCheckListener(listener: OnServerCheckListener) {
+        this.listener = listener
+    }
+
+    fun setServers(servers: List<ServerInfo>) {
+        servers.forEachIndexed { index, server ->
+            if (lastAddedCountry != server.country.name) {
+                lastAddedCountry = server.country.name
+                addCountryFolder(server.country)
+            }
+            addServerRadioButton(server, index)
+        }
+    }
+
+    private fun addCountryFolder(countryInfo: CountryInfo) {
+        val countryFolderView = CountryFolderView(context)
+        countryFolderView.setCountry(countryInfo)
+        countryFolderView.setOnExpandListener(onExpandListener)
+        servers_group.addView(countryFolderView, LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+    }
+
+    private fun addServerRadioButton(serverInfo: ServerInfo, index: Int) {
+        val radioButton = RadioButton(context).apply {
+            id = index
+            tag = serverInfo.country.code
+            text = serverInfo.city.name
+            setPadding(radioButtonTextPadding, radioButtonVerticalPadding, 0, radioButtonVerticalPadding)
+            setOnClickListener {
+                listener?.onCheck(serverInfo)
+            }
+        }
+        val params = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        params.setMargins(radioButtonLeftMargin, 0, 0, 0)
+        servers_group.addView(radioButton, params)
+    }
+
+    private val onExpandListener = object : CountryFolderView.OnExpandListener {
+        override fun onExpand(country: CountryInfo, isExpand: Boolean) {
+            for (index in 0 until servers_group.childCount) {
+                if (servers_group.getChildAt(index).tag == country.code) {
+                    servers_group.getChildAt(index).visibility = if (isExpand) View.VISIBLE else View.GONE
+                }
+            }
+        }
+    }
+
+    interface OnServerCheckListener {
+        fun onCheck(serverInfo: ServerInfo)
+    }
+}
