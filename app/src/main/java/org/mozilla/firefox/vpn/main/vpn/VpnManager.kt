@@ -43,7 +43,8 @@ class VpnManager(
         when (request) {
             ConnectRequest.Connect -> monitorConnectedState()
             ConnectRequest.Disconnect -> monitorDisconnectedState()
-            ConnectRequest.ForceDisconnect -> liveData { emit(VpnState.Disconnected as VpnState) }
+            ConnectRequest.ForceConnected -> monitorSignalState()
+            ConnectRequest.ForceDisconnect -> liveData<VpnState> { emit(VpnState.Disconnected) }
         }
     }
 
@@ -54,10 +55,14 @@ class VpnManager(
     }
 
     fun connect(config: Config) {
-        connectRequest.value = ConnectRequest.Connect
+        if (isConnected()) {
+            connectRequest.value = ConnectRequest.ForceConnected
+        } else {
+            connectRequest.value = ConnectRequest.Connect
 
-        val tunnel = Tunnel(TUNNEL_NAME, config)
-        tunnelManager.tunnelUp(tunnel)
+            val tunnel = Tunnel(TUNNEL_NAME, config)
+            tunnelManager.tunnelUp(tunnel)
+        }
     }
 
     fun disconnect() {
@@ -78,16 +83,20 @@ class VpnManager(
     }
 
     private fun monitorConnectedState(): LiveData<VpnState> {
-        return liveData(Dispatchers.IO, 0) {
+        return liveData<VpnState>(Dispatchers.IO, 0) {
             emit(VpnState.Connecting)
 
             if (verifyConnected()) {
                 emit(VpnState.Connected)
+                connectRequest.postValue(ConnectRequest.ForceConnected)
             } else {
                 connectRequest.postValue(ConnectRequest.ForceDisconnect)
-                return@liveData
             }
+        }
+    }
 
+    private fun monitorSignalState(): LiveData<VpnState> {
+        return liveData(Dispatchers.IO, 0) {
             monitorSignal().collect {
                 emit(it)
             }
@@ -164,6 +173,7 @@ class VpnManager(
     sealed class ConnectRequest {
         object Connect : ConnectRequest()
         object Disconnect : ConnectRequest()
+        object ForceConnected : ConnectRequest()
         object ForceDisconnect : ConnectRequest()
     }
 
