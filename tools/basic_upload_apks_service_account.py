@@ -39,15 +39,15 @@ def main():
         result = edit_request.execute()
         edit_id = result['id']
 
-        print(f"Result: {result}")
+        # print(f"Result: {result}")
 
         apk_response = service.edits().apks().upload(
             editId=edit_id,
             packageName=package_name,
             media_body=apk_file).execute()
 
-        print(apk_response)
-        print(f"Version code {apk_response['versionCode']} has been uploaded")
+        # print(apk_response)
+        # print(f"Version code {apk_response['versionCode']} has been uploaded")
 
         track_response = service.edits().tracks().update(
             editId=edit_id,
@@ -57,15 +57,16 @@ def main():
                   'versionCodes': [apk_response['versionCode']],
                   'status': u'completed'}]}).execute()
 
-        print(track_response)
-        print(f"Track {track_response['track']} is set with releases: {track_response['releases']}")
+        # print(track_response)
+        # print(f"Track {track_response['track']} is set with releases: {track_response['releases']}")
 
         commit_request = service.edits().commit(editId=edit_id, packageName=package_name).execute()
 
-        print(f"Edit {commit_request['id']} has been committed")
+        # print(f"Edit {commit_request['id']} has been committed")
 
     except Exception as e:
-        print(f"Error: {e}")
+        # print(f"Error: {e}")
+        print("Erorr: %s" % e)
 
 
 if __name__ == '__main__':

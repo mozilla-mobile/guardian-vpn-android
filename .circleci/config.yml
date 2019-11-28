@@ -97,11 +97,5 @@ workflows:
     jobs:
       - build
   build_release:
-    triggers:
-      - schedule:
-          cron: "0 2 * * *"
-          filters:
-            branches:
-              only: master
     jobs:
       - build_release
