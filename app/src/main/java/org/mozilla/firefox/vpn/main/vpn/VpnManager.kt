@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
@@ -55,7 +56,7 @@ class VpnManager(
         return tunnelManager.isGranted()
     }
 
-    fun connect(config: Config) {
+    suspend fun connect(config: Config) = withContext(Dispatchers.Main.immediate) {
         val isConnected = isConnected()
         val isSwitching = isConnected && tunnelManager.currentTunnel?.config?.let {
             it != config
@@ -76,9 +77,14 @@ class VpnManager(
         }
     }
 
-    fun disconnect() {
+    suspend fun disconnect() = withContext(Dispatchers.Main.immediate) {
         tunnelManager.tunnelDown()
         connectRequest.value = ConnectRequest.Disconnect
+    }
+
+    suspend fun shutdownConnection() = withContext(Dispatchers.Main.immediate) {
+        disconnect()
+        connectRequest.value = ConnectRequest.ForceDisconnect
     }
 
     fun isConnected(): Boolean {

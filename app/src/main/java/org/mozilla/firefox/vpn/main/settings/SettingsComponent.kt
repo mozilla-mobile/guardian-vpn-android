@@ -15,6 +15,6 @@ class SettingsComponentImpl(
     override val viewModel: SettingsViewModel = SettingsViewModel(
         userRepository = userRepo,
         userStates = UserStates(userStateResolver),
-        signOutUseCase = SignOutUseCase(deviceRepo, userRepo)
+        signOutUseCase = SignOutUseCase(deviceRepo, userRepo, vpnManager)
     )
 }
