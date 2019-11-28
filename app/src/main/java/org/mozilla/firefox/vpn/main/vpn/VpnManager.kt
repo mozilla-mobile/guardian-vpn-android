@@ -45,6 +45,7 @@ class VpnManager(
             ConnectRequest.Disconnect -> monitorDisconnectedState()
             ConnectRequest.ForceConnected -> monitorSignalState()
             ConnectRequest.ForceDisconnect -> liveData<VpnState> { emit(VpnState.Disconnected) }
+            ConnectRequest.Switch -> monitorSwitchingState()
         }
     }
 
@@ -55,13 +56,23 @@ class VpnManager(
     }
 
     fun connect(config: Config) {
-        if (isConnected()) {
-            connectRequest.value = ConnectRequest.ForceConnected
-        } else {
-            connectRequest.value = ConnectRequest.Connect
+        val isConnected = isConnected()
+        val isSwitching = isConnected && tunnelManager.currentTunnel?.config?.let {
+            it != config
+        } ?: false
 
-            val tunnel = Tunnel(TUNNEL_NAME, config)
-            tunnelManager.tunnelUp(tunnel)
+        when {
+            isSwitching -> {
+                connectRequest.value = ConnectRequest.Switch
+                val tunnel = Tunnel(TUNNEL_NAME, config)
+                tunnelManager.tunnelUp(tunnel)
+            }
+            isConnected -> connectRequest.value = ConnectRequest.ForceConnected
+            else -> {
+                connectRequest.value = ConnectRequest.Connect
+                val tunnel = Tunnel(TUNNEL_NAME, config)
+                tunnelManager.tunnelUp(tunnel)
+            }
         }
     }
 
@@ -83,8 +94,21 @@ class VpnManager(
     }
 
     private fun monitorConnectedState(): LiveData<VpnState> {
-        return liveData<VpnState>(Dispatchers.IO, 0) {
+        return liveData(Dispatchers.IO, 0) {
             emit(VpnState.Connecting)
+
+            if (verifyConnected()) {
+                emit(VpnState.Connected)
+                connectRequest.postValue(ConnectRequest.ForceConnected)
+            } else {
+                connectRequest.postValue(ConnectRequest.ForceDisconnect)
+            }
+        }
+    }
+
+    private fun monitorSwitchingState(): LiveData<VpnState> {
+        return liveData(Dispatchers.IO, 0) {
+            emit(VpnState.Switching)
 
             if (verifyConnected()) {
                 emit(VpnState.Connected)
@@ -172,6 +196,7 @@ class VpnManager(
 
     sealed class ConnectRequest {
         object Connect : ConnectRequest()
+        object Switch : ConnectRequest()
         object Disconnect : ConnectRequest()
         object ForceConnected : ConnectRequest()
         object ForceDisconnect : ConnectRequest()
