@@ -3,6 +3,7 @@ package org.mozilla.firefox.vpn
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.main.vpn.VpnManager
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
+import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.newInstance
 import org.mozilla.firefox.vpn.user.data.UserRepository
@@ -13,6 +14,7 @@ interface GuardianComponent {
     val serverRepo: ServerRepository
     val vpnManager: VpnManager
     val userStateResolver: UserStateResolver
+    val selectedServerProvider: SelectedServerProvider
 }
 
 class GuardianComponentImpl(
@@ -38,4 +40,6 @@ class GuardianComponentImpl(
     override val userStateResolver: UserStateResolver by lazy {
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }
     }
+
+    override val selectedServerProvider: SelectedServerProvider = SelectedServerProvider(serverRepo)
 }

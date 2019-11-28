@@ -10,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_servers.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.util.viewModel
@@ -17,7 +18,7 @@ import org.mozilla.firefox.vpn.util.viewModel
 class ServersFragment : BottomSheetDialogFragment() {
 
     private val component by lazy {
-        ServersComponentImpl(context!!.guardianComponent)
+        ServersComponentImpl(context!!.coreComponent, context!!.guardianComponent)
     }
 
     private val viewModel by viewModel { component.viewModel }
@@ -54,7 +55,12 @@ class ServersFragment : BottomSheetDialogFragment() {
         viewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
                 radio_group.setServers(it)
+                viewModel.updateSelectedServer()
             }
+        })
+
+        viewModel.selectedServer.observe(viewLifecycleOwner, Observer {
+            radio_group.setSelectedServer(it)
         })
     }
 
@@ -71,7 +77,7 @@ class ServersFragment : BottomSheetDialogFragment() {
 
     private val onServerCheckListener = object : ServersRadioGroup.OnServerCheckListener {
         override fun onCheck(serverInfo: ServerInfo) {
-            //TODO: switch to prefer server
+            viewModel.executeAction(ServersViewModel.Action.Switch(serverInfo))
         }
     }
 
