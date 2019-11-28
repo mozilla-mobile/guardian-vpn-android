@@ -6,39 +6,45 @@ import com.wireguard.config.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
-import org.mozilla.firefox.vpn.servers.domain.GetServerConfigUseCase
-import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
+import org.mozilla.firefox.vpn.servers.domain.*
+import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.then
 
 class VpnViewModel(
     application: Application,
     private val vpnManager: VpnManager,
     private val getServerConfigUseCase: GetServerConfigUseCase,
     vpnStateProvider: VpnStateProvider,
-    selectedServerProvider: SelectedServerProvider
+    selectedServerProvider: SelectedServerProvider,
+    private val getServersUseCase: GetServersUseCase,
+    private val getSelectedServerUseCase: GetSelectedServerUseCase
 ) : AndroidViewModel(application) {
 
-    private val initialServer = MutableLiveData<ServerInfo>()
+    private val initialServer = MutableLiveData<ServerInfo?>()
 
-    val selectedServer = MediatorLiveData<ServerInfo>().apply {
-        var selected: ServerInfo? = null
+    val selectedServer = MediatorLiveData<ServerInfo?>().apply {
+        var selected: ServerInfo?
 
-        addSource(initialServer) {
-            selected = it
-            config = getServerConfigUseCase(it)
-            value = it
-        }
+        addSource(initialServer) { initServer ->
+            initServer ?: return@addSource
+            selected = initServer
+            config = getServerConfigUseCase(initServer)
+            value = initServer
 
-        addSource(selectedServerProvider.observable) {
-            val info = it ?: return@addSource
-            if (vpnManager.isConnected() && selected != info) {
-                selected = info
-                config = getServerConfigUseCase(info)
-                switchVpn()
+            addSource(selectedServerProvider.observable) { newServer ->
+                newServer?.let {
+                    if (vpnManager.isConnected() && selected != it) {
+                        selected = it
+                        config = getServerConfigUseCase(it)
+                        switchVpn()
+                    }
+                    value = it
+                }
             }
-            value = info
         }
     }
 
@@ -73,7 +79,17 @@ class VpnViewModel(
     private var config: Config? = null
 
     init {
-        initialServer.value = selectedServerProvider.selectedServer
+        viewModelScope.launch(Dispatchers.Main) {
+            initialServer.value = initSelectedServer()
+        }
+    }
+
+    private suspend fun initSelectedServer(): ServerInfo? = withContext(Dispatchers.IO) {
+        val result = getServersUseCase(FilterStrategy.ByCity).then { getSelectedServerUseCase(it) }
+        when (result) {
+            is Result.Success -> result.value
+            else -> null
+        }
     }
 
     fun executeAction(action: Action) {
