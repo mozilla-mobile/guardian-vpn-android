@@ -2,6 +2,7 @@ package org.mozilla.firefox.vpn.main.vpn
 
 import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SetSelectedServerUseCase
 
@@ -18,9 +19,9 @@ class VpnComponentImpl(
         get() = VpnViewModel(
             application = app,
             vpnManager = vpnManager,
-            userRepository = userRepo,
             deviceRepository = deviceRepo,
             getServersUseCase = GetServersUseCase(userRepo, serverRepo),
-            setSelectedServerUseCase = SetSelectedServerUseCase(serverRepo)
+            setSelectedServerUseCase = SetSelectedServerUseCase(serverRepo),
+            vpnStateProvider = VpnManagerStateProvider(vpnManager)
         )
 }

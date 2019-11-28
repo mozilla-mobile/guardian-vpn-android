@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_vpn.*
@@ -26,6 +28,7 @@ class VpnFragment : Fragment() {
     private val vpnViewModel by viewModel { component.viewModel }
 
     private val serversFragment = ServersFragment.newInstance()
+    private lateinit var vpnSwitch: SwitchCompatExt
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_vpn, container, false)
@@ -33,10 +36,12 @@ class VpnFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        vpnSwitch = SwitchCompatExt(vpn_switch)
+
         observeState()
         observeServers()
 
-        vpn_switch.setOnCheckedChangeListener { _, isChecked ->
+        vpnSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 vpnViewModel.executeAction(VpnViewModel.Action.Connect)
             } else {
@@ -81,6 +86,7 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.VISIBLE
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
+        vpnSwitch.setCheckedSilently(true)
         updateStatePanelElevation(true)
     }
 
@@ -90,7 +96,7 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.GONE
         vpn_state_online.visibility = View.VISIBLE
         vpn_state_switching.visibility = View.GONE
-        vpn_switch.isChecked = true
+        vpnSwitch.setCheckedSilently(true)
         updateStatePanelElevation(true)
     }
 
@@ -109,7 +115,7 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.GONE
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
-        vpn_switch.isChecked = false
+        vpnSwitch.setCheckedSilently(false)
         updateStatePanelElevation(false)
     }
 
@@ -129,5 +135,20 @@ class VpnFragment : Fragment() {
                 country_name.text = it[0].country.name
             }
         })
+    }
+}
+
+class SwitchCompatExt(private val switch : SwitchCompat) {
+    private var listener: ((CompoundButton, Boolean) -> Unit)? = null
+
+    fun setCheckedSilently(isChecked: Boolean) {
+        switch.setOnCheckedChangeListener(null)
+        switch.isChecked = isChecked
+        switch.setOnCheckedChangeListener(listener)
+    }
+
+    fun setOnCheckedChangeListener(listener: (CompoundButton, Boolean) -> Unit) {
+        this.listener = listener
+        switch.setOnCheckedChangeListener(listener)
     }
 }
