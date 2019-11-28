@@ -3,6 +3,7 @@ package org.mozilla.firefox.vpn.main.vpn
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +13,14 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_vpn.*
+import kotlinx.android.synthetic.main.layout_vpn_online.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
 import org.mozilla.firefox.vpn.util.EmojiUtil
 import org.mozilla.firefox.vpn.util.viewModel
+import java.util.concurrent.TimeUnit
 
 class VpnFragment : Fragment() {
 
@@ -65,6 +68,7 @@ class VpnFragment : Fragment() {
 
     private fun observeState() {
         vpnViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
+            Log.d("roger_tag", "state=$state")
             when (state) {
                 is VpnViewModel.UIState.RequestPermission -> requestPermission()
                 is VpnViewModel.UIState.Connecting -> showConnectingState()
@@ -98,6 +102,16 @@ class VpnFragment : Fragment() {
         vpn_state_switching.visibility = View.GONE
         vpnSwitch.setCheckedSilently(true)
         updateStatePanelElevation(true)
+        vpnViewModel.duration.observe(viewLifecycleOwner, Observer {
+            val duration = String.format(
+                "%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(it),
+                TimeUnit.MILLISECONDS.toMinutes(it) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(it) % TimeUnit.MINUTES.toSeconds(1)
+            )
+            val text = getString(R.string.vpn_state_online_hint, duration)
+            vpn_state_online.vpn_state_hint.text = text
+        })
         if (serversFragment.isVisible) {
             serversFragment.dismissAllowingStateLoss()
         }

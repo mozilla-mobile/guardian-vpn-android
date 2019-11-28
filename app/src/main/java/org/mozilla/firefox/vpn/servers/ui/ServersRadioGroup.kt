@@ -51,7 +51,7 @@ class ServersRadioGroup : RadioGroup {
         serverViewMap[server]?.let {
             it.isChecked = true
             scroll_view.post {
-                scroll_view.smoothScrollTo(0, it.y.toInt() - scroll_view.measuredHeight / 2)
+                scroll_view.scrollTo(0, it.y.toInt() - scroll_view.measuredHeight / 2)
             }
         }
     }

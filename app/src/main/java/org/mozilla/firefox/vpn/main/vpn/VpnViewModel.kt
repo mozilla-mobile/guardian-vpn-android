@@ -4,10 +4,13 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.wireguard.config.Config
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
-import org.mozilla.firefox.vpn.servers.domain.*
+import org.mozilla.firefox.vpn.servers.data.ServerInfo
+import org.mozilla.firefox.vpn.servers.domain.GetServerConfigUseCase
+import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 
 class VpnViewModel(
     application: Application,
@@ -17,15 +20,34 @@ class VpnViewModel(
     selectedServerProvider: SelectedServerProvider
 ) : AndroidViewModel(application) {
 
-    val selectedServer = selectedServerProvider.observable.map {
-        it?.let {
+    private val initialServer = MutableLiveData<ServerInfo>()
+
+    val selectedServer = MediatorLiveData<ServerInfo>().apply {
+        var selected: ServerInfo? = null
+
+        addSource(initialServer) {
+            selected = it
             config = getServerConfigUseCase(it)
-            if (vpnManager.isConnected()) {
-                getServerConfigUseCase(it)?.apply {
-                    connectVpn()
-                }
+            value = it
+        }
+
+        addSource(selectedServerProvider.observable) {
+            val info = it ?: return@addSource
+            if (vpnManager.isConnected() && selected != info) {
+                selected = info
+                config = getServerConfigUseCase(info)
+                switchVpn()
             }
-            it
+            value = info
+        }
+    }
+
+    val duration by lazy {
+        liveData(viewModelScope.coroutineContext + Dispatchers.IO, 0) {
+            while (true) {
+                emit(vpnManager.getDuration())
+                delay(1000)
+            }
         }
     }
 
@@ -51,7 +73,7 @@ class VpnViewModel(
     private var config: Config? = null
 
     init {
-        selectedServerProvider.notifyServerChanged()
+        initialServer.value = selectedServerProvider.selectedServer
     }
 
     fun executeAction(action: Action) {
@@ -75,6 +97,12 @@ class VpnViewModel(
     private fun connectVpn() {
         viewModelScope.launch(Dispatchers.Main.immediate) {
             vpnManager.connect(config!!)
+        }
+    }
+
+    private fun switchVpn() {
+        viewModelScope.launch(Dispatchers.Main.immediate) {
+            vpnManager.switch(config!!)
         }
     }
 
