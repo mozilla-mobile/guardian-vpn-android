@@ -69,6 +69,9 @@ jobs:
         name: Build Debug Apk
         command: ./gradlew assembleRelease
     - run:
+        name: Install necessary libraries
+        command: pip install google-api-python-client
+    - run:
         name: store service_account key
         command: |
             echo $DEPLOYMENT_PRIVATE_KEY | base64 --decode > service_account.json
