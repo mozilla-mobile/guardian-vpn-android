@@ -160,6 +160,7 @@ class DevicesAdapter(
                 time.setTextColor(ContextCompat.getColor(itemView.context, R.color.blue50))
                 delete.visibility = View.INVISIBLE
                 loading.visibility = View.INVISIBLE
+                item_holder.alpha = 1f
             } else {
                 time.text = getRelativeTime(device.createdAt)
                 time.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray40))
