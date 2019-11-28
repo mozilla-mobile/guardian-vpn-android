@@ -66,7 +66,7 @@ jobs:
         name: Run Tests
         command: ./gradlew lint test
     - run:
-        name: Build Debug Apk
+        name: Build Release Apk
         command: ./gradlew assembleRelease
     - run:
         name: Install necessary libraries
@@ -100,5 +100,11 @@ workflows:
     jobs:
       - build
   build_release:
+    triggers:
+      - schedule:
+          cron: "0 11 * * *"
+          filters:
+            branches:
+              only: master
     jobs:
       - build_release
