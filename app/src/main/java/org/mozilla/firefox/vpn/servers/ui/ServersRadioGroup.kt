@@ -26,6 +26,8 @@ class ServersRadioGroup : RadioGroup {
     private var lastAddedCountry: String = ""
     private var listener: OnServerCheckListener? = null
 
+    private val serverViewMap = mutableMapOf<ServerInfo, RadioButton>()
+
     init {
         LayoutInflater.from(context).inflate(R.layout.view_servers_radio_group, this, true)
     }
@@ -35,12 +37,22 @@ class ServersRadioGroup : RadioGroup {
     }
 
     fun setServers(servers: List<ServerInfo>) {
+        serverViewMap.clear()
         servers.forEachIndexed { index, server ->
             if (lastAddedCountry != server.country.name) {
                 lastAddedCountry = server.country.name
                 addCountryFolder(server.country)
             }
             addServerRadioButton(server, index)
+        }
+    }
+
+    fun setSelectedServer(server: ServerInfo) {
+        serverViewMap[server]?.let {
+            it.isChecked = true
+            scroll_view.post {
+                scroll_view.smoothScrollTo(0, it.y.toInt() - scroll_view.measuredHeight / 2)
+            }
         }
     }
 
@@ -64,6 +76,7 @@ class ServersRadioGroup : RadioGroup {
         val params = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         params.setMargins(radioButtonLeftMargin, 0, 0, 0)
         servers_group.addView(radioButton, params)
+        serverViewMap[serverInfo] = radioButton
     }
 
     private val onExpandListener = object : CountryFolderView.OnExpandListener {
