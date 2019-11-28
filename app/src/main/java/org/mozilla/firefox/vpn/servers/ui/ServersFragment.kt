@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_servers.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.guardianComponent
+import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.util.viewModel
 
 class ServersFragment : BottomSheetDialogFragment() {
@@ -28,11 +29,13 @@ class ServersFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeServers()
+        radio_group.setOnServerCheckListener(onServerCheckListener)
 
         btn_cancel.setOnClickListener {
             dismiss()
         }
+
+        observeServers()
     }
 
     override fun onStart() {
@@ -50,19 +53,25 @@ class ServersFragment : BottomSheetDialogFragment() {
     private fun observeServers() {
         viewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
-                server_list.adapter =
-                    ServerListAdapter(it)
+                radio_group.setServers(it)
             }
         })
     }
 
     private val bottomSheetBehaviorCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+
         override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                 dismiss()
             }
+        }
+    }
+
+    private val onServerCheckListener = object : ServersRadioGroup.OnServerCheckListener {
+        override fun onCheck(serverInfo: ServerInfo) {
+            //TODO: switch to prefer server
         }
     }
 

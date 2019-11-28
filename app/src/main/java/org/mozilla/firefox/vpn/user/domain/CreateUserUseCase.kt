@@ -1,6 +1,5 @@
 package org.mozilla.firefox.vpn.user.domain
 
-import android.os.SystemClock
 import org.mozilla.firefox.vpn.UserStateResolver
 import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.data.*

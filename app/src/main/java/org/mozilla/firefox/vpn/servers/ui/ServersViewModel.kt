@@ -14,7 +14,7 @@ class ServersViewModel(
 
     val servers by lazy {
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-            val result = getServersUseCase(FilterStrategy.ByCountry)
+            val result = getServersUseCase(FilterStrategy.ByCity)
             if (result is Result.Success) {
                 emit(result.value)
             } else {
