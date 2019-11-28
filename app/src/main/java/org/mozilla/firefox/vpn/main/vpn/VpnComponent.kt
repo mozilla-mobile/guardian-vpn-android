@@ -3,7 +3,9 @@ package org.mozilla.firefox.vpn.main.vpn
 import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
+import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServerConfigUseCase
+import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 
 interface VpnComponent {
     val viewModel: VpnViewModel
@@ -20,6 +22,8 @@ class VpnComponentImpl(
             vpnManager = vpnManager,
             vpnStateProvider = VpnManagerStateProvider(vpnManager),
             getServerConfigUseCase = GetServerConfigUseCase(app, deviceRepo),
-            selectedServerProvider = selectedServerProvider
+            selectedServerProvider = selectedServerProvider,
+            getServersUseCase = GetServersUseCase(userRepo, serverRepo),
+            getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo)
         )
 }
