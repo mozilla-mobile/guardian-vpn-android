@@ -11,6 +11,8 @@ import com.wireguard.crypto.KeyPair
 import kotlinx.coroutines.Dispatchers
 import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SetSelectedServerUseCase
@@ -21,14 +23,11 @@ import java.net.InetAddress
 class VpnViewModel(
     application: Application,
     private val vpnManager: VpnManager,
-    private val userRepository: UserRepository,
     private val deviceRepository: DeviceRepository,
     private val getServersUseCase: GetServersUseCase,
-    private val setSelectedServerUseCase: SetSelectedServerUseCase
+    private val setSelectedServerUseCase: SetSelectedServerUseCase,
+    vpnStateProvider: VpnStateProvider
 ) : AndroidViewModel(application) {
-
-    private val _uiState: MutableLiveData<UIState> = MutableLiveData()
-    val uiState: LiveData<UIState> = _uiState
 
     val servers by lazy {
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
@@ -41,22 +40,34 @@ class VpnViewModel(
         }
     }
 
-    private val config: Config? by lazy {
-        prepareConfig()
+    /* UIState that triggered by vpn state changed */
+    private val _vpnState = vpnStateProvider.stateObservable.map {
+        when (it) {
+            VpnState.Disconnected -> UIState.Disconnected
+            VpnState.Connecting -> UIState.Connecting
+            VpnState.Connected -> UIState.Connected
+            VpnState.Disconnecting -> UIState.Disconnecting
+            else -> UIState.Disconnecting
+        }
     }
 
-    init {
-        if (vpnManager.isConnected()) {
-            _uiState.value = UIState.Connected
-        } else {
-            _uiState.value = UIState.Disconnected
-        }
+    /* UIState we explicitly want to transit to */
+    private val _uiState: MutableLiveData<UIState> = MutableLiveData()
+
+    val uiState: LiveData<UIState> = MediatorLiveData<UIState>().apply {
+        addSource(_uiState) { value = it }
+        addSource(_vpnState) { value = it }
+    }
+
+    private val config: Config? by lazy {
+        prepareConfig()
     }
 
     private fun prepareConfig(): Config? {
         val currentDevice = deviceRepository.getDevice() ?: return null
         val device = currentDevice.device
         val privateKey = currentDevice.privateKeyBase64
+        //val privateKey = KeyPair().privateKey.toBase64()
 
         val wgInterface = Interface.Builder().apply {
             val ipv4Address = device.ipv4Address
@@ -76,12 +87,12 @@ class VpnViewModel(
                 setPersistentKeepalive(60)
                 parseAllowedIPs("0.0.0.0/0")
             }.build())
-            peers.add(Peer.Builder().apply {
-                setPublicKey(Key.fromBase64("Rzh64qPcg8W8klJq0H4EZdVCH7iaPuQ9falc99GTgRA="))
-                parseEndpoint("103.231.88.2:32768")
-                setPersistentKeepalive(60)
-                parseAllowedIPs("0.0.0.0/0")
-            }.build())
+//            peers.add(Peer.Builder().apply {
+//                setPublicKey(Key.fromBase64("Rzh64qPcg8W8klJq0H4EZdVCH7iaPuQ9falc99GTgRA="))
+//                parseEndpoint("103.231.88.2:32768")
+//                setPersistentKeepalive(60)
+//                parseAllowedIPs("0.0.0.0/0")
+//            }.build())
 
             addPeers(peers)
         }.build()
@@ -106,15 +117,11 @@ class VpnViewModel(
     }
 
     private fun connectVpn() {
-        _uiState.value = UIState.Connecting
         vpnManager.connect(config!!)
-        _uiState.value = UIState.Connected
     }
 
     private fun disconnectVpn() {
-        _uiState.value = UIState.Disconnecting
         vpnManager.disconnect()
-        _uiState.value = UIState.Disconnected
     }
 
     sealed class UIState {
