@@ -3,6 +3,7 @@ package org.mozilla.firefox.vpn.service
 import android.os.Build
 import com.google.gson.*
 import com.google.gson.annotations.SerializedName
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,6 +15,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import java.lang.reflect.Type
+import java.util.concurrent.TimeUnit
 
 interface GuardianService {
     @POST("api/v1/vpn/login")
@@ -67,6 +69,7 @@ fun GuardianService.Companion.newInstance(): GuardianService {
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
+        .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
         .build()
 
     val gson = GsonBuilder()

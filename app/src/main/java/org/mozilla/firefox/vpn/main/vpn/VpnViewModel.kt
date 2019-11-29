@@ -2,46 +2,43 @@ package org.mozilla.firefox.vpn.main.vpn
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.wireguard.config.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
-import org.mozilla.firefox.vpn.servers.domain.*
-import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
+import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
+import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
+import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
+import org.mozilla.firefox.vpn.util.onSuccess
 import org.mozilla.firefox.vpn.util.then
 
 class VpnViewModel(
     application: Application,
     private val vpnManager: VpnManager,
-    private val getServerConfigUseCase: GetServerConfigUseCase,
     vpnStateProvider: VpnStateProvider,
     selectedServerProvider: SelectedServerProvider,
     private val getServersUseCase: GetServersUseCase,
-    private val getSelectedServerUseCase: GetSelectedServerUseCase
+    private val getSelectedServerUseCase: GetSelectedServerUseCase,
+    private val currentDeviceUseCase: CurrentDeviceUseCase
 ) : AndroidViewModel(application) {
 
-    private val initialServer = MutableLiveData<ServerInfo?>()
+    private val initialServer = MutableLiveData<ServerInfo>()
+
+    private var currentServer: ServerInfo? = null
 
     val selectedServer = MediatorLiveData<ServerInfo?>().apply {
-        var selected: ServerInfo?
-
         addSource(initialServer) { initServer ->
-            initServer ?: return@addSource
-            selected = initServer
-            config = getServerConfigUseCase(initServer)
+            currentServer = initServer
             value = initServer
 
             addSource(selectedServerProvider.observable) { newServer ->
                 newServer?.let {
-                    if (vpnManager.isConnected() && selected != it) {
-                        selected = it
-                        config = getServerConfigUseCase(it)
-                        switchVpn()
-                    }
+                    onServerSelected(currentServer!!, it)
+                    currentServer = it
                     value = it
                 }
             }
@@ -64,6 +61,7 @@ class VpnViewModel(
             VpnState.Connecting -> UIState.Connecting
             VpnState.Connected -> UIState.Connected
             VpnState.Disconnecting -> UIState.Disconnecting
+            is VpnState.Switching -> UIState.Switching(it.oldServer.city.name, it.newServer.city.name)
             else -> UIState.Disconnecting
         }
     }
@@ -76,19 +74,11 @@ class VpnViewModel(
         addSource(_vpnState) { value = it }
     }
 
-    private var config: Config? = null
-
     init {
-        viewModelScope.launch(Dispatchers.Main) {
-            initialServer.value = initSelectedServer()
-        }
-    }
-
-    private suspend fun initSelectedServer(): ServerInfo? = withContext(Dispatchers.IO) {
-        val result = getServersUseCase(FilterStrategy.ByCity).then { getSelectedServerUseCase(it) }
-        when (result) {
-            is Result.Success -> result.value
-            else -> null
+        viewModelScope.launch(Dispatchers.IO) {
+            getServersUseCase(FilterStrategy.ByCity)
+                .then { getSelectedServerUseCase(it) }
+                .onSuccess { initialServer.postValue(it) }
         }
     }
 
@@ -96,7 +86,7 @@ class VpnViewModel(
         when (action) {
             is Action.Connect -> {
                 if (vpnManager.isGranted()) {
-                    connectVpn()
+                    currentServer?.let { connectVpn(it) }
                 } else {
                     requestPermission()
                 }
@@ -110,15 +100,25 @@ class VpnViewModel(
         _uiState.value = UIState.Disconnected
     }
 
-    private fun connectVpn() {
-        viewModelScope.launch(Dispatchers.Main.immediate) {
-            vpnManager.connect(config!!)
+    private fun onServerSelected(oldServer: ServerInfo, newServer: ServerInfo) {
+        if (vpnManager.isConnected() && oldServer != newServer) {
+            switchVpn(oldServer, newServer)
         }
     }
 
-    private fun switchVpn() {
+    private fun connectVpn(server: ServerInfo) {
         viewModelScope.launch(Dispatchers.Main.immediate) {
-            vpnManager.switch(config!!)
+            currentDeviceUseCase()?.let {
+                vpnManager.connect(server, it)
+            }
+        }
+    }
+
+    private fun switchVpn(oldServer: ServerInfo, newServer: ServerInfo) {
+        viewModelScope.launch(Dispatchers.Main.immediate) {
+            currentDeviceUseCase()?.let {
+                vpnManager.switch(oldServer, newServer, it)
+            }
         }
     }
 
@@ -131,7 +131,7 @@ class VpnViewModel(
     sealed class UIState {
         object Connecting : UIState()
         object Disconnecting : UIState()
-        object Switching : UIState()
+        class Switching(val from: String, val to: String) : UIState()
         object Connected : UIState()
         object Disconnected : UIState()
         object RequestPermission : UIState()

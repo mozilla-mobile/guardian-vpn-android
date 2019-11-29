@@ -9,16 +9,18 @@ import android.os.SystemClock
 import androidx.lifecycle.*
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.backend.TunnelManager
-import com.wireguard.config.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
+import org.mozilla.firefox.vpn.servers.data.ServerInfo
+import org.mozilla.firefox.vpn.servers.domain.createConfig
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.PingUtil
 import java.util.concurrent.TimeUnit
@@ -46,7 +48,7 @@ class VpnManager(
             ConnectRequest.Disconnect -> monitorDisconnectedState()
             ConnectRequest.ForceConnected -> monitorSignalState()
             ConnectRequest.ForceDisconnect -> liveData<VpnState> { emit(VpnState.Disconnected) }
-            ConnectRequest.Switch -> monitorSwitchingState()
+            is ConnectRequest.Switch -> monitorSwitchingState(request.oldServer, request.newServer)
         }
     }
 
@@ -56,20 +58,20 @@ class VpnManager(
         return tunnelManager.isGranted()
     }
 
-    suspend fun connect(config: Config) = withContext(Dispatchers.Main.immediate) {
+    suspend fun connect(server: ServerInfo, currentDevice: CurrentDevice) = withContext(Dispatchers.Main.immediate) {
         when {
             isConnected() -> connectRequest.value = ConnectRequest.ForceConnected
             else -> {
                 connectRequest.value = ConnectRequest.Connect
-                val tunnel = Tunnel(TUNNEL_NAME, config)
+                val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(server))
                 tunnelManager.tunnelUp(tunnel)
             }
         }
     }
 
-    suspend fun switch(config: Config) = withContext(Dispatchers.Main.immediate) {
-        connectRequest.value = ConnectRequest.Switch
-        val tunnel = Tunnel(TUNNEL_NAME, config)
+    suspend fun switch(oldServer: ServerInfo, newServer: ServerInfo, currentDevice: CurrentDevice) = withContext(Dispatchers.Main.immediate) {
+        connectRequest.value = ConnectRequest.Switch(oldServer, newServer)
+        val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer))
         tunnelManager.tunnelUp(tunnel)
     }
 
@@ -112,9 +114,9 @@ class VpnManager(
         }
     }
 
-    private fun monitorSwitchingState(): LiveData<VpnState> {
+    private fun monitorSwitchingState(oldServer: ServerInfo, newServer: ServerInfo): LiveData<VpnState> {
         return liveData(Dispatchers.IO, 0) {
-            emit(VpnState.Switching)
+            emit(VpnState.Switching(oldServer, newServer))
 
             if (verifyConnected()) {
                 emit(VpnState.Connected)
@@ -202,7 +204,7 @@ class VpnManager(
 
     sealed class ConnectRequest {
         object Connect : ConnectRequest()
-        object Switch : ConnectRequest()
+        class Switch(val oldServer: ServerInfo, val newServer: ServerInfo) : ConnectRequest()
         object Disconnect : ConnectRequest()
         object ForceConnected : ConnectRequest()
         object ForceDisconnect : ConnectRequest()
