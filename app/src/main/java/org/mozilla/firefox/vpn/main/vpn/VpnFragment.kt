@@ -3,7 +3,6 @@ package org.mozilla.firefox.vpn.main.vpn
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +31,17 @@ class VpnFragment : Fragment() {
 
     private val serversFragment = ServersFragment.newInstance()
     private lateinit var vpnSwitch: SwitchCompatExt
+
+    private val durationObserver = Observer<Long> {
+        val duration = String.format(
+            "%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(it),
+            TimeUnit.MILLISECONDS.toMinutes(it) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(it) % TimeUnit.MINUTES.toSeconds(1)
+        )
+        val text = getString(R.string.vpn_state_online_hint, duration)
+        vpn_state_online.vpn_state_hint.text = text
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_vpn, container, false)
@@ -68,13 +78,13 @@ class VpnFragment : Fragment() {
 
     private fun observeState() {
         vpnViewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
-            Log.d("roger_tag", "state=$state")
             when (state) {
                 is VpnViewModel.UIState.RequestPermission -> requestPermission()
                 is VpnViewModel.UIState.Connecting -> showConnectingState()
                 is VpnViewModel.UIState.Connected -> showConnectedState()
                 is VpnViewModel.UIState.Disconnecting -> showDisconnectingState()
                 is VpnViewModel.UIState.Disconnected -> showDisconnectedState()
+                is VpnViewModel.UIState.Switching -> showSwitchingState(state.from, state.to)
             }
         })
     }
@@ -90,6 +100,7 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.VISIBLE
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
+        vpn_switch.alpha = 0.5f
         vpnSwitch.setCheckedSilently(true)
         updateStatePanelElevation(true)
     }
@@ -100,21 +111,10 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.GONE
         vpn_state_online.visibility = View.VISIBLE
         vpn_state_switching.visibility = View.GONE
+        vpn_switch.alpha = 1f
         vpnSwitch.setCheckedSilently(true)
         updateStatePanelElevation(true)
-        vpnViewModel.duration.observe(viewLifecycleOwner, Observer {
-            val duration = String.format(
-                "%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(it),
-                TimeUnit.MILLISECONDS.toMinutes(it) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(it) % TimeUnit.MINUTES.toSeconds(1)
-            )
-            val text = getString(R.string.vpn_state_online_hint, duration)
-            vpn_state_online.vpn_state_hint.text = text
-        })
-        if (serversFragment.isVisible) {
-            serversFragment.dismissAllowingStateLoss()
-        }
+        startObserveDuration()
     }
 
     private fun showDisconnectingState() {
@@ -123,6 +123,7 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.GONE
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
+        vpn_switch.alpha = 0.5f
         updateStatePanelElevation(false)
     }
 
@@ -132,8 +133,31 @@ class VpnFragment : Fragment() {
         vpn_state_connecting.visibility = View.GONE
         vpn_state_online.visibility = View.GONE
         vpn_state_switching.visibility = View.GONE
+        vpn_state_switching.alpha = 1f
         vpnSwitch.setCheckedSilently(false)
         updateStatePanelElevation(false)
+        stopObserveDuration()
+    }
+
+    private fun showSwitchingState(from: String, to: String) {
+        vpn_state_offline.visibility = View.GONE
+        vpn_state_disconnecting.visibility = View.GONE
+        vpn_state_connecting.visibility = View.GONE
+        vpn_state_online.visibility = View.GONE
+        vpn_state_switching.visibility = View.VISIBLE
+        vpn_switch.alpha = 0.5f
+        val hintText = getString(R.string.vpn_state_switching_hint, from, to)
+        vpn_state_switching.vpn_state_hint.text = hintText
+        vpnSwitch.setCheckedSilently(true)
+        updateStatePanelElevation(true)
+    }
+
+    private fun startObserveDuration() {
+        vpnViewModel.duration.observe(viewLifecycleOwner, durationObserver)
+    }
+
+    private fun stopObserveDuration() {
+        vpnViewModel.duration.removeObserver(durationObserver)
     }
 
     private fun updateStatePanelElevation(isSecure: Boolean) {
