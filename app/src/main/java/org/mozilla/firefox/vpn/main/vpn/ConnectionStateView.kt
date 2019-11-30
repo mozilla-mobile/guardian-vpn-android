@@ -78,6 +78,17 @@ class ConnectionStateView : CardView {
     }
 
     private fun initGlobeAnimation(oldModel: UIModel, newModel: UIModel) {
+        globe.frame = when (newModel) {
+            is UIModel.Disconnected -> 0
+            is UIModel.Connecting -> 15
+            is UIModel.Unstable,
+            is UIModel.NoSignal,
+            is UIModel.WarningState,
+            is UIModel.Connected -> 30
+            is UIModel.Switching -> 45
+            is UIModel.Disconnecting -> 75
+        }
+
         if (oldModel is UIModel.Disconnected && newModel is UIModel.Connecting) {
             globe.playOnce(0, 14)
         } else if (oldModel is UIModel.Connecting && newModel is UIModel.Connected) {
