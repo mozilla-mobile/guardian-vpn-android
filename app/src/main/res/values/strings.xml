@@ -23,10 +23,14 @@
     <string name="vpn_state_offline_hint">Turn it on to protect your entire device</string>
     <string name="vpn_state_disconnecting">Disconnecting&#8230;</string>
     <string name="vpn_state_disconnecting_hint">You will be disconnected shortly</string>
+    <string name="vpn_state_unstable">Unstable</string>
+    <string name="vpn_state_check_connection">Check connection</string>
+    <string name="vpn_state_no_signal">No signal</string>
     <string name="vpn_state_connecting">Connecting&#8230;</string>
     <string name="vpn_state_connecting_hint">You will be protected shortly</string>
     <string name="vpn_state_online">VPN is on</string>
-    <string name="vpn_state_online_hint">Secure and protected • %s</string>
+    <string name="vpn_state_online_hint">Secure and protected</string>
+    <string name="vpn_state_separator" translatable="false">&#8226;</string>
     <string name="vpn_state_switching">Switching&#8230;</string>
     <string name="vpn_state_switching_hint">From %1$s to %2$s</string>
     <string name="vpn_country_switch_hint">Select connection</string>

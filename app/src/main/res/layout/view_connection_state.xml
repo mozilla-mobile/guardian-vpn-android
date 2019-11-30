@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/ripple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_rawRes="@raw/ripple"
+        app:lottie_speed="0.5"
+        android:visibility="gone" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/globe"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_rawRes="@raw/globe"
+        tools:background="@drawable/ic_vpn_online" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:gravity="center"
+        android:text="@string/vpn_state_offline"
+        android:textColor="@color/gray50"
+        android:textAppearance="@style/TextAppearance.Guardian.Title10"
+        app:layout_constraintTop_toBottomOf="@id/globe"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/warning_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_error"
+        android:visibility="gone"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="@+id/warning_text"
+        app:layout_constraintBottom_toBottomOf="@+id/warning_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/warning_text" />
+
+    <TextView
+        android:id="@+id/warning_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vpn_state_unstable"
+        android:textColor="@color/yellow50"
+        android:textAppearance="@style/TextAppearance.Guardian.Body10"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/description"
+        app:layout_constraintBottom_toBottomOf="@+id/description"
+        app:layout_constraintStart_toEndOf="@id/warning_icon"
+        app:layout_constraintEnd_toStartOf="@+id/description"/>
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/vpn_state_offline_hint"
+        android:textColor="@color/gray40"
+        android:textAppearance="@style/TextAppearance.Guardian.Body10"
+        android:textSize="15dp"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintStart_toEndOf="@id/warning_text"
+        app:layout_constraintEnd_toStartOf="@id/duration"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:textColor="@color/gray40"
+        android:textAppearance="@style/TextAppearance.Guardian.Body10"
+        android:textSize="15dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/description"
+        app:layout_constraintBottom_toBottomOf="@id/description"
+        app:layout_constraintStart_toEndOf="@id/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="SpUsage" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:layout_marginTop="24dp"
+        app:thumbTint="@color/switch_thumb"
+        app:trackTint="@color/switch_track"
+        app:layout_constraintTop_toBottomOf="@id/description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
