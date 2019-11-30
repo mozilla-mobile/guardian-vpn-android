@@ -15,6 +15,7 @@ import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.util.onSuccess
 import org.mozilla.firefox.vpn.util.then
+import org.mozilla.firefox.vpn.R
 
 class VpnViewModel(
     application: Application,
@@ -57,12 +58,15 @@ class VpnViewModel(
     /* UIState that triggered by vpn state changed */
     private val _vpnState = vpnStateProvider.stateObservable.map {
         when (it) {
-            VpnState.Disconnected -> UIState.Disconnected
-            VpnState.Connecting -> UIState.Connecting
-            VpnState.Connected -> UIState.Connected
-            VpnState.Disconnecting -> UIState.Disconnecting
-            is VpnState.Switching -> UIState.Switching(it.oldServer.city.name, it.newServer.city.name)
-            else -> UIState.Disconnecting
+            VpnState.Disconnected -> UIState.Disconnected(UIModel.Disconnected())
+            VpnState.Connecting -> UIState.Connecting(UIModel.Connecting())
+            VpnState.Connected -> UIState.Connected(UIModel.Connected())
+            VpnState.Disconnecting -> UIState.Disconnecting(UIModel.Disconnecting())
+            is VpnState.Switching -> {
+                UIState.Switching(UIModel.Switching(it.oldServer.city.name, it.newServer.city.name))
+            }
+            VpnState.Unstable -> UIState.Unstable(UIModel.Unstable())
+            VpnState.NoSignal -> UIState.NoSignal(UIModel.NoSignal())
         }
     }
 
@@ -97,7 +101,7 @@ class VpnViewModel(
 
     private fun requestPermission() {
         _uiState.value = UIState.RequestPermission
-        _uiState.value = UIState.Disconnected
+        _uiState.value = UIState.Disconnected(UIModel.Disconnected())
     }
 
     private fun onServerSelected(oldServer: ServerInfo, newServer: ServerInfo) {
@@ -129,12 +133,100 @@ class VpnViewModel(
     }
 
     sealed class UIState {
-        object Connecting : UIState()
-        object Disconnecting : UIState()
-        class Switching(val from: String, val to: String) : UIState()
-        object Connected : UIState()
-        object Disconnected : UIState()
+        class Connecting(val uiModel: UIModel) : UIState()
+        class Disconnecting(val uiModel: UIModel) : UIState()
+        class Switching(val uiModel: UIModel) : UIState()
+        class Connected(val uiModel: UIModel) : UIState()
+        class Disconnected(val uiModel: UIModel) : UIState()
+        class Unstable(val uiModel: UIModel) : UIState()
+        class NoSignal(val uiModel: UIModel) : UIState()
         object RequestPermission : UIState()
+    }
+
+    sealed class UIModel(
+        val style: Styles,
+        val titleId: Int,
+        val descriptionId: Int,
+        val switchOn: Boolean
+    ) {
+
+        class Connected : UIModel(
+            Styles.Secure,
+            R.string.vpn_state_online,
+            R.string.vpn_state_online_hint,
+            true
+        )
+        class Connecting : UIModel(
+            Styles.Secure.copy(switchAlpha = 0.5f),
+            R.string.vpn_state_connecting,
+            R.string.vpn_state_connecting_hint,
+            true
+        )
+        class Disconnected : UIModel(
+            Styles.Insecure,
+            R.string.vpn_state_offline,
+            R.string.vpn_state_offline_hint,
+            false
+        )
+        class Disconnecting : UIModel(
+            Styles.Insecure.copy(switchAlpha = 0.5f),
+            R.string.vpn_state_disconnecting,
+            R.string.vpn_state_disconnecting_hint,
+            false
+        )
+        class Switching(val from: String, val to: String) : UIModel(
+            Styles.Secure.copy(switchAlpha = 0.5f),
+            R.string.vpn_state_switching,
+            R.string.vpn_state_switching_hint,
+            true
+        )
+        abstract class WarningState(
+            titleId: Int,
+            descriptionId: Int,
+            val stateTextId: Int,
+            val stateColorId: Int
+        ) : UIModel(
+            Styles.Secure,
+            titleId,
+            descriptionId,
+            true
+        )
+        class Unstable : WarningState(
+            R.string.vpn_state_unstable,
+            R.string.vpn_state_check_connection,
+            R.string.vpn_state_unstable,
+            R.color.yellow50
+        )
+        class NoSignal : WarningState(
+            R.string.vpn_state_no_signal,
+            R.string.vpn_state_check_connection,
+            R.string.vpn_state_no_signal,
+            R.color.red50
+        )
+
+        data class Styles(
+            val bkgColorId: Int,
+            val titleColorId: Int,
+            val descriptionColorId: Int,
+            val bkgElevation: Int,
+            var switchAlpha: Float = 1f
+        ) {
+            companion object {
+                val Secure = Styles(
+                    R.color.purple90,
+                    android.R.color.white,
+                    R.color.white80,
+                    R.dimen.vpn_panel_elevation_secure
+                )
+
+                val Insecure = Styles(
+                    android.R.color.transparent,
+                    R.color.gray50,
+                    R.color.gray40,
+                    R.dimen.vpn_panel_elevation_insecure
+                )
+            }
+        }
     }
 
     sealed class Action {
