@@ -3,11 +3,12 @@ package org.mozilla.firefox.vpn.servers.data
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
-import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.service.*
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapValue
+import org.mozilla.firefox.vpn.util.onSuccess
 import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
 
 class ServerRepository(
     private val guardianService: GuardianService,
@@ -18,6 +19,11 @@ class ServerRepository(
      * @return Result.Success(serverList) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
      */
     suspend fun getServers(token: String): Result<List<ServerInfo>> {
+        getCachedServers()
+            ?.takeIf { System.currentTimeMillis() - it.lastUpdate < TimeUnit.DAYS.toMillis(1)}
+            ?.takeIf { it.servers.isNotEmpty() }
+            ?.let { return Result.Success(it.servers) }
+
         val bearerToken = "Bearer $token"
 
         return try {
@@ -34,6 +40,8 @@ class ServerRepository(
                         .map { (country, city, server) ->
                             ServerInfo(country.toInfo(), city.toInfo(), server)
                         }
+                }.onSuccess {
+                    cacheServers(it)
                 }
                 .handleError(401) {
                     it?.toErrorBody()
@@ -59,8 +67,20 @@ class ServerRepository(
         }
     }
 
+    private fun cacheServers(servers: List<ServerInfo>) {
+        val json = Gson().toJson(ServersCache(servers, System.currentTimeMillis()))
+        prefs.edit().putString(PREF_SERVERS, json).apply()
+    }
+
+    private fun getCachedServers(): ServersCache? {
+        return prefs.getString(PREF_SERVERS, null)?.let {
+            Gson().fromJson(it, ServersCache::class.java)
+        }
+    }
+
     companion object {
         private const val PREF_SERVER_SELECTED = "pref_selected_server"
+        private const val PREF_SERVERS = "pref_servers"
     }
 }
 
@@ -106,3 +126,9 @@ data class SelectedServer(
     val strategy: FilterStrategy,
     val server: ServerInfo
 )
+
+data class ServersCache(
+    val servers: List<ServerInfo>,
+    val lastUpdate: Long
+)
+
