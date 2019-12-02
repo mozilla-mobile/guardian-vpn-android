@@ -71,6 +71,13 @@ class ConnectionStateView : CardView {
 
         duration.visibility = if (model is UIModel.Connected) { View.VISIBLE } else { View.GONE }
 
+        switch_btn.isEnabled = when (model) {
+            is UIModel.Connecting,
+            is UIModel.Disconnecting,
+            is UIModel.Switching -> false
+            else -> true
+        }
+
         switchSilently(model.switchOn)
 
         applyStyle(model.style)
