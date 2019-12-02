@@ -4,7 +4,6 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
@@ -15,6 +14,7 @@ import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.util.TimeFormat
 import org.mozilla.firefox.vpn.util.TimeUtil
+import org.mozilla.firefox.vpn.util.color
 
 class DevicesAdapter(
     private var uiModel: DevicesUiModel,
@@ -157,13 +157,13 @@ class DevicesAdapter(
             val isCurrentDevice = currentDevice?.device == device
             if (isCurrentDevice) {
                 time.text = itemView.context.getString(R.string.devices_current_device)
-                time.setTextColor(ContextCompat.getColor(itemView.context, R.color.blue50))
+                time.setTextColor(itemView.context.color(R.color.blue50))
                 delete.visibility = View.INVISIBLE
                 loading.visibility = View.INVISIBLE
                 item_holder.alpha = 1f
             } else {
                 time.text = getRelativeTime(device.createdAt)
-                time.setTextColor(ContextCompat.getColor(itemView.context, R.color.gray40))
+                time.setTextColor(itemView.context.color(R.color.gray40))
 
                 if (deviceUiMode.isLoading) {
                     loading.visibility = View.VISIBLE
