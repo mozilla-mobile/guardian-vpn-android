@@ -2,6 +2,7 @@ package org.mozilla.firefox.vpn.servers.ui
 
 import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SetSelectedServerUseCase
@@ -17,6 +18,7 @@ class ServersComponentImpl(
 
     override val viewModel: ServersViewModel
         get() = ServersViewModel(
+            vpnStateProvider = VpnManagerStateProvider(vpnManager),
             getServersUseCase = GetServersUseCase(userRepo, serverRepo),
             setSelectedServerUseCase = SetSelectedServerUseCase(serverRepo, selectedServerProvider),
             getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo)

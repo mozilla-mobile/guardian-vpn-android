@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
@@ -14,6 +15,7 @@ import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.onSuccess
 
 class ServersViewModel(
+    vpnStateProvider: VpnStateProvider,
     private val getServersUseCase: GetServersUseCase,
     private val setSelectedServerUseCase: SetSelectedServerUseCase,
     private val getSelectedServerUseCase: GetSelectedServerUseCase
@@ -32,6 +34,8 @@ class ServersViewModel(
 
     private val _selectedServer = MutableLiveData<ServerInfo>()
     val selectedServer = _selectedServer
+
+    val vpnState = vpnStateProvider.stateObservable
 
     fun updateSelectedServer() {
         getSelectedServerUseCase(servers.value ?: emptyList())
