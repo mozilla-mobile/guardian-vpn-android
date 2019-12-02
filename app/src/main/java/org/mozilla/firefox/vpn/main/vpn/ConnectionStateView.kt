@@ -7,13 +7,14 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.CompoundButton
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import kotlinx.android.synthetic.main.view_connection_state.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.main.vpn.VpnViewModel.UIModel
+import org.mozilla.firefox.vpn.util.color
+import org.mozilla.firefox.vpn.util.tint
 
 class ConnectionStateView : CardView {
 
@@ -51,13 +52,16 @@ class ConnectionStateView : CardView {
 
         when (model) {
             is UIModel.WarningState -> {
-                warning_text.visibility = View.VISIBLE
-                warning_icon.visibility = View.VISIBLE
-                val color = ContextCompat.getColor(context, model.stateColorId)
-                DrawableCompat.setTint(warning_icon.drawable, color)
-                warning_text.setTextColor(color)
-                val state = context.getString(model.stateTextId)
-                warning_text.text = state
+                val color = context.color(model.stateColorId)
+                warning_icon.apply {
+                    visibility = View.VISIBLE
+                    drawable.tint(color)
+                }
+                warning_text.apply {
+                    visibility = View.VISIBLE
+                    text = context.getString(model.stateTextId)
+                    setTextColor(color)
+                }
             }
             else -> {
                 warning_icon.visibility = View.GONE
@@ -113,10 +117,10 @@ class ConnectionStateView : CardView {
     }
 
     private fun applyStyle(style: UIModel.Styles) {
-        container.setBackgroundColor(ContextCompat.getColor(context, style.bkgColorId))
-        title.setTextColor(ContextCompat.getColor(context, style.titleColorId))
-        description.setTextColor(ContextCompat.getColor(context, style.descriptionColorId))
-        duration.setTextColor(ContextCompat.getColor(context, style.descriptionColorId))
+        container.setBackgroundColor(context.color(style.bkgColorId))
+        title.setTextColor(context.color(style.titleColorId))
+        description.setTextColor(context.color(style.descriptionColorId))
+        duration.setTextColor(context.color(style.descriptionColorId))
 
         switch_btn.alpha = style.switchAlpha
 

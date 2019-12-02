@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
-    tools:background="@color/red40">
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_snackbar">
 
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="40dp"
         android:textAppearance="@style/TextAppearance.Guardian.Byline10"
         android:gravity="center_vertical|center_horizontal"
         app:layout_constraintTop_toTopOf="parent"
@@ -32,5 +32,30 @@
         app:layout_constraintLeft_toRightOf="@id/text"
         app:layout_constraintRight_toRightOf="parent"
         tools:text="Retry"/>
+
+    <View
+        android:id="@+id/close"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/bg_snackbar_close_area" />
+
+    <View
+        android:id="@+id/close_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_cancel"
+        app:layout_constraintTop_toTopOf="@id/close"
+        app:layout_constraintBottom_toBottomOf="@id/close"
+        app:layout_constraintStart_toStartOf="@id/close"
+        app:layout_constraintEnd_toEndOf="@id/close" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/close_views"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="close,close_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

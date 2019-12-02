@@ -16,6 +16,7 @@ import org.mozilla.firefox.vpn.main.getSupportActionBar
 import org.mozilla.firefox.vpn.main.setSupportActionBar
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.ui.GuardianSnackbar
+import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.util.viewModel
 
 class DevicesFragment : Fragment() {
@@ -89,10 +90,10 @@ class DevicesFragment : Fragment() {
         device_list.visibility = View.INVISIBLE
         GuardianSnackbar.make(
             root_view.findViewById(android.R.id.content),
-            GuardianSnackbar.Config(
-                style = GuardianSnackbar.Style.Red,
+            InAppNotificationView.Config(
+                style = InAppNotificationView.Style.Red,
                 text = "Something wrong.",
-                textAction = GuardianSnackbar.TextAction("Try again") { viewModel.loadDevicesList() }
+                textAction = InAppNotificationView.TextAction("Try again") { viewModel.loadDevicesList() }
             ),
             GuardianSnackbar.LENGTH_INDEFINITE
         ).show()
