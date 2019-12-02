@@ -47,6 +47,13 @@ class ServersRadioGroup : RadioGroup {
         }
     }
 
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        for (index in 0 until servers_group.childCount) {
+            servers_group.getChildAt(index).isEnabled = enabled
+        }
+    }
+
     fun setSelectedServer(server: ServerInfo) {
         serverViewMap[server]?.let {
             it.isChecked = true

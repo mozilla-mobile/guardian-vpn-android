@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_servers.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.util.viewModel
 
@@ -61,6 +62,22 @@ class ServersFragment : BottomSheetDialogFragment() {
 
         viewModel.selectedServer.observe(viewLifecycleOwner, Observer {
             radio_group.setSelectedServer(it)
+        })
+
+        viewModel.vpnState.observe(viewLifecycleOwner, Observer { vpnState ->
+            connection_text.text = when (vpnState) {
+                is VpnState.Connecting -> getString(R.string.vpn_state_connecting)
+                is VpnState.Disconnecting -> getString(R.string.vpn_state_disconnecting)
+                is VpnState.Switching -> getString(R.string.vpn_state_switching)
+                else -> getString(R.string.label_connection)
+            }
+
+            radio_group.isEnabled = when (vpnState) {
+                is VpnState.Connecting,
+                is VpnState.Disconnecting,
+                is VpnState.Switching -> false
+                else -> true
+            }
         })
     }
 
