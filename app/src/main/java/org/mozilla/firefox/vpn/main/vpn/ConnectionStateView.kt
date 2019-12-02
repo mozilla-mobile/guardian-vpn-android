@@ -14,6 +14,7 @@ import com.airbnb.lottie.LottieDrawable
 import kotlinx.android.synthetic.main.view_connection_state.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.main.vpn.VpnViewModel.UIModel
+import org.mozilla.firefox.vpn.util.tint
 
 class ConnectionStateView : CardView {
 
@@ -51,13 +52,16 @@ class ConnectionStateView : CardView {
 
         when (model) {
             is UIModel.WarningState -> {
-                warning_text.visibility = View.VISIBLE
-                warning_icon.visibility = View.VISIBLE
                 val color = ContextCompat.getColor(context, model.stateColorId)
-                DrawableCompat.setTint(warning_icon.drawable, color)
-                warning_text.setTextColor(color)
-                val state = context.getString(model.stateTextId)
-                warning_text.text = state
+                warning_icon.apply {
+                    visibility = View.VISIBLE
+                    drawable.tint(color)
+                }
+                warning_text.apply {
+                    visibility = View.VISIBLE
+                    text = context.getString(model.stateTextId)
+                    setTextColor(color)
+                }
             }
             else -> {
                 warning_icon.visibility = View.GONE
