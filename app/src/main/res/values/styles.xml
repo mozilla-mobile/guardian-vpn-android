@@ -52,7 +52,7 @@
         <item name="android:fontFamily">@font/inter_semibold</item>
     </style>
     <style name="TextAppearance.Guardian.Twemoji" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:fontFamily">@font/twemoji_mozilla</item>
+        <item name="android:fontFamily">@font/twemoji_compat</item>
     </style>
 
     <!-- TextAppearance defined in Guardian -->
