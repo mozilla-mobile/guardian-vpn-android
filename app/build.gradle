@@ -52,6 +52,10 @@ android {
     }
 }
 
+configurations {
+    ktlint
+}
+
 dependencies {
     implementation project(':libwg')
     implementation project(':crypto')
@@ -71,20 +75,36 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-rc02'
     implementation 'androidx.navigation:navigation-runtime-ktx:2.2.0-rc02'
     implementation 'androidx.preference:preference:1.1.0'
-    implementation 'androidx.browser:browser:1.2.0-alpha09'
+    implementation 'androidx.browser:browser:1.2.0-beta01'
     implementation 'androidx.emoji:emoji-bundled:1.0.0'
-    implementation 'com.airbnb.android:lottie:3.2.2'
 
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
     implementation 'io.coil-kt:coil:0.7.0'
-
     implementation 'com.github.hadilq.liveevent:liveevent:1.0.1'
+    implementation 'com.airbnb.android:lottie:3.2.2'
+    ktlint 'com.pinterest:ktlint:0.35.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+}
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "src/**/*.kt"
+}
+
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "-F", "src/**/*.kt"
 }

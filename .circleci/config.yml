@@ -23,7 +23,7 @@ jobs:
         key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
     - run:
         name: Run Tests
-        command: ./gradlew lint test
+        command: ./gradlew lint test ktlint
     - run:
         name: Build Debug Apk
         command: ./gradlew assembleDebug
@@ -64,7 +64,7 @@ jobs:
         key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
     - run:
         name: Run Tests
-        command: ./gradlew lint test
+        command: ./gradlew lint test ktlint
     - run:
         name: Build Release Apk
         command: ./gradlew assembleRelease
