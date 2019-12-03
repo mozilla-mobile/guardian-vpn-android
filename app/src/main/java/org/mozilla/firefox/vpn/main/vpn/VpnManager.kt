@@ -6,11 +6,22 @@ import android.content.Context
 import android.content.Intent
 import android.net.VpnService.Builder
 import android.os.SystemClock
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.backend.TunnelManager
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
@@ -21,13 +32,12 @@ import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.PingUtil
 import org.mozilla.firefox.vpn.util.flatMap
 import org.mozilla.firefox.vpn.util.measureElapsedRealtime
-import java.util.concurrent.TimeUnit
 
 class VpnManager(
     private val appContext: Context
-): VpnStateProvider {
+) : VpnStateProvider {
 
-    private val tunnelManager = TunnelManager(appContext, object: TunnelManager.VpnBuilderProvider{
+    private val tunnelManager = TunnelManager(appContext, object : TunnelManager.VpnBuilderProvider {
         override fun patchBuilder(builder: Builder): Builder {
             val configureIntent = Intent()
             // TODO: Fix this weird dependency
@@ -141,7 +151,7 @@ class VpnManager(
         val host = tunnel.config.peers.first().endpoint.get().host
         while (true) {
             val (pingSuccess, pingSec) = measureElapsedRealtime(TimeUnit.SECONDS) { ping(host) }
-            GLog.d(TAG, "ping result=${pingSuccess}, seconds=${pingSec}")
+            GLog.d(TAG, "ping result=$pingSuccess, seconds=$pingSec")
             delay(PING_INTERVAL_MS)
         }
     }

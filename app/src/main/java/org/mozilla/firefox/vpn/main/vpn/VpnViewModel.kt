@@ -1,10 +1,17 @@
 package org.mozilla.firefox.vpn.main.vpn
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
@@ -15,7 +22,6 @@ import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.util.onSuccess
 import org.mozilla.firefox.vpn.util.then
-import org.mozilla.firefox.vpn.R
 
 class VpnViewModel(
     application: Application,

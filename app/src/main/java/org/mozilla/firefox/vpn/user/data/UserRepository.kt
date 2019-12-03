@@ -2,9 +2,27 @@ package org.mozilla.firefox.vpn.user.data
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import org.mozilla.firefox.vpn.service.*
-import org.mozilla.firefox.vpn.util.*
 import java.net.UnknownHostException
+import org.mozilla.firefox.vpn.service.GuardianService
+import org.mozilla.firefox.vpn.service.LoginInfo
+import org.mozilla.firefox.vpn.service.LoginResult
+import org.mozilla.firefox.vpn.service.NetworkException
+import org.mozilla.firefox.vpn.service.UnauthorizedException
+import org.mozilla.firefox.vpn.service.UnknownErrorBody
+import org.mozilla.firefox.vpn.service.UnknownException
+import org.mozilla.firefox.vpn.service.User
+import org.mozilla.firefox.vpn.service.handleError
+import org.mozilla.firefox.vpn.service.resolveBody
+import org.mozilla.firefox.vpn.service.toErrorBody
+import org.mozilla.firefox.vpn.service.toUnauthorizedError
+import org.mozilla.firefox.vpn.util.GLog
+import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.TimeFormat
+import org.mozilla.firefox.vpn.util.TimeFormatException
+import org.mozilla.firefox.vpn.util.TimeUtil
+import org.mozilla.firefox.vpn.util.mapValue
+import org.mozilla.firefox.vpn.util.onError
+import org.mozilla.firefox.vpn.util.onSuccess
 
 class UserRepository(
     private val guardianService: GuardianService,
@@ -50,7 +68,7 @@ class UserRepository(
             .apply()
     }
 
-    fun getUserInfo() : UserInfo? {
+    fun getUserInfo(): UserInfo? {
         return prefs.getString(PREF_USER_INFO, null)?.let {
             Gson().fromJson(it, UserInfo::class.java)
         }
@@ -114,7 +132,6 @@ val UserInfo.isSubscribed: Boolean
 
         return subscription.vpn.active && now.before(renewDate)
     }
-
 
 val UserInfo.isDeviceLimitReached: Boolean
     get() {

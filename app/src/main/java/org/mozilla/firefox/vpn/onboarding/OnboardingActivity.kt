@@ -41,7 +41,7 @@ class OnboardingActivity : AppCompatActivity() {
         })
 
         viewModel.showLoggedOutMessage.observe(this, Observer {
-            val message= it.resolve(this) ?: return@Observer
+            val message = it.resolve(this) ?: return@Observer
             val sb = GuardianSnackbar.make(
                 container,
                 InAppNotificationView.Config(

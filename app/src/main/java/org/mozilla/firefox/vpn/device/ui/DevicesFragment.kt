@@ -2,7 +2,11 @@ package org.mozilla.firefox.vpn.device.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -122,7 +126,7 @@ class DevicesFragment : Fragment() {
             .setTitle(R.string.devices_remove_dialog_title)
             .setMessage(getString(R.string.devices_remove_dialog_message, device.name))
             .setPositiveButton(R.string.remove) { _, _ -> positiveCallback() }
-            .setNegativeButton(android.R.string.cancel) { _, _ ->  }
+            .setNegativeButton(android.R.string.cancel) { _, _ -> }
             .show()
     }
 }

@@ -13,13 +13,13 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import kotlinx.android.synthetic.main.activity_main.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.UserState
 import org.mozilla.firefox.vpn.UserStates
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.isDeviceLimitReached
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
-import org.mozilla.firefox.vpn.*
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 
 class MainActivity : AppCompatActivity() {

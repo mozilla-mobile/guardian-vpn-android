@@ -2,7 +2,8 @@ package org.mozilla.firefox.vpn.user.domain
 
 import org.mozilla.firefox.vpn.UserStateResolver
 import org.mozilla.firefox.vpn.service.LoginResult
-import org.mozilla.firefox.vpn.user.data.*
+import org.mozilla.firefox.vpn.user.data.UserInfo
+import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class CreateUserUseCase(
     private val userRepository: UserRepository,

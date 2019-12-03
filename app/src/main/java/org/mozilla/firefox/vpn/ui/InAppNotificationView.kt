@@ -77,4 +77,3 @@ object InAppNotificationView {
         object Green : Style(R.color.green40, R.color.gray50, R.color.green50, R.color.gray50)
     }
 }
-
