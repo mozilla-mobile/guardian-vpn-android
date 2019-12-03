@@ -33,14 +33,16 @@ class VpnManager(
             // TODO: Fix this weird dependency
             configureIntent.component = ComponentName(appContext, MainActivity::class.java)
             configureIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            builder.setConfigureIntent(PendingIntent.getActivity(appContext, 0, configureIntent, 0))
+            builder.setConfigureIntent(
+                PendingIntent.getActivity(appContext, 0, configureIntent, 0)
+            )
             return builder
         }
     })
 
     private val connectRequest = MutableLiveData<ConnectRequest>()
 
-    private val _stateObservable = Transformations.switchMap(connectRequest) { request ->
+    private val _stateObservable = connectRequest.switchMap { request ->
         when (request) {
             ConnectRequest.Connect -> monitorConnectedState()
             ConnectRequest.Disconnect -> monitorDisconnectedState()
@@ -59,7 +61,10 @@ class VpnManager(
         return tunnelManager.isGranted()
     }
 
-    suspend fun connect(server: ServerInfo, currentDevice: CurrentDevice) = withContext(Dispatchers.Main.immediate) {
+    suspend fun connect(
+        server: ServerInfo,
+        currentDevice: CurrentDevice
+    ) = withContext(Dispatchers.Main.immediate) {
         when {
             isConnected() -> connectRequest.value = ConnectRequest.ForceConnected
             else -> {
@@ -70,7 +75,11 @@ class VpnManager(
         }
     }
 
-    suspend fun switch(oldServer: ServerInfo, newServer: ServerInfo, currentDevice: CurrentDevice) = withContext(Dispatchers.Main.immediate) {
+    suspend fun switch(
+        oldServer: ServerInfo,
+        newServer: ServerInfo,
+        currentDevice: CurrentDevice
+    ) = withContext(Dispatchers.Main.immediate) {
         connectRequest.value = ConnectRequest.Switch(oldServer, newServer)
         val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer))
         tunnelManager.tunnelUp(tunnel)
