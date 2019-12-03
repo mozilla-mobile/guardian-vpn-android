@@ -15,7 +15,12 @@ import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
 import org.mozilla.firefox.vpn.user.domain.GetLoginInfoUseCase
 import org.mozilla.firefox.vpn.user.domain.VerifyLoginUseCase
-import org.mozilla.firefox.vpn.util.*
+import org.mozilla.firefox.vpn.util.GLog
+import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.StringResource
+import org.mozilla.firefox.vpn.util.addCompletionHandler
+import org.mozilla.firefox.vpn.util.onError
+import org.mozilla.firefox.vpn.util.onSuccess
 
 class OnboardingViewModel(
     private val loginInfoUseCase: GetLoginInfoUseCase,

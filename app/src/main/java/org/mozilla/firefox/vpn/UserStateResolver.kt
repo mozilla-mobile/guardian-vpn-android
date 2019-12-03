@@ -1,6 +1,8 @@
 package org.mozilla.firefox.vpn
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.user.data.isDeviceLimitReached

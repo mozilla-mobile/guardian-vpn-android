@@ -7,10 +7,10 @@ import com.wireguard.config.Interface
 import com.wireguard.config.Peer
 import com.wireguard.crypto.Key
 import com.wireguard.crypto.KeyPair
+import java.net.InetAddress
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
-import java.net.InetAddress
 
 class GetServerConfigUseCase(
     appContext: Application,

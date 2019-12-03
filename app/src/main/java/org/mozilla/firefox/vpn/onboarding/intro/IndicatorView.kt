@@ -23,8 +23,8 @@ class IndicatorView : LinearLayout {
     init {
         LayoutInflater.from(context).inflate(R.layout.view_indicator, this, true)
 
-        activeIndicator = ContextCompat.getDrawable(context,R.drawable.ic_indicator_active)
-        inactiveIndicator = ContextCompat.getDrawable(context,R.drawable.ic_indicator_inactive)
+        activeIndicator = ContextCompat.getDrawable(context, R.drawable.ic_indicator_active)
+        inactiveIndicator = ContextCompat.getDrawable(context, R.drawable.ic_indicator_inactive)
     }
 
     fun updateIndicatorStatus(position: Int) {

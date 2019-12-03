@@ -4,7 +4,9 @@ import android.os.SystemClock
 import android.util.TimeFormatException
 import com.google.gson.internal.bind.util.ISO8601Utils
 import java.text.ParsePosition
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 object TimeUtil {
@@ -42,7 +44,7 @@ interface TimeFormat {
     }
 }
 
-class TimeFormatException(msg: String, cause: Throwable): RuntimeException(msg, cause)
+class TimeFormatException(msg: String, cause: Throwable) : RuntimeException(msg, cause)
 
 inline fun <T : Any> measureElapsedRealtime(unit: TimeUnit = TimeUnit.MILLISECONDS, block: () -> T): Pair<T, Long> {
     val ts = SystemClock.elapsedRealtime()

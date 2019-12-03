@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.fragment_vpn.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
@@ -16,7 +17,6 @@ import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
 import org.mozilla.firefox.vpn.util.EmojiUtil
 import org.mozilla.firefox.vpn.util.viewModel
-import java.util.concurrent.TimeUnit
 
 class VpnFragment : Fragment() {
 

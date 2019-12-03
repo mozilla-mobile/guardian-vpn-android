@@ -178,5 +178,3 @@ fun LottieAnimationView.then(block: LottieAnimationView.() -> Unit) {
         }
     })
 }
-
-

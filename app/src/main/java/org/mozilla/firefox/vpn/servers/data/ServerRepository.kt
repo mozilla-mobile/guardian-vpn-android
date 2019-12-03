@@ -2,13 +2,23 @@ package org.mozilla.firefox.vpn.servers.data
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
 import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
-import org.mozilla.firefox.vpn.service.*
+import org.mozilla.firefox.vpn.service.City
+import org.mozilla.firefox.vpn.service.Country
+import org.mozilla.firefox.vpn.service.GuardianService
+import org.mozilla.firefox.vpn.service.NetworkException
+import org.mozilla.firefox.vpn.service.Server
+import org.mozilla.firefox.vpn.service.UnknownErrorBody
+import org.mozilla.firefox.vpn.service.UnknownException
+import org.mozilla.firefox.vpn.service.handleError
+import org.mozilla.firefox.vpn.service.resolveBody
+import org.mozilla.firefox.vpn.service.toErrorBody
+import org.mozilla.firefox.vpn.service.toUnauthorizedError
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapValue
 import org.mozilla.firefox.vpn.util.onSuccess
-import java.net.UnknownHostException
-import java.util.concurrent.TimeUnit
 
 class ServerRepository(
     private val guardianService: GuardianService,
@@ -20,7 +30,7 @@ class ServerRepository(
      */
     suspend fun getServers(token: String): Result<List<ServerInfo>> {
         getCachedServers()
-            ?.takeIf { System.currentTimeMillis() - it.lastUpdate < TimeUnit.DAYS.toMillis(1)}
+            ?.takeIf { System.currentTimeMillis() - it.lastUpdate < TimeUnit.DAYS.toMillis(1) }
             ?.takeIf { it.servers.isNotEmpty() }
             ?.let { return Result.Success(it.servers) }
 
@@ -131,4 +141,3 @@ data class ServersCache(
     val servers: List<ServerInfo>,
     val lastUpdate: Long
 )
-

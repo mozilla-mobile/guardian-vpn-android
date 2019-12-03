@@ -1,10 +1,14 @@
 package org.mozilla.firefox.vpn.main.settings.domain
 
-import kotlinx.coroutines.*
+import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.main.vpn.VpnManager
 import org.mozilla.firefox.vpn.user.data.UserRepository
-import kotlin.coroutines.coroutineContext
 
 class SignOutUseCase(
     private val deviceRepository: DeviceRepository,

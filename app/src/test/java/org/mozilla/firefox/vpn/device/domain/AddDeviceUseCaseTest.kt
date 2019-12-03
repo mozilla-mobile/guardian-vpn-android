@@ -1,6 +1,6 @@
 package org.mozilla.firefox.vpn.device.domain
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mozilla.firefox.vpn.util.findAvailableDeviceName
 

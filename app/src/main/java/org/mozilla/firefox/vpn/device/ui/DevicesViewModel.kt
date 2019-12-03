@@ -1,6 +1,10 @@
 package org.mozilla.firefox.vpn.device.ui
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -76,7 +80,7 @@ class DevicesViewModel(
         }
     }
 
-    fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.Main.immediate){
+    fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.Main.immediate) {
         addDeletingDevice(device)
 
         withContext(Dispatchers.IO) {

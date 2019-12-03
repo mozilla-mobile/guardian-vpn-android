@@ -55,13 +55,10 @@ class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycle
 
     private fun createConnection(): CustomTabsServiceConnection {
         return object : CustomTabsServiceConnection() {
-            override fun onCustomTabsServiceConnected(
-                name: ComponentName,
-                client: CustomTabsClient?
-            ) {
+            override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
                 GLog.d(TAG, "service connected")
-                client?.warmup(0)
-                this@LoginCustomTab.session = client?.newSession(null)
+                client.warmup(0)
+                this@LoginCustomTab.session = client.newSession(null)
                 this@LoginCustomTab.client = client
             }
 
@@ -86,5 +83,5 @@ class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycle
 fun Fragment.launchUrl(url: String) {
     CustomTabsIntent.Builder().apply {
         enableUrlBarHiding()
-    }.build().launchUrl(context, url.toUri())
+    }.build().launchUrl(requireContext(), url.toUri())
 }

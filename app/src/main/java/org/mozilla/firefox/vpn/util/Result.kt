@@ -40,7 +40,7 @@ fun <T : Any> Result<T>.getOrNull(): T? {
     }
 }
 
-inline fun <T : Any, K: Any> Result<T>.then(action: (T) -> Result<K>): Result<K> {
+inline fun <T : Any, K : Any> Result<T>.then(action: (T) -> Result<K>): Result<K> {
     return when (this) {
         is Result.Success -> action(value)
         is Result.Fail -> Result.Fail(exception)

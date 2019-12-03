@@ -1,7 +1,7 @@
 package org.mozilla.firefox.vpn.util
 
-import org.mozilla.firefox.vpn.service.DeviceInfo
 import kotlin.math.max
+import org.mozilla.firefox.vpn.service.DeviceInfo
 
 fun findAvailableModelName(devices: List<DeviceInfo>): String {
     return findAvailableDeviceName(android.os.Build.MODEL, devices.map { it.name })

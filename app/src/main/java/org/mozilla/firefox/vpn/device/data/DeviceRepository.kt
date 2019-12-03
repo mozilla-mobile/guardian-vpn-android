@@ -3,10 +3,20 @@ package org.mozilla.firefox.vpn.device.data
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.wireguard.crypto.KeyPair
-import org.mozilla.firefox.vpn.service.*
+import java.net.UnknownHostException
+import org.mozilla.firefox.vpn.service.DeviceInfo
+import org.mozilla.firefox.vpn.service.DeviceRequestBody
+import org.mozilla.firefox.vpn.service.GuardianService
+import org.mozilla.firefox.vpn.service.NetworkException
+import org.mozilla.firefox.vpn.service.UnknownErrorBody
+import org.mozilla.firefox.vpn.service.UnknownException
+import org.mozilla.firefox.vpn.service.handleError
+import org.mozilla.firefox.vpn.service.resolveBody
+import org.mozilla.firefox.vpn.service.toDeviceApiError
+import org.mozilla.firefox.vpn.service.toErrorBody
+import org.mozilla.firefox.vpn.service.toUnauthorizedError
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.onSuccess
-import java.net.UnknownHostException
 
 class DeviceRepository(
     private val guardianService: GuardianService,
