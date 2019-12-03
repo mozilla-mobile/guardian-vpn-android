@@ -9,12 +9,8 @@ import android.os.SystemClock
 import androidx.lifecycle.*
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.backend.TunnelManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
@@ -23,6 +19,8 @@ import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.servers.domain.createConfig
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.PingUtil
+import org.mozilla.firefox.vpn.util.flatMap
+import org.mozilla.firefox.vpn.util.measureElapsedRealtime
 import java.util.concurrent.TimeUnit
 
 class VpnManager(
@@ -53,6 +51,9 @@ class VpnManager(
     }
 
     override val stateObservable: LiveData<VpnState> = _stateObservable.map { it }
+
+    private var lastSignalTime = SystemClock.elapsedRealtime()
+    private var lastStableTime = SystemClock.elapsedRealtime()
 
     fun isGranted(): Boolean {
         return tunnelManager.isGranted()
@@ -127,10 +128,73 @@ class VpnManager(
         }
     }
 
+    private suspend fun runPingLoop(tunnel: Tunnel) {
+        val host = tunnel.config.peers.first().endpoint.get().host
+        while (true) {
+            val (pingSuccess, pingSec) = measureElapsedRealtime(TimeUnit.SECONDS) { ping(host) }
+            GLog.d(TAG, "ping result=${pingSuccess}, seconds=${pingSec}")
+            delay(PING_INTERVAL_MS)
+        }
+    }
+
     private fun monitorSignalState(): LiveData<VpnState> {
+        lastSignalTime = SystemClock.elapsedRealtime()
+        lastStableTime = SystemClock.elapsedRealtime()
+
         return liveData(Dispatchers.IO, 0) {
-            monitorSignal().collect {
-                emit(it)
+            val tunnel = tunnelManager.currentTunnel ?: return@liveData
+
+            coroutineScope {
+                launch(Dispatchers.IO) { runPingLoop(tunnel) }
+
+                withContext(Dispatchers.Main) {
+                    rxChangedFlow(tunnel)
+                        .flatMap { signalStableFlow(it) }
+                        .flatMap { signalStateFlow(it) }
+                        .collect { emit(it) }
+                }
+            }
+        }
+    }
+
+    private fun rxChangedFlow(tunnel: Tunnel): Flow<Boolean> {
+        return flow {
+            var prevRx = tunnelManager.getStatistics(tunnel).totalRx()
+            while (true) {
+                delay(RX_DETECT_INTERVAL_MS)
+                emit(tunnelManager.getStatistics(tunnel).totalRx() > prevRx)
+                prevRx = tunnelManager.getStatistics(tunnel).totalRx()
+            }
+        }
+    }
+
+    private fun signalStableFlow(hasSignal: Boolean): Flow<Boolean> {
+        return flow {
+            val timeDiff = SystemClock.elapsedRealtime() - lastSignalTime
+            when {
+                hasSignal -> {
+                    lastSignalTime = SystemClock.elapsedRealtime()
+                    emit(true)
+                }
+                timeDiff >= UNSTABLE_THRESHOLD_MS -> emit(false)
+                else -> GLog.d(TAG, "${(UNSTABLE_THRESHOLD_MS - timeDiff) / 1000} secs to unstable")
+            }
+        }
+    }
+
+    private fun signalStateFlow(isStable: Boolean): Flow<VpnState> {
+        return flow {
+            val timeDiff = SystemClock.elapsedRealtime() - lastStableTime
+            when {
+                isStable -> {
+                    lastStableTime = SystemClock.elapsedRealtime()
+                    emit(VpnState.Connected)
+                }
+                SystemClock.elapsedRealtime() - lastStableTime > NO_SIGNAL_THRESHOLD_MS -> emit(VpnState.NoSignal)
+                else -> {
+                    GLog.d(TAG, "${(NO_SIGNAL_THRESHOLD_MS - timeDiff) / 1000} secs to no-signal")
+                    emit(VpnState.Unstable)
+                }
             }
         }
     }
@@ -140,54 +204,6 @@ class VpnManager(
         // test until the internet is reachable before returning true
         delay(1000)
         return true
-    }
-
-    private suspend fun monitorSignal(): Flow<VpnState> {
-        val noSignalCheckDuration = 120
-        val stableCheckDuration = 30
-
-        val noSignalThreshold = noSignalCheckDuration / stableCheckDuration
-        var unstableCount = 0
-
-        return flow {
-            while (true) {
-                val stable = isStable(stableCheckDuration)
-                when {
-                    stable -> {
-                        emit(VpnState.Connected)
-                        unstableCount = 0
-                    }
-                    unstableCount >= noSignalThreshold -> emit(VpnState.NoSignal)
-                    else -> {
-                        emit(VpnState.Unstable)
-                        unstableCount++
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun isStable(durationSecs: Int): Boolean {
-        val tunnel = tunnelManager.currentTunnel ?: return false
-        val config = tunnel.config
-        val host = config.peers.first().endpoint.get().host
-        val initialRx = tunnelManager.getStatistics(tunnel).totalRx()
-
-        val pingTs = SystemClock.elapsedRealtime()
-        val pingSuccess = ping(host)
-        GLog.d(TAG, "ping result=${pingSuccess}, time=${SystemClock.elapsedRealtime() - pingTs}")
-
-        val checkInterval = 5L
-        repeat((durationSecs / checkInterval).toInt()) {
-            delay(TimeUnit.SECONDS.toMillis(checkInterval))
-            val latestRx = tunnelManager.getStatistics(tunnel).totalRx()
-            GLog.d(TAG, "rx change=${latestRx - initialRx}")
-        }
-
-        val latestRx = tunnelManager.getStatistics(tunnel).totalRx()
-        GLog.d(TAG, "conclude rx change=${latestRx - initialRx}")
-
-        return latestRx > initialRx
     }
 
     private fun ping(hostAddress: String): Boolean {
@@ -213,5 +229,10 @@ class VpnManager(
     companion object {
         private const val TAG = "VpnManager"
         private const val TUNNEL_NAME = "guardian_tunnel"
+
+        private val UNSTABLE_THRESHOLD_MS = TimeUnit.SECONDS.toMillis(30)
+        private val NO_SIGNAL_THRESHOLD_MS = TimeUnit.SECONDS.toMillis(120)
+        private val RX_DETECT_INTERVAL_MS = TimeUnit.SECONDS.toMillis(1)
+        private val PING_INTERVAL_MS = TimeUnit.SECONDS.toMillis(2)
     }
 }
