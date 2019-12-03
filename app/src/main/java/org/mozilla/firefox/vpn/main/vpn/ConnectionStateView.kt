@@ -116,9 +116,23 @@ class ConnectionStateView : CardView {
     }
 
     private fun initRippleAnimation(oldModel: UIModel, newModel: UIModel) {
-        if (oldModel !is UIModel.Connected && newModel is UIModel.Connected) {
+        when (newModel) {
+            is UIModel.Connecting,
+            is UIModel.Disconnected,
+            is UIModel.NoSignal -> {
+                ripple.pauseAnimation()
+                ripple.setMinAndMaxFrame(0, 0)
+                ripple.progress = 0f
+            }
+        }
+
+        val playEnterAnimation = oldModel !is UIModel.Connected && newModel is UIModel.Connected
+        val playEndAnimation = oldModel is UIModel.Connected &&
+                (newModel is UIModel.Disconnecting || newModel is UIModel.Unstable)
+
+        if (playEnterAnimation) {
             ripple.playOnce(0, 74).then { loop(75, 120) }
-        } else if (oldModel !is UIModel.Disconnecting && newModel is UIModel.Disconnecting) {
+        } else if (playEndAnimation) {
             ripple.playOnce(ripple.frame, 210)
         }
     }
