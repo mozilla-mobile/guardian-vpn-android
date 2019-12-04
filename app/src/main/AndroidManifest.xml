@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".GuardianApp"
+        android:name="org.mozilla.firefox.vpn.GuardianApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,7 +16,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".splash.SplashActivity"
+            android:name="org.mozilla.firefox.vpn.splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
@@ -27,13 +27,13 @@
         </activity>
 
         <activity
-            android:name=".onboarding.OnboardingActivity"
+            android:name="org.mozilla.firefox.vpn.onboarding.OnboardingActivity"
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".main.MainActivity"
+            android:name="org.mozilla.firefox.vpn.main.MainActivity"
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
