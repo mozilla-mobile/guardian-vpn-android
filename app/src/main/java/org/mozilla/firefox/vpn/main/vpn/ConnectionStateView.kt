@@ -3,7 +3,10 @@ package org.mozilla.firefox.vpn.main.vpn
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.widget.CompoundButton
 import androidx.cardview.widget.CardView
@@ -22,7 +25,22 @@ class ConnectionStateView : CardView {
     private var currentModel: UIModel = UIModel.Disconnected()
 
     private val onCheckedChangedListener =
-        CompoundButton.OnCheckedChangeListener { _, isChecked -> onSwitchListener?.invoke(isChecked) }
+        CompoundButton.OnCheckedChangeListener { _, isChecked ->
+            val drawable = if (isChecked) {
+                val thumb = context.getDrawable(R.drawable.thumb_green)
+                val bitmap = (thumb as BitmapDrawable).bitmap
+                val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, context.resources.displayMetrics).toInt()
+                BitmapDrawable(context.resources, Bitmap.createScaledBitmap(bitmap, size, size, true))
+            } else {
+                val thumb = context.getDrawable(R.drawable.thumb_grey)
+                val bitmap = (thumb as BitmapDrawable).bitmap
+                val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, context.resources.displayMetrics).toInt()
+                BitmapDrawable(context.resources, Bitmap.createScaledBitmap(bitmap, size, size, true))
+            }
+            switch_btn.thumbDrawable = drawable
+
+            onSwitchListener?.invoke(isChecked)
+        }
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -32,6 +50,26 @@ class ConnectionStateView : CardView {
         switch_btn.setOnCheckedChangeListener(onCheckedChangedListener)
         ripple.frame = 0
         warning_icon.setImageDrawable(DrawableCompat.wrap(warning_icon.drawable).mutate())
+
+//        val thumb = context.getDrawable(R.drawable.thumb_grey)
+//        val bitmap = (thumb as BitmapDrawable).bitmap
+//        val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, context.resources.displayMetrics).toInt()
+//        val resized = BitmapDrawable(context.resources, Bitmap.createScaledBitmap(bitmap, size, size, true))
+//        switch_btn.thumbDrawable = resized
+//        switch_btn.thumbTintList = ContextCompat.getColorStateList(context, R.color.switch_thumb)
+
+        val drawable = if (switch_btn.isChecked) {
+            val thumb = context.getDrawable(R.drawable.thumb_green)
+            val bitmap = (thumb as BitmapDrawable).bitmap
+            val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, context.resources.displayMetrics).toInt()
+            BitmapDrawable(context.resources, Bitmap.createScaledBitmap(bitmap, size, size, true))
+        } else {
+            val thumb = context.getDrawable(R.drawable.thumb_grey)
+            val bitmap = (thumb as BitmapDrawable).bitmap
+            val size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, context.resources.displayMetrics).toInt()
+            BitmapDrawable(context.resources, Bitmap.createScaledBitmap(bitmap, size, size, true))
+        }
+        switch_btn.thumbDrawable = drawable
     }
 
     fun applyUiModel(model: UIModel) {
