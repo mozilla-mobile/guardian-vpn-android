@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/intro_title_1" />
+        tools:text="@string/nux_title_2" />
 
     <TextView
         android:id="@+id/intro_description"
@@ -41,6 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/intro_title"
-        tools:text="@string/intro_description_1" />
+        tools:text="@string/nux_content_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

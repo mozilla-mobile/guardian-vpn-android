@@ -28,17 +28,17 @@ class IntroListAdapter : RecyclerView.Adapter<IntroViewHolder>() {
         )
 
         private val introTitleList = listOf(
-            R.string.intro_title_1,
-            R.string.intro_title_2,
-            R.string.intro_title_3,
-            R.string.intro_title_4
+            R.string.nux_title_2,
+            R.string.nux_title_1,
+            R.string.nux_title_3,
+            R.string.nux_title_4
         )
 
         private val introDescriptionList = listOf(
-            R.string.intro_description_1,
-            R.string.intro_description_2,
-            R.string.intro_description_3,
-            R.string.intro_description_4
+            R.string.nux_content_2,
+            R.string.nux_content_1,
+            R.string.nux_content_3,
+            R.string.nux_content_4
         )
 
         fun bind(position: Int) {

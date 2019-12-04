@@ -13,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:title="@string/label_about"
+        app:title="@string/about_page_title"
         app:titleTextColor="@color/gray50"
         app:titleTextAppearance="@style/TextAppearance.Guardian.Header20"
         app:navigationIcon="@drawable/ic_back" />
@@ -52,7 +52,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/label_version"
+        android:text="@string/about_version_title"
         android:textColor="@color/gray50"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toBottomOf="@id/guardian_description"
@@ -101,7 +101,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/label_terms_of_service"
+            android:text="@string/terms_service_url_title"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
@@ -141,7 +141,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/label_privacy_policy"
+            android:text="@string/privacy_policy_url_title"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 

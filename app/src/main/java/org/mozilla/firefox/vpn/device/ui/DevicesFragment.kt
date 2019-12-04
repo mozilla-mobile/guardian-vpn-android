@@ -86,7 +86,7 @@ class DevicesFragment : Fragment() {
             (device_list.adapter as? DevicesAdapter)?.setData(uiModel)
         }
 
-        deviceCountView.text = getString(R.string.devices_count, uiModel.devices.size, uiModel.maxDevices)
+        deviceCountView.text = getString(R.string.devices_page_subtitle, uiModel.devices.size, uiModel.maxDevices)
     }
 
     private fun showError() {
@@ -123,10 +123,10 @@ class DevicesFragment : Fragment() {
 
     private fun showDeleteDialog(context: Context, device: DeviceInfo, positiveCallback: () -> Unit) {
         AlertDialog.Builder(context)
-            .setTitle(R.string.devices_remove_dialog_title)
-            .setMessage(getString(R.string.devices_remove_dialog_message, device.name))
-            .setPositiveButton(R.string.remove) { _, _ -> positiveCallback() }
-            .setNegativeButton(android.R.string.cancel) { _, _ -> }
+            .setTitle(R.string.devices_remove_popup_title)
+            .setMessage(getString(R.string.devices_remove_popup_content, device.name))
+            .setPositiveButton(R.string.popup_remove_button_text) { _, _ -> positiveCallback() }
+            .setNegativeButton(R.string.popup_cancel_button_text) { _, _ -> }
             .show()
     }
 }

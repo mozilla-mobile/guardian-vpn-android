@@ -66,10 +66,10 @@ class ServersFragment : BottomSheetDialogFragment() {
 
         viewModel.vpnState.observe(viewLifecycleOwner, Observer { vpnState ->
             connection_text.text = when (vpnState) {
-                is VpnState.Connecting -> getString(R.string.vpn_state_connecting)
-                is VpnState.Disconnecting -> getString(R.string.vpn_state_disconnecting)
-                is VpnState.Switching -> getString(R.string.vpn_state_switching)
-                else -> getString(R.string.label_connection)
+                is VpnState.Connecting -> getString(R.string.hero_text_connecting)
+                is VpnState.Disconnecting -> getString(R.string.hero_text_disconnecting)
+                is VpnState.Switching -> getString(R.string.hero_text_switching)
+                else -> getString(R.string.connection_page_title)
             }
 
             radio_group.isEnabled = when (vpnState) {

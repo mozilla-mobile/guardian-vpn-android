@@ -12,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:title="@string/label_get_help"
+        app:title="@string/get_help_page_title"
         app:titleTextColor="@color/gray50"
         app:titleTextAppearance="@style/TextAppearance.Guardian.Header20"
         app:navigationIcon="@drawable/ic_back" />
@@ -34,7 +34,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/label_contact_us"
+            android:text="@string/contact_url_title"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
@@ -74,7 +74,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/label_help_and_support"
+            android:text="@string/help_support_url_title"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 

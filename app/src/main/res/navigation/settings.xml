@@ -28,18 +28,18 @@
     <fragment
         android:id="@+id/settings_devices"
         android:name="org.mozilla.firefox.vpn.device.ui.DevicesFragment"
-        android:label="@string/label_my_devices"
+        android:label="@string/devices_page_title"
         tools:layout="@layout/fragment_devices" />
 
     <fragment
         android:id="@+id/settings_help"
         android:name="org.mozilla.firefox.vpn.help.HelpFragment"
-        android:label="@string/label_get_help"
+        android:label="@string/get_help_page_title"
         tools:layout="@layout/fragment_help" />
 
     <fragment
         android:id="@+id/settings_about"
         android:name="org.mozilla.firefox.vpn.about.AboutFragment"
-        android:label="@string/label_about"
+        android:label="@string/about_page_title"
         tools:layout="@layout/fragment_about" />
 </navigation>

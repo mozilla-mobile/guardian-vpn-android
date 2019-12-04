@@ -51,7 +51,7 @@
         android:layout_marginEnd="32dp"
         android:background="@drawable/selector_bg_primary_button"
         android:gravity="center"
-        android:text="@string/action_manage_account"
+        android:text="@string/avatar_menu_manage_account"
         android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toBottomOf="@id/profile_email"
@@ -85,7 +85,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/label_my_devices"
+            android:text="@string/devices_page_title"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
@@ -135,7 +135,7 @@
             android:layout_marginStart="16dp"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:text="@string/label_get_help"
+            android:text="@string/get_help_page_title"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
@@ -176,7 +176,7 @@
             android:layout_marginStart="16dp"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:text="@string/label_about"
+            android:text="@string/about_page_title"
             android:textColor="@color/gray50"
             android:textAppearance="@style/TextAppearance.Guardian.Header20" />
 
@@ -191,7 +191,7 @@
         android:paddingEnd="24dp"
         android:gravity="center"
         android:background="@drawable/ripple_rect_radius_4dp"
-        android:text="@string/action_sign_out"
+        android:text="@string/avatar_menu_sign_out"
         android:textColor="@color/red50"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintBottom_toBottomOf="parent"

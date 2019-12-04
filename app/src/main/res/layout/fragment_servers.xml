@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="@string/label_connection"
+        android:text="@string/connection_page_title"
         android:textColor="@color/gray50"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toTopOf="@id/btn_cancel"
