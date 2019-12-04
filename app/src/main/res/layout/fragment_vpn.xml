@@ -48,7 +48,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/bg_country_switch"
+        android:background="@drawable/ripple_contry_switch"
         app:layout_constraintTop_toBottomOf="@id/connection_state_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
