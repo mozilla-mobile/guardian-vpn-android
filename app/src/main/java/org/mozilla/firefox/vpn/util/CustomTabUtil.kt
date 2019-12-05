@@ -1,16 +1,20 @@
 package org.mozilla.firefox.vpn.util
 
 import android.content.ComponentName
+import android.content.Context
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycleObserver {
 
@@ -80,8 +84,40 @@ class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycle
     }
 }
 
-fun Fragment.launchUrl(url: String) {
-    CustomTabsIntent.Builder().apply {
-        enableUrlBarHiding()
-    }.build().launchUrl(requireContext(), url.toUri())
+suspend fun Fragment.launchUrl(url: String): Boolean {
+    return withContext(Dispatchers.Main) {
+        val activity = activity ?: return@withContext false
+        val session = initCustomTabService(activity) ?: return@withContext false
+        launchUrl(activity, session, url)
+        return@withContext true
+    }
+}
+
+private suspend fun initCustomTabService(
+    context: Context
+) = suspendCoroutine<CustomTabsSession?> {
+    val pkg = getTargetPackage(context) ?: return@suspendCoroutine it.resume(null)
+
+    val isSuccess = CustomTabsClient.bindCustomTabsService(context, pkg, object : CustomTabsServiceConnection() {
+
+        override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
+            client.warmup(0)
+            it.resume(client.newSession(null))
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {}
+    })
+
+    if (!isSuccess) {
+        return@suspendCoroutine it.resume(null)
+    }
+}
+
+private fun launchUrl(context: Context, session: CustomTabsSession, url: String) {
+    CustomTabsIntent.Builder(session).build().launchUrl(context, Uri.parse(url))
+}
+
+private fun getTargetPackage(context: Context): String? {
+    val customTabCandidates = listOf("org.mozilla.fenix", "com.android.chrome")
+    return CustomTabsClient.getPackageName(context, customTabCandidates, true)
 }

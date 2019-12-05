@@ -5,8 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_about.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.service.GuardianService
@@ -25,10 +28,14 @@ class AboutFragment : Fragment() {
         }
         version_text.text = BuildConfig.VERSION_NAME
         btn_terms.setOnClickListener {
-            launchUrl(GuardianService.HOST_TERMS)
+            viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
+                launchUrl(GuardianService.HOST_TERMS)
+            }
         }
         btn_policy.setOnClickListener {
-            launchUrl(GuardianService.HOST_PRIVACY)
+            viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
+                launchUrl(GuardianService.HOST_PRIVACY)
+            }
         }
     }
 }
