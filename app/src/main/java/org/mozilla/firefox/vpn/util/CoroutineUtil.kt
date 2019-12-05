@@ -19,3 +19,15 @@ fun <T, R> Flow<T>.flatMap(transform: suspend (T) -> Flow<R>): Flow<R> {
         }
     }
 }
+
+fun <T> Flow<T>.distinctBy(selector: (v1: T, v2: T) -> Boolean): Flow<T> {
+    return flow {
+        var current: T? = null
+        collect { newValue ->
+            if (current == null || selector(current!!, newValue)) {
+                current = newValue
+                emit(newValue)
+            }
+        }
+    }
+}
