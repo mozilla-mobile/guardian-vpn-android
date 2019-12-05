@@ -158,32 +158,32 @@ class VpnViewModel(
 
         class Connected : UIModel(
             Styles.Secure,
-            R.string.vpn_state_online,
-            R.string.vpn_state_online_hint,
+            R.string.hero_text_vpn_on,
+            R.string.hero_subtext_secure_protected,
             true
         )
         class Connecting : UIModel(
             Styles.Secure.copy(switchAlpha = 0.5f),
-            R.string.vpn_state_connecting,
-            R.string.vpn_state_connecting_hint,
+            R.string.hero_text_connecting,
+            R.string.hero_subtext_protected_shortly,
             true
         )
         class Disconnected : UIModel(
             Styles.Insecure,
-            R.string.vpn_state_offline,
-            R.string.vpn_state_offline_hint,
+            R.string.hero_text_vpn_off,
+            R.string.hero_subtext_turn_on,
             false
         )
         class Disconnecting : UIModel(
             Styles.Insecure.copy(switchAlpha = 0.5f),
-            R.string.vpn_state_disconnecting,
-            R.string.vpn_state_disconnecting_hint,
+            R.string.hero_text_disconnecting,
+            R.string.hero_subtext_disconnected_shortly,
             false
         )
         class Switching(val from: String, val to: String) : UIModel(
             Styles.Secure.copy(switchAlpha = 0.5f),
-            R.string.vpn_state_switching,
-            R.string.vpn_state_switching_hint,
+            R.string.hero_text_switching,
+            R.string.hero_subtext_server_switch,
             true
         )
         abstract class WarningState(
@@ -198,15 +198,15 @@ class VpnViewModel(
             true
         )
         class Unstable : WarningState(
-            R.string.vpn_state_unstable,
-            R.string.vpn_state_check_connection,
-            R.string.vpn_state_unstable,
+            R.string.hero_subtext_unstable,
+            R.string.hero_subtext_check_connection,
+            R.string.hero_subtext_unstable,
             R.color.yellow50
         )
         class NoSignal : WarningState(
-            R.string.vpn_state_no_signal,
-            R.string.vpn_state_check_connection,
-            R.string.vpn_state_no_signal,
+            R.string.hero_subtext_no_signal,
+            R.string.hero_subtext_check_connection,
+            R.string.hero_subtext_no_signal,
             R.color.red50
         )
 
