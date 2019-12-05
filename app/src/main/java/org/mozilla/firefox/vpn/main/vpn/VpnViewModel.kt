@@ -198,13 +198,13 @@ class VpnViewModel(
             true
         )
         class Unstable : WarningState(
-            R.string.hero_subtext_unstable,
+            R.string.hero_text_vpn_on,
             R.string.hero_subtext_check_connection,
             R.string.hero_subtext_unstable,
             R.color.yellow50
         )
         class NoSignal : WarningState(
-            R.string.hero_subtext_no_signal,
+            R.string.hero_text_vpn_on,
             R.string.hero_subtext_check_connection,
             R.string.hero_subtext_no_signal,
             R.color.red50
