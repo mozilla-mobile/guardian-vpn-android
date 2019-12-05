@@ -40,9 +40,7 @@ class DevicesViewModel(
         while (true) {
             refreshUserInfoUseCase().checkAuth(
                 authorized = {
-                    if (userStates.state.shouldRegisterDevice()) {
-                        registerNewDevice()
-                    }
+                    registerIfNeeded()
                     emit(DevicesUiState.StateLoaded(buildDevicesUiModel()))
                 },
                 unauthorized = {
@@ -70,6 +68,7 @@ class DevicesViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             refreshUserInfoUseCase().checkAuth(
                 authorized = {
+                    registerIfNeeded()
                     refreshExplicitly.postValue(DevicesUiState.StateLoaded(buildDevicesUiModel()))
                 },
                 unauthorized = {
@@ -89,6 +88,7 @@ class DevicesViewModel(
             removeDevicesUseCase(device.pubKey).checkAuth(
                 authorized = {
                     removeDeletingDevice(device)
+                    registerIfNeeded()
                 },
                 unauthorized = {
                     logoutUseCase()
@@ -97,6 +97,12 @@ class DevicesViewModel(
             notifyUserStateUseCase()
 
             refreshDevices()
+        }
+    }
+
+    private suspend fun registerIfNeeded() = withContext(Dispatchers.IO) {
+        if (userStates.state.shouldRegisterDevice()) {
+            registerNewDevice()
         }
     }
 
