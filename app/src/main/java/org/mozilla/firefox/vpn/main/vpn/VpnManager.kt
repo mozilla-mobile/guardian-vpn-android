@@ -138,7 +138,7 @@ class VpnManager(
         return liveData(Dispatchers.IO, 0) {
             emit(VpnState.Switching(oldServer, newServer))
 
-            if (verifyConnected()) {
+            if (verifySwitched()) {
                 emit(VpnState.Connected)
                 connectRequest.postValue(ConnectRequest.ForceConnected)
             } else {
@@ -222,6 +222,11 @@ class VpnManager(
         // TODO: Now we just simply delay 1 second and report connected. Maybe we should block and
         // test until the internet is reachable before returning true
         delay(1000)
+        return true
+    }
+
+    private suspend fun verifySwitched(): Boolean {
+        delay(1500)
         return true
     }
 

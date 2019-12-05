@@ -89,16 +89,9 @@ class ConnectionStateView : CardView {
     }
 
     private fun initGlobeAnimation(oldModel: UIModel, newModel: UIModel) {
-        globe.frame = when (newModel) {
-            is UIModel.Disconnected -> 0
-            is UIModel.Connecting -> 15
-            is UIModel.Unstable,
-            is UIModel.NoSignal,
-            is UIModel.WarningState,
-            is UIModel.Connected -> 30
-            is UIModel.Switching -> 45
-            is UIModel.Disconnecting -> 75
-        }
+        val fromAnyConnectedState = oldModel is UIModel.Connected ||
+                oldModel is UIModel.Unstable ||
+                oldModel is UIModel.NoSignal
 
         if (oldModel is UIModel.Disconnected && newModel is UIModel.Connecting) {
             globe.playOnce(0, 14)
@@ -108,10 +101,24 @@ class ConnectionStateView : CardView {
             globe.playOnce(30, 44)
         } else if (oldModel is UIModel.Switching && newModel is UIModel.Connected) {
             globe.playOnce(45, 59)
-        } else if (oldModel is UIModel.Connected && newModel is UIModel.Disconnecting) {
+        } else if (fromAnyConnectedState && newModel is UIModel.Disconnecting) {
             globe.playOnce(60, 74)
         } else if (oldModel is UIModel.Disconnecting && newModel is UIModel.Disconnected) {
             globe.playOnce(75, 89)
+        } else if (fromAnyConnectedState && newModel is UIModel.Switching) {
+            globe.playOnce(30, 44)
+        } else {
+            val frame = when (newModel) {
+                is UIModel.Disconnected -> 0
+                is UIModel.Connecting -> 15
+                is UIModel.Unstable,
+                is UIModel.NoSignal,
+                is UIModel.WarningState,
+                is UIModel.Connected -> 30
+                is UIModel.Switching -> 30
+                is UIModel.Disconnecting -> 75
+            }
+            globe.fixAtFrame(frame)
         }
     }
 
@@ -120,9 +127,7 @@ class ConnectionStateView : CardView {
             is UIModel.Connecting,
             is UIModel.Disconnected,
             is UIModel.NoSignal -> {
-                ripple.pauseAnimation()
-                ripple.setMinAndMaxFrame(0, 0)
-                ripple.progress = 0f
+                ripple.fixAtFrame(0)
             }
         }
 
@@ -168,6 +173,12 @@ fun LottieAnimationView.playOnce(min: Int, max: Int): LottieAnimationView {
     setMinAndMaxFrame(min, max)
     playAnimation()
     return this
+}
+
+fun LottieAnimationView.fixAtFrame(frame: Int) {
+    pauseAnimation()
+    setMinAndMaxFrame(frame, frame)
+    progress = 0f
 }
 
 fun LottieAnimationView.then(block: LottieAnimationView.() -> Unit) {
