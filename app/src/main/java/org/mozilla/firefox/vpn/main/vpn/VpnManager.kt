@@ -65,7 +65,7 @@ class VpnManager(
 
     override val stateObservable: LiveData<VpnState> = _stateObservable
         .map { it }
-        .distinctBy { v1, v2 -> v1::class != v2::class }
+        .distinctBy { v1, v2 -> v1 != v2 }
 
     private var lastSignalTime = SystemClock.elapsedRealtime()
     private var lastStableTime = SystemClock.elapsedRealtime()
