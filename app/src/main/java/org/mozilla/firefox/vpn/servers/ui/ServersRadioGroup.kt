@@ -26,6 +26,7 @@ class ServersRadioGroup : RadioGroup {
     private var lastAddedCountry: String = ""
     private var listener: OnServerCheckListener? = null
 
+    private val countryFolderViewMap = mutableMapOf<CountryInfo, CountryFolderView>()
     private val serverViewMap = mutableMapOf<ServerInfo, RadioButton>()
 
     init {
@@ -37,6 +38,7 @@ class ServersRadioGroup : RadioGroup {
     }
 
     fun setServers(servers: List<ServerInfo>) {
+        countryFolderViewMap.clear()
         serverViewMap.clear()
         servers.forEachIndexed { index, server ->
             if (lastAddedCountry != server.country.name) {
@@ -61,6 +63,9 @@ class ServersRadioGroup : RadioGroup {
                 scroll_view.scrollTo(0, it.y.toInt() - scroll_view.measuredHeight / 2)
             }
         }
+        countryFolderViewMap[server.country]?.let {
+            it.performClick()
+        }
     }
 
     private fun addCountryFolder(countryInfo: CountryInfo) {
@@ -68,6 +73,7 @@ class ServersRadioGroup : RadioGroup {
         countryFolderView.setCountry(countryInfo)
         countryFolderView.setOnExpandListener(onExpandListener)
         servers_group.addView(countryFolderView, LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+        countryFolderViewMap[countryInfo] = countryFolderView
     }
 
     private fun addServerRadioButton(serverInfo: ServerInfo, index: Int) {
@@ -76,6 +82,7 @@ class ServersRadioGroup : RadioGroup {
             tag = serverInfo.country.code
             text = serverInfo.city.name
             setPadding(radioButtonTextPadding, radioButtonVerticalPadding, 0, radioButtonVerticalPadding)
+            visibility = View.GONE
             setOnClickListener {
                 listener?.onCheck(serverInfo)
             }
