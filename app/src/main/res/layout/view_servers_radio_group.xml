@@ -8,6 +8,7 @@
     <RadioGroup
         android:id="@+id/servers_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp" />
 
 </androidx.core.widget.NestedScrollView>
