@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import java.util.concurrent.Executors
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,7 +42,7 @@ class DevicesViewModel(
         while (true) {
             refreshUserInfoUseCase().checkAuth(
                 authorized = {
-                    registerIfNeeded()
+                    registerBlocking()
                     emit(DevicesUiState.StateLoaded(buildDevicesUiModel()))
                 },
                 unauthorized = {
@@ -59,6 +61,9 @@ class DevicesViewModel(
         addSource(refreshPeriodically) { value = it }
     }
 
+    private val singleThreadDispatcher = Executors.newSingleThreadExecutor()
+        .asCoroutineDispatcher()
+
     init {
         loadDevicesList()
     }
@@ -68,7 +73,7 @@ class DevicesViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             refreshUserInfoUseCase().checkAuth(
                 authorized = {
-                    registerIfNeeded()
+                    registerBlocking()
                     refreshExplicitly.postValue(DevicesUiState.StateLoaded(buildDevicesUiModel()))
                 },
                 unauthorized = {
@@ -88,7 +93,7 @@ class DevicesViewModel(
             removeDevicesUseCase(device.pubKey).checkAuth(
                 authorized = {
                     removeDeletingDevice(device)
-                    registerIfNeeded()
+                    registerBlocking()
                 },
                 unauthorized = {
                     logoutUseCase()
@@ -100,7 +105,11 @@ class DevicesViewModel(
         }
     }
 
-    private suspend fun registerIfNeeded() = withContext(Dispatchers.IO) {
+    private suspend fun registerBlocking() = withContext(singleThreadDispatcher) {
+        registerIfNeeded()
+    }
+
+    private suspend fun registerIfNeeded() {
         if (userStates.state.shouldRegisterDevice()) {
             registerNewDevice()
         }
