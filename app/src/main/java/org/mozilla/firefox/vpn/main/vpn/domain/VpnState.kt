@@ -16,7 +16,7 @@ sealed class VpnState {
     object Connected : VpnState()
     object Disconnecting : VpnState()
     object Disconnected : VpnState()
-    class Switching(val oldServer: ServerInfo, val newServer: ServerInfo) : VpnState()
+    data class Switching(val oldServer: ServerInfo, val newServer: ServerInfo) : VpnState()
     object Unstable : VpnState()
     object NoSignal : VpnState()
 }

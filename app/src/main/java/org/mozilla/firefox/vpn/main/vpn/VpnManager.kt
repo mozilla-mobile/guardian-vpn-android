@@ -30,6 +30,7 @@ import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.servers.domain.createConfig
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.PingUtil
+import org.mozilla.firefox.vpn.util.distinctBy
 import org.mozilla.firefox.vpn.util.flatMap
 import org.mozilla.firefox.vpn.util.measureElapsedRealtime
 
@@ -62,7 +63,9 @@ class VpnManager(
         }
     }
 
-    override val stateObservable: LiveData<VpnState> = _stateObservable.map { it }
+    override val stateObservable: LiveData<VpnState> = _stateObservable
+        .map { it }
+        .distinctBy { v1, v2 -> v1 != v2 }
 
     private var lastSignalTime = SystemClock.elapsedRealtime()
     private var lastStableTime = SystemClock.elapsedRealtime()
