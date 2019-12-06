@@ -18,7 +18,7 @@ class CountryFolderView : LinearLayout {
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private var isFolderOpen = true
+    private var isFolderOpen = false
 
     private var listener: OnExpandListener? = null
 
@@ -35,7 +35,7 @@ class CountryFolderView : LinearLayout {
         country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(country.code))
         country_name.text = country.name
 
-        country_folder.setOnClickListener {
+        setOnClickListener {
             if (isFolderOpen) {
                 isFolderOpen = false
                 dropdown_arrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_arrow_close))
