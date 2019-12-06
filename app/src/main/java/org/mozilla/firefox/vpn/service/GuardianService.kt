@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.mozilla.firefox.vpn.BuildConfig
+import org.mozilla.firefox.vpn.const.ENDPOINT
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
@@ -58,7 +59,7 @@ interface GuardianService {
     ): Response<Unit>
 
     companion object {
-        const val HOST_GUARDIAN = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
+        const val HOST_GUARDIAN = ENDPOINT
         const val HOST_FXA = "$HOST_GUARDIAN/r/vpn/account"
         const val HOST_FEEDBACK = "$HOST_GUARDIAN/r/vpn/client/feedback"
         const val HOST_SUPPORT = "$HOST_GUARDIAN/r/vpn/support"
