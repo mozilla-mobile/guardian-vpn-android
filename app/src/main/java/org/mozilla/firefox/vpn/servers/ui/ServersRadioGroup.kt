@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.view_servers_radio_group.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.servers.data.CountryInfo
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
+import org.mozilla.firefox.vpn.util.colorStateList
 
 class ServersRadioGroup : RadioGroup {
 
@@ -83,6 +84,7 @@ class ServersRadioGroup : RadioGroup {
             text = serverInfo.city.name
             setPadding(radioButtonTextPadding, radioButtonVerticalPadding, 0, radioButtonVerticalPadding)
             visibility = View.GONE
+            buttonTintList = context.colorStateList(R.color.radio_button)
             setOnClickListener {
                 listener?.onCheck(serverInfo)
             }
