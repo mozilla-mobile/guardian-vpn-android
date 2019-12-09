@@ -68,7 +68,10 @@ class VpnManager(
             }
         }
 
-        override fun onServiceDown() {
+        override fun onServiceDown(isRevoked: Boolean) {
+            if (isRevoked) {
+                connectRequest.postValue(ConnectRequest.ForceDisconnect)
+            }
             this@VpnManager.serviceProxy = null
             upTime = 0L
         }
