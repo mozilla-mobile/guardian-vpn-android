@@ -14,7 +14,8 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
-        android:src="@drawable/ic_arrow_close" />
+        android:src="@drawable/ic_arrow_close"
+        android:tint="@color/gray40" />
 
     <TextView
         android:id="@+id/country_emoji"
