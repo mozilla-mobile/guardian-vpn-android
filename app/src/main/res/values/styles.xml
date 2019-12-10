@@ -51,9 +51,6 @@
     <style name="TextAppearance.Guardian.Inter.SemiBold" parent="TextAppearance.AppCompat.Body1">
         <item name="android:fontFamily">@font/inter_semibold</item>
     </style>
-    <style name="TextAppearance.Guardian.Twemoji" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:fontFamily">@font/twemoji_compat</item>
-    </style>
 
     <!-- TextAppearance defined in Guardian -->
     <style name="TextAppearance.Guardian.Title10" parent="TextAppearance.Guardian.Metropolis.Regular">

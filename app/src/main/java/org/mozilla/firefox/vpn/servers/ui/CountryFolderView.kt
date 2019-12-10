@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.view_country_folder.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.servers.data.CountryInfo
-import org.mozilla.firefox.vpn.util.EmojiUtil
+import org.mozilla.firefox.vpn.util.getCountryFlag
 
 class CountryFolderView : LinearLayout {
 
@@ -32,7 +32,7 @@ class CountryFolderView : LinearLayout {
 
     fun setCountry(country: CountryInfo) {
 
-        country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(country.code))
+        country_flag.setImageResource(context.getCountryFlag(country.code))
         country_name.text = country.name
 
         setOnClickListener {

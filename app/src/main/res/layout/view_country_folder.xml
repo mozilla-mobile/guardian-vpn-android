@@ -17,14 +17,13 @@
         android:src="@drawable/ic_arrow_close"
         android:tint="@color/gray40" />
 
-    <TextView
-        android:id="@+id/country_emoji"
+    <ImageView
+        android:id="@+id/country_flag"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
-        android:gravity="center"
-        android:textSize="15sp"
-        android:textAppearance="@style/TextAppearance.Guardian.Twemoji" />
+        android:padding="4dp"
+        tools:src="@drawable/ic_1f1e8_1f1e6" />
 
     <TextView
         android:id="@+id/country_name"
