@@ -15,7 +15,7 @@ import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
-import org.mozilla.firefox.vpn.util.EmojiUtil
+import org.mozilla.firefox.vpn.util.getCountryFlag
 import org.mozilla.firefox.vpn.util.viewModel
 
 class VpnFragment : Fragment() {
@@ -130,7 +130,7 @@ class VpnFragment : Fragment() {
     private fun observeServers() {
         vpnViewModel.selectedServer.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
-                country_emoji.text = EmojiUtil.loadEmoji(EmojiUtil.getCountryFlagCodePoint(it.country.code))
+                country_flag.setImageResource(context!!.getCountryFlag(it.country.code))
                 country_name.text = it.city.name
             }
         })
