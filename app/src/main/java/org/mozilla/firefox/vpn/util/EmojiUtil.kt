@@ -8,7 +8,7 @@ import java.util.Locale
 
 object EmojiUtil {
 
-    fun initEmoji(context: Context) {
+    fun init(context: Context) {
         val config = BundledEmojiCompatConfig(context)
         EmojiCompat.init(config)
     }

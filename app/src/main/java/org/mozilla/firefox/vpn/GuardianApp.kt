@@ -2,7 +2,9 @@ package org.mozilla.firefox.vpn
 
 import android.app.Application
 import android.content.Context
+import org.mozilla.firefox.vpn.main.vpn.VpnNotificationSender
 import org.mozilla.firefox.vpn.util.EmojiUtil
+import org.mozilla.firefox.vpn.util.NotificationUtil
 
 class GuardianApp : Application() {
 
@@ -11,12 +13,16 @@ class GuardianApp : Application() {
     }
 
     lateinit var guardianComponent: GuardianComponent
+    lateinit var vpnNotificationSender: VpnNotificationSender
 
     override fun onCreate() {
         super.onCreate()
 
         guardianComponent = GuardianComponentImpl(coreComponent)
-        EmojiUtil.initEmoji(this)
+        EmojiUtil.init(this)
+        NotificationUtil.init(this)
+
+        vpnNotificationSender = VpnNotificationSender(this, guardianComponent.vpnManager)
     }
 }
 
