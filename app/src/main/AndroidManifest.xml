@@ -39,7 +39,7 @@
             android:screenOrientation="portrait" />
 
         <service
-            android:name="com.wireguard.android.backend.TunnelManager$VpnService"
+            android:name="org.mozilla.firefox.vpn.main.vpn.GuardianVpnService"
             android:permission="android.permission.BIND_VPN_SERVICE">
             <intent-filter>
                 <action android:name="android.net.VpnService" />

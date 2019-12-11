@@ -1,18 +1,17 @@
 package org.mozilla.firefox.vpn.main.vpn
 
-import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.net.VpnService.Builder
 import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
+import com.wireguard.android.backend.ServiceProxy
 import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.backend.TunnelManager
+import com.wireguard.android.backend.VpnServiceStateListener
+import com.wireguard.android.backend.isUp
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
-import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
@@ -38,18 +36,8 @@ class VpnManager(
     private val appContext: Context
 ) : VpnStateProvider {
 
-    private val tunnelManager = TunnelManager(appContext, object : TunnelManager.VpnBuilderProvider {
-        override fun patchBuilder(builder: Builder): Builder {
-            val configureIntent = Intent()
-            // TODO: Fix this weird dependency
-            configureIntent.component = ComponentName(appContext, MainActivity::class.java)
-            configureIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            builder.setConfigureIntent(
-                PendingIntent.getActivity(appContext, 0, configureIntent, 0)
-            )
-            return builder
-        }
-    })
+    val tunnelManager = TunnelManager(GuardianVpnService::class.java)
+    var serviceProxy: ServiceProxy? = null
 
     private val connectRequest = MutableLiveData<ConnectRequest>()
 
@@ -70,8 +58,27 @@ class VpnManager(
     private var lastSignalTime = SystemClock.elapsedRealtime()
     private var lastStableTime = SystemClock.elapsedRealtime()
 
+    private var upTime = 0L
+
+    private val serviceStateListener = object : VpnServiceStateListener {
+        override fun onServiceUp(proxy: ServiceProxy) {
+            this@VpnManager.serviceProxy = proxy
+            if (upTime == 0L) {
+                upTime = SystemClock.elapsedRealtime()
+            }
+        }
+
+        override fun onServiceDown(isRevoked: Boolean) {
+            if (isRevoked) {
+                connectRequest.postValue(ConnectRequest.ForceDisconnect)
+            }
+            this@VpnManager.serviceProxy = null
+            upTime = 0L
+        }
+    }
+
     fun isGranted(): Boolean {
-        return tunnelManager.isGranted()
+        return GuardianVpnService.getPermissionIntent(appContext) == null
     }
 
     suspend fun connect(
@@ -82,8 +89,11 @@ class VpnManager(
             isConnected() -> connectRequest.value = ConnectRequest.ForceConnected
             else -> {
                 connectRequest.value = ConnectRequest.Connect
-                val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(server))
-                tunnelManager.tunnelUp(tunnel)
+                tunnelManager.turnOn(
+                    appContext,
+                    Tunnel(TUNNEL_NAME, currentDevice.createConfig(server)),
+                    serviceStateListener
+                )
             }
         }
     }
@@ -94,22 +104,25 @@ class VpnManager(
         currentDevice: CurrentDevice
     ) = withContext(Dispatchers.Main.immediate) {
         connectRequest.value = ConnectRequest.Switch(oldServer, newServer)
-        val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer))
-        tunnelManager.tunnelUp(tunnel)
+        tunnelManager.turnOn(
+            appContext,
+            Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer)),
+            serviceStateListener
+        )
     }
 
     suspend fun disconnect() = withContext(Dispatchers.Main.immediate) {
-        tunnelManager.tunnelDown()
+        tunnelManager.turnOff(appContext)
         connectRequest.value = ConnectRequest.Disconnect
     }
 
     suspend fun shutdownConnection() = withContext(Dispatchers.Main.immediate) {
-        tunnelManager.tunnelDown()
+        tunnelManager.turnOff(appContext)
         connectRequest.value = ConnectRequest.ForceDisconnect
     }
 
     fun isConnected(): Boolean {
-        return tunnelManager.isConnected()
+        return tunnelManager.tunnel?.isUp() ?: false
     }
 
     override fun getState(): VpnState {
@@ -121,7 +134,10 @@ class VpnManager(
     }
 
     fun getDuration(): Long {
-        return tunnelManager.upDuration
+        if (upTime == 0L || tunnelManager.tunnel?.isUp() != true) {
+            return 0L
+        }
+        return SystemClock.elapsedRealtime() - upTime
     }
 
     private fun monitorConnectedState(): LiveData<VpnState> {
@@ -164,7 +180,7 @@ class VpnManager(
         lastStableTime = SystemClock.elapsedRealtime()
 
         return liveData(Dispatchers.IO, 0) {
-            val tunnel = tunnelManager.currentTunnel ?: return@liveData
+            val tunnel = tunnelManager.tunnel ?: return@liveData
 
             coroutineScope {
                 launch(Dispatchers.IO) { runPingLoop(tunnel) }
@@ -181,11 +197,17 @@ class VpnManager(
 
     private fun rxChangedFlow(tunnel: Tunnel): Flow<Boolean> {
         return flow {
-            var prevRx = tunnelManager.getStatistics(tunnel).totalRx()
+            val serviceProxy = serviceProxy ?: run {
+                emit(false)
+                return@flow
+            }
+
+            var prevRx = serviceProxy.getStatistic(tunnel).totalRx()
             while (true) {
                 delay(RX_DETECT_INTERVAL_MS)
-                emit(tunnelManager.getStatistics(tunnel).totalRx() > prevRx)
-                prevRx = tunnelManager.getStatistics(tunnel).totalRx()
+                val newRx = serviceProxy.getStatistic(tunnel).totalRx()
+                emit(newRx > prevRx)
+                prevRx = newRx
             }
         }
     }
