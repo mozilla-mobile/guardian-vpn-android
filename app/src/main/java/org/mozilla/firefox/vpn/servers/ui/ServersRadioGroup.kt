@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.core.widget.TextViewCompat
 import kotlinx.android.synthetic.main.view_servers_radio_group.view.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.servers.data.CountryInfo
@@ -82,6 +83,7 @@ class ServersRadioGroup : RadioGroup {
             id = index
             tag = serverInfo.country.code
             text = serverInfo.city.name
+            TextViewCompat.setTextAppearance(this, R.style.TextAppearance_Guardian_Body10)
             setPadding(radioButtonTextPadding, radioButtonVerticalPadding, 0, radioButtonVerticalPadding)
             visibility = View.GONE
             buttonTintList = context.colorStateList(R.color.radio_button)
