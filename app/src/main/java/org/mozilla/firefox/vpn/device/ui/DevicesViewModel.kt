@@ -94,14 +94,12 @@ class DevicesViewModel(
                 authorized = {
                     removeDeletingDevice(device)
                     registerBlocking()
+                    refreshDevices()
                 },
                 unauthorized = {
                     logoutUseCase()
                 }
             )
-            notifyUserStateUseCase()
-
-            refreshDevices()
         }
     }
 
