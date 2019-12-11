@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -95,10 +96,32 @@ class ServersFragment : BottomSheetDialogFragment() {
     private val onServerCheckListener = object : ServersRadioGroup.OnServerCheckListener {
         override fun onCheck(serverInfo: ServerInfo) {
             viewModel.executeAction(ServersViewModel.Action.Switch(serverInfo))
+            view?.postDelayed({ collapseSmoothly() }, DURATION_RADIO_CHECK_ANIM)
         }
+    }
+
+    private fun collapseSmoothly() {
+        if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            return
+        }
+
+        val bottomSheet = dialog?.findViewById<FrameLayout>(
+            com.google.android.material.R.id.design_bottom_sheet
+        ) ?: return
+
+        val behavior = try {
+            BottomSheetBehavior.from(bottomSheet)
+        } catch (e: IllegalArgumentException) {
+            return
+        }
+
+        behavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     companion object {
         fun newInstance(): ServersFragment = ServersFragment()
+
+        /** Refer to btn_radio_material_anim.xml */
+        private const val DURATION_RADIO_CHECK_ANIM = 483L
     }
 }
