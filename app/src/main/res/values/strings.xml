@@ -1,6 +1,6 @@
 <resources>
     <!-- Application -->
-    <string name="application_name">Firefox Private Network</string>
+    <string name="application_name">Firefox VPN</string>
     <string name="application_description">A fast, secure and easy to use VPN (Virtual Private Network).</string>
 
     <!-- Pages -->
@@ -223,7 +223,7 @@
     <string name="entrance_title">Firefox Private Network</string>
     <string name="entrance_description">A fast, secure and easy to use VPN\n(Virtual Private Network).</string>
     <string name="onboarding_logged_out">Logged out and device removed.</string>
-    <string name="vpn_title">Private Network</string>
+    <string name="vpn_title">Firefox Private Network</string>
     <string name="vpn_state_separator" translatable="false">&#8226;</string>
     <string name="vpn_country_switch_hint">Select connection</string>
     <string name="label_guardian_vpn">Guardian VPN</string>
