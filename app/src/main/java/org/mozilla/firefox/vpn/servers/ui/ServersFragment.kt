@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -44,12 +45,19 @@ class ServersFragment : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.let {
-            val bottomSheet = it.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
-            val behavior = BottomSheetBehavior.from(bottomSheet)
-            behavior.setBottomSheetCallback(bottomSheetBehaviorCallback)
-            behavior.peekHeight = 0
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            val bottomSheet = it.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet) ?: return@let
+            val params = (bottomSheet.layoutParams as? CoordinatorLayout.LayoutParams) ?: return@let
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT
+
+            if (params.behavior !is ServersBottomSheetBehavior) {
+                params.behavior = ServersBottomSheetBehavior<FrameLayout>()
+            }
+
+            (params.behavior as? BottomSheetBehavior)?.apply {
+                setBottomSheetCallback(bottomSheetBehaviorCallback)
+                peekHeight = 0
+                state = BottomSheetBehavior.STATE_EXPANDED
+            }
         }
     }
 
