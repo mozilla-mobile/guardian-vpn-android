@@ -11,6 +11,7 @@ import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.service.UnknownErrorBody
 import org.mozilla.firefox.vpn.service.UnknownException
 import org.mozilla.firefox.vpn.service.User
+import org.mozilla.firefox.vpn.service.Versions
 import org.mozilla.firefox.vpn.service.handleError
 import org.mozilla.firefox.vpn.service.resolveBody
 import org.mozilla.firefox.vpn.service.toErrorBody
@@ -102,6 +103,17 @@ class UserRepository(
         } catch (e: UnknownHostException) {
             Result.Fail(NetworkException)
         } catch (e: Exception) {
+            Result.Fail(UnknownException("Unknown exception=$e"))
+        }
+    }
+
+    suspend fun getVersions(): Result<Versions> {
+        return try {
+            val response = guardianService.getVersions()
+            response.resolveBody()
+        } catch (e: UnknownHostException) {
+            Result.Fail(NetworkException)
+        } catch (e: java.lang.Exception) {
             Result.Fail(UnknownException("Unknown exception=$e"))
         }
     }
