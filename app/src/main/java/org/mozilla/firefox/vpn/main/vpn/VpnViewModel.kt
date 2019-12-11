@@ -11,8 +11,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
+import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessage
+import org.mozilla.firefox.vpn.main.vpn.domain.SetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
@@ -20,6 +23,8 @@ import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
+import org.mozilla.firefox.vpn.service.Version
+import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
 import org.mozilla.firefox.vpn.util.onSuccess
 import org.mozilla.firefox.vpn.util.then
 
@@ -30,7 +35,10 @@ class VpnViewModel(
     selectedServerProvider: SelectedServerProvider,
     private val getServersUseCase: GetServersUseCase,
     private val getSelectedServerUseCase: GetSelectedServerUseCase,
-    private val currentDeviceUseCase: CurrentDeviceUseCase
+    private val currentDeviceUseCase: CurrentDeviceUseCase,
+    private val getVersionsUseCase: GetVersionsUseCase,
+    private val getLatestUpdateMessage: GetLatestUpdateMessage,
+    private val setLatestUpdateMessageUseCase: SetLatestUpdateMessageUseCase
 ) : AndroidViewModel(application) {
 
     private val initialServer = MutableLiveData<ServerInfo>()
@@ -60,6 +68,20 @@ class VpnViewModel(
             }
         }
     }
+
+    val updateAvailable: LiveData<Version?>
+        get() = liveData(Dispatchers.IO) {
+            getVersionsUseCase().onSuccess {
+                val latest = it.latest
+                val latestVersion = latest.version.toInt()
+                val shown = getLatestUpdateMessage() >= latestVersion
+                if (latestVersion > BuildConfig.VERSION_CODE && !shown) {
+                    emit(latest)
+                } else {
+                    emit(null)
+                }
+            }
+        }
 
     /* UIState that triggered by vpn state changed */
     private val _vpnState = vpnStateProvider.stateObservable.map {
@@ -136,6 +158,10 @@ class VpnViewModel(
         viewModelScope.launch(Dispatchers.Main.immediate) {
             vpnManager.disconnect()
         }
+    }
+
+    fun onUpdateMessageDismiss(version: Version) {
+        setLatestUpdateMessageUseCase(version)
     }
 
     sealed class UIState {

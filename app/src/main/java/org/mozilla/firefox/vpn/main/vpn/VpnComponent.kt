@@ -3,9 +3,12 @@ package org.mozilla.firefox.vpn.main.vpn
 import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
+import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessage
+import org.mozilla.firefox.vpn.main.vpn.domain.SetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
+import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
 
 interface VpnComponent {
     val viewModel: VpnViewModel
@@ -24,6 +27,9 @@ class VpnComponentImpl(
             selectedServerProvider = selectedServerProvider,
             getServersUseCase = GetServersUseCase(userRepo, serverRepo),
             getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo),
-            currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver)
+            currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
+            getVersionsUseCase = GetVersionsUseCase(userRepo),
+            setLatestUpdateMessageUseCase = SetLatestUpdateMessageUseCase(prefs),
+            getLatestUpdateMessage = GetLatestUpdateMessage(prefs)
         )
 }

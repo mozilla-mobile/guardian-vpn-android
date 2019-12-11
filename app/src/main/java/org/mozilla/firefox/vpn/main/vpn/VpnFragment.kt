@@ -1,7 +1,10 @@
 package org.mozilla.firefox.vpn.main.vpn
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +18,8 @@ import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
+import org.mozilla.firefox.vpn.service.Version
+import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.util.getCountryFlag
 import org.mozilla.firefox.vpn.util.viewModel
 
@@ -46,6 +51,12 @@ class VpnFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeState()
         observeServers()
+
+        vpnViewModel.updateAvailable.observe(viewLifecycleOwner, Observer { version ->
+            version
+                ?.let { showUpdateMessage(view.context, it) }
+                ?: dismissUpdateMessage()
+        })
 
         connection_state_view.onSwitchListener = { isChecked ->
             if (isChecked) {
@@ -134,5 +145,46 @@ class VpnFragment : Fragment() {
                 country_name.text = it.city.name
             }
         })
+    }
+
+    private fun showUpdateMessage(context: Context, version: Version) {
+        val messageView = InAppNotificationView.inflate(
+            context,
+            InAppNotificationView.Config(
+                style = InAppNotificationView.Style.Blue,
+                text = resources.getString(R.string.toast_update_version_message_1),
+                textAction = InAppNotificationView.TextAction(
+                    text = resources.getString(R.string.update_update_button_text),
+                    action = {
+                        launchPlayStore(context)
+                    }),
+                closeAction = {
+                    vpnViewModel.onUpdateMessageDismiss(version)
+                    dismissUpdateMessage()
+                }
+            )
+        )
+        message_container.addView(messageView)
+        message_container.visibility = View.VISIBLE
+    }
+
+    private fun dismissUpdateMessage() {
+        message_container.visibility = View.GONE
+        message_container.removeAllViews()
+    }
+
+    private fun launchPlayStore(context: Context) {
+        val intent = try {
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=${context.packageName}")
+            )
+        } catch (e: ActivityNotFoundException) {
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
+            )
+        }
+        context.startActivity(intent)
     }
 }

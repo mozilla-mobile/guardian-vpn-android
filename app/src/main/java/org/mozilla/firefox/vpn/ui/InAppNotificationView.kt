@@ -1,7 +1,14 @@
 package org.mozilla.firefox.vpn.ui
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
+import android.text.Spannable
 import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.view.View
 import kotlinx.android.synthetic.main.view_in_app_notification.view.*
@@ -27,17 +34,34 @@ object InAppNotificationView {
 
     private fun initTextAction(view: View, config: Config) {
         val action = config.textAction ?: run {
-            view.action_text.visibility = View.GONE
             return
         }
 
-        view.action_text.setTextColor(view.context.color(config.style.textColorId))
-        val spanned = SpannableString(action.text).apply {
-            setSpan(UnderlineSpan(), 0, action.text.length, 0)
+        val actionText = action.text
+        val text = "${view.text.text} $actionText"
+        val spannable = SpannableString(text)
+        val start = view.text.text.length + 1
+        val end = start + actionText.length
+
+        spannable.setSpan(UnderlineSpan(), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+
+        val boldSpan = StyleSpan(Typeface.BOLD)
+        spannable.setSpan(boldSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+
+        val clickSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                action.action()
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                ds.color = Color.WHITE
+            }
         }
-        view.action_text.text = spanned
-        view.action_text.setOnClickListener { action.action() }
-        view.action_text.visibility = View.VISIBLE
+        spannable.setSpan(clickSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+
+        view.text.movementMethod = LinkMovementMethod.getInstance()
+
+        view.text.text = spannable
     }
 
     private fun initCloseButton(view: View, config: Config) {
