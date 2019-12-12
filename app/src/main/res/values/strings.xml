@@ -1,6 +1,6 @@
 <resources>
     <!-- Application -->
-    <string name="application_name">Firefox Private Network</string>
+    <string name="application_name">Firefox Private Network Debug</string>
     <string name="application_description">A fast, secure and easy to use VPN (Virtual Private Network).</string>
 
     <!-- Pages -->
