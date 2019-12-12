@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="11dp"
-        android:text="@string/vpn_title"
+        android:text="@string/application_name"
         android:textColor="@color/gray50"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toTopOf="@id/app_icon"

@@ -19,8 +19,10 @@
         <activity
             android:name="org.mozilla.firefox.vpn.splash.SplashActivity"
             android:exported="true"
+            android:label="@string/launcher_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Splash">
+            android:theme="@style/AppTheme.Splash"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,13 +33,15 @@
             android:name="org.mozilla.firefox.vpn.onboarding.OnboardingActivity"
             android:exported="false"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name="org.mozilla.firefox.vpn.main.MainActivity"
             android:exported="false"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <service
             android:name="org.mozilla.firefox.vpn.main.vpn.GuardianVpnService"
