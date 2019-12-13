@@ -13,6 +13,7 @@ import android.text.style.UnderlineSpan
 import android.view.View
 import kotlinx.android.synthetic.main.view_in_app_notification.view.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.color
 import org.mozilla.firefox.vpn.util.tint
 
@@ -29,7 +30,7 @@ object InAppNotificationView {
 
     private fun initText(view: View, config: Config) {
         view.text.setTextColor(view.context.color(config.style.textColorId))
-        view.text.text = config.text
+        view.text.text = config.text.resolve(view.context)
     }
 
     private fun initTextAction(view: View, config: Config) {
@@ -37,7 +38,7 @@ object InAppNotificationView {
             return
         }
 
-        val actionText = action.text
+        val actionText = action.text.resolve(view.context) ?: return
         val text = "${view.text.text} $actionText"
         val spannable = SpannableString(text)
         val start = view.text.text.length + 1
@@ -54,7 +55,7 @@ object InAppNotificationView {
             }
 
             override fun updateDrawState(ds: TextPaint) {
-                ds.color = Color.WHITE
+                ds.color = config.style.textColorId
             }
         }
         spannable.setSpan(clickSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
@@ -80,13 +81,17 @@ object InAppNotificationView {
 
     data class Config(
         val style: Style = Style.Green,
-        val text: String,
-        val textAction: TextAction? = null,
-        val closeAction: (() -> Unit)? = null
-    )
+        val text: StringResource,
+        var textAction: TextAction? = null,
+        var closeAction: (() -> Unit)? = null
+    ) {
+        companion object {
+            fun warning(text: StringResource) = Config(Style.Red, text)
+        }
+    }
 
     data class TextAction(
-        val text: String,
+        val text: StringResource,
         val action: () -> Unit
     )
 
@@ -100,4 +105,12 @@ object InAppNotificationView {
         object Blue : Style(R.color.blue50, android.R.color.white, R.color.blue60, android.R.color.white)
         object Green : Style(R.color.green40, R.color.gray50, R.color.green50, R.color.gray50)
     }
+}
+
+fun InAppNotificationView.Config.action(text: StringResource, action: () -> Unit): InAppNotificationView.Config {
+    return this.apply { textAction = InAppNotificationView.TextAction(text, action) }
+}
+
+fun InAppNotificationView.Config.close(action: () -> Unit): InAppNotificationView.Config {
+    return this.apply { closeAction = action }
 }

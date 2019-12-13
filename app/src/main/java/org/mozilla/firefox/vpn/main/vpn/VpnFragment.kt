@@ -20,6 +20,7 @@ import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
 import org.mozilla.firefox.vpn.service.Version
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
+import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.getCountryFlag
 import org.mozilla.firefox.vpn.util.viewModel
 
@@ -152,9 +153,9 @@ class VpnFragment : Fragment() {
             context,
             InAppNotificationView.Config(
                 style = InAppNotificationView.Style.Blue,
-                text = resources.getString(R.string.toast_update_version_message_1),
+                text = StringResource(R.string.toast_update_version_message_1),
                 textAction = InAppNotificationView.TextAction(
-                    text = resources.getString(R.string.update_update_button_text),
+                    text = StringResource(R.string.update_update_button_text),
                     action = {
                         launchPlayStore(context)
                     }),
