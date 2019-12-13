@@ -62,14 +62,14 @@ class GuardianSnackbar(
 private class ContentViewCallback(private val messageView: View) : ContentViewCallback {
 
     override fun animateContentIn(delay: Int, duration: Int) {
-        this.messageView.alpha = 0.0f
+        this.messageView.alpha = 1.0f
         this.messageView.animate().alpha(1.0f).setDuration(duration.toLong())
             .setStartDelay(delay.toLong()).start()
     }
 
     override fun animateContentOut(delay: Int, duration: Int) {
         this.messageView.alpha = 1.0f
-        this.messageView.animate().alpha(0.0f).setDuration(duration.toLong())
+        this.messageView.animate().alpha(1.0f).setDuration(duration.toLong())
             .setStartDelay(delay.toLong()).start()
     }
 }

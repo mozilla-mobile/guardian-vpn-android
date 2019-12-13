@@ -55,12 +55,13 @@ object InAppNotificationView {
             }
 
             override fun updateDrawState(ds: TextPaint) {
-                ds.color = config.style.textColorId
+                ds.color = view.context.color(config.style.textColorId)
             }
         }
         spannable.setSpan(clickSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
 
         view.text.movementMethod = LinkMovementMethod.getInstance()
+        view.text.highlightColor = Color.TRANSPARENT
 
         view.text.text = spannable
     }
