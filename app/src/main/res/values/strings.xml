@@ -220,7 +220,6 @@
 
     <!-- Legacy, need to clean up or up lift to fluent string list -->
     <string name="label_vpn">VPN</string>
-    <string name="entrance_title">Firefox Private Network</string>
     <string name="entrance_description">A fast, secure and easy to use VPN\n(Virtual Private Network).</string>
     <string name="onboarding_logged_out">Logged out and device removed.</string>
     <string name="launcher_name">Firefox VPN</string>

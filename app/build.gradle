@@ -2,6 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+def commitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -15,7 +24,7 @@ android {
         def circleci_build_number = System.getenv("CIRCLE_BUILD_NUM")
         if (circleci_build_number?.trim()) {
             versionCode circleci_build_number.toInteger()
-            versionNameSuffix "(" + circleci_build_number + ")"
+            versionName "$versionName($circleci_build_number)"
         }
     }
 
@@ -48,6 +57,7 @@ android {
 
         preview {
             applicationIdSuffix ".beta"
+            versionNameSuffix "-${commitHash()}"
         }
     }
 
