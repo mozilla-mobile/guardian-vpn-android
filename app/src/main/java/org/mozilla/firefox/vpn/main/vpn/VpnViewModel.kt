@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
-import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessage
+import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.SetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
@@ -24,7 +24,12 @@ import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.Version
+import org.mozilla.firefox.vpn.user.data.checkAuth
 import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
+import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
+import org.mozilla.firefox.vpn.user.domain.NotifyUserStateUseCase
+import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
+import org.mozilla.firefox.vpn.util.distinctBy
 import org.mozilla.firefox.vpn.util.onSuccess
 import org.mozilla.firefox.vpn.util.then
 
@@ -37,8 +42,11 @@ class VpnViewModel(
     private val getSelectedServerUseCase: GetSelectedServerUseCase,
     private val currentDeviceUseCase: CurrentDeviceUseCase,
     private val getVersionsUseCase: GetVersionsUseCase,
-    private val getLatestUpdateMessage: GetLatestUpdateMessage,
-    private val setLatestUpdateMessageUseCase: SetLatestUpdateMessageUseCase
+    private val getLatestUpdateMessageUseCase: GetLatestUpdateMessageUseCase,
+    private val setLatestUpdateMessageUseCase: SetLatestUpdateMessageUseCase,
+    private val refreshUserInfoUseCase: RefreshUserInfoUseCase,
+    private val logoutUseCase: LogoutUseCase,
+    private val notifyUserStateUseCase: NotifyUserStateUseCase
 ) : AndroidViewModel(application) {
 
     private val initialServer = MutableLiveData<ServerInfo>()
@@ -74,7 +82,7 @@ class VpnViewModel(
             getVersionsUseCase().onSuccess {
                 val latest = it.latest
                 val latestVersion = latest.version.toInt()
-                val shown = getLatestUpdateMessage() >= latestVersion
+                val shown = getLatestUpdateMessageUseCase() >= latestVersion
                 if (latestVersion > BuildConfig.VERSION_CODE && !shown) {
                     emit(latest)
                 } else {
@@ -104,7 +112,7 @@ class VpnViewModel(
     val uiState: LiveData<UIState> = MediatorLiveData<UIState>().apply {
         addSource(_uiState) { value = it }
         addSource(_vpnState) { value = it }
-    }
+    }.distinctBy { v1, v2 -> v1::class != v2::class }
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -118,7 +126,7 @@ class VpnViewModel(
         when (action) {
             is Action.Connect -> {
                 if (vpnManager.isGranted()) {
-                    currentServer?.let { connectVpn(it) }
+                    currentServer?.let { tryConnectVpn(it) }
                 } else {
                     requestPermission()
                 }
@@ -138,12 +146,24 @@ class VpnViewModel(
         }
     }
 
-    private fun connectVpn(server: ServerInfo) {
-        viewModelScope.launch(Dispatchers.Main.immediate) {
-            currentDeviceUseCase()?.let {
-                vpnManager.connect(server, it)
-            }
+    private fun tryConnectVpn(server: ServerInfo) {
+        _uiState.postValue(UIState.Connecting(UIModel.Connecting()))
+
+        viewModelScope.launch(Dispatchers.IO) {
+            refreshUserInfoUseCase().checkAuth(
+                authorized = { connectVpn(server) },
+                unauthorized = { logout() }
+            )
         }
+    }
+
+    private suspend fun connectVpn(server: ServerInfo) {
+        currentDeviceUseCase()?.let { vpnManager.connect(server, it) }
+    }
+
+    private fun logout() {
+        logoutUseCase()
+        notifyUserStateUseCase()
     }
 
     private fun switchVpn(oldServer: ServerInfo, newServer: ServerInfo) {
