@@ -34,6 +34,7 @@ class DevicesFragment : Fragment() {
     }
 
     private lateinit var deviceCountView: TextView
+    private var snackBar: GuardianSnackbar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,8 +62,16 @@ class DevicesFragment : Fragment() {
             when (it) {
                 is DevicesUiState.StateLoading -> showLoading()
                 is DevicesUiState.StateLoaded -> showData(it.uiModel)
-                is DevicesUiState.StateError -> showError()
+                is DevicesUiState.StateError -> showError(it.errorMessage)
             }
+        })
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
+            showSnackBar(it.config, it.duration)
+        })
+
+        viewModel.dismissMessage.observe(viewLifecycleOwner, Observer {
+            dismissSnackBar()
         })
     }
 
@@ -89,18 +98,10 @@ class DevicesFragment : Fragment() {
         deviceCountView.text = getString(R.string.devices_page_subtitle, uiModel.devices.size, uiModel.maxDevices)
     }
 
-    private fun showError() {
+    private fun showError(errorMessage: ErrorMessage) {
         loading_view.visibility = View.INVISIBLE
         device_list.visibility = View.INVISIBLE
-        GuardianSnackbar.make(
-            root_view.findViewById(android.R.id.content),
-            InAppNotificationView.Config(
-                style = InAppNotificationView.Style.Red,
-                text = "Something wrong.",
-                textAction = InAppNotificationView.TextAction("Try again") { viewModel.loadDevicesList() }
-            ),
-            GuardianSnackbar.LENGTH_INDEFINITE
-        ).show()
+        showSnackBar(errorMessage.config, errorMessage.duration)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -128,5 +129,16 @@ class DevicesFragment : Fragment() {
             .setPositiveButton(R.string.popup_remove_button_text) { _, _ -> positiveCallback() }
             .setNegativeButton(R.string.popup_cancel_button_text) { _, _ -> }
             .show()
+    }
+
+    private fun showSnackBar(config: InAppNotificationView.Config, duration: Int) {
+        snackBar?.dismiss()
+        snackBar = GuardianSnackbar.make(content, config, duration)
+        snackBar?.show()
+    }
+
+    private fun dismissSnackBar() {
+        snackBar?.dismiss()
+        snackBar = null
     }
 }

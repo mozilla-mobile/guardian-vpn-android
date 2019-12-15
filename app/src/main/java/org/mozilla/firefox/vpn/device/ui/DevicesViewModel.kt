@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.hadilq.liveevent.LiveEvent
 import java.util.concurrent.Executors
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.UserStates
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
@@ -20,11 +23,15 @@ import org.mozilla.firefox.vpn.device.domain.RemoveDeviceUseCase
 import org.mozilla.firefox.vpn.isDeviceLimitReached
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.shouldRegisterDevice
+import org.mozilla.firefox.vpn.ui.GuardianSnackbar
+import org.mozilla.firefox.vpn.ui.InAppNotificationView
+import org.mozilla.firefox.vpn.ui.action
 import org.mozilla.firefox.vpn.user.data.checkAuth
 import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
 import org.mozilla.firefox.vpn.user.domain.NotifyUserStateUseCase
 import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
 import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.StringResource
 
 class DevicesViewModel(
     private val getDevicesUseCase: GetDevicesUseCase,
@@ -56,6 +63,9 @@ class DevicesViewModel(
 
     private val deletingDevices = mutableListOf<DeviceInfo>()
 
+    val errorMessage = LiveEvent<ErrorMessage>()
+    val dismissMessage = LiveEvent<Unit>()
+
     val devicesUiModel = MediatorLiveData<DevicesUiState>().apply {
         addSource(refreshExplicitly) { value = it }
         addSource(refreshPeriodically) { value = it }
@@ -68,7 +78,7 @@ class DevicesViewModel(
         loadDevicesList()
     }
 
-    fun loadDevicesList() {
+    private fun loadDevicesList() {
         refreshExplicitly.value = DevicesUiState.StateLoading
         viewModelScope.launch(Dispatchers.IO) {
             refreshUserInfoUseCase().checkAuth(
@@ -84,7 +94,7 @@ class DevicesViewModel(
         }
     }
 
-    fun deleteDevice(device: DeviceInfo) = viewModelScope.launch(Dispatchers.Main.immediate) {
+    fun deleteDevice(device: DeviceInfo): Job = viewModelScope.launch(Dispatchers.Main.immediate) {
         addDeletingDevice(device)
 
         withContext(Dispatchers.IO) {
@@ -92,12 +102,25 @@ class DevicesViewModel(
 
             removeDevicesUseCase(device.pubKey).checkAuth(
                 authorized = {
+                    dismissMessage.postValue(Unit)
                     removeDeletingDevice(device)
                     registerBlocking()
                     refreshDevices()
                 },
                 unauthorized = {
                     logoutUseCase()
+                },
+                onError = {
+                    removeDeletingDevice(device)
+                    errorMessage.postValue(ErrorMessage(InAppNotificationView.Config
+                            .warning(StringResource(R.string.toast_unable_to_remove_device))
+                            .action(StringResource(R.string.toast_try_again)) {
+                                dismissMessage.postValue(Unit)
+                                deleteDevice(device)
+                            },
+                            GuardianSnackbar.LENGTH_INDEFINITE
+                    ))
+                    refreshDevices()
                 }
             )
         }
@@ -161,7 +184,7 @@ class DevicesViewModel(
 sealed class DevicesUiState {
     object StateLoading : DevicesUiState()
     data class StateLoaded(val uiModel: DevicesUiModel) : DevicesUiState()
-    object StateError : DevicesUiState()
+    data class StateError(val errorMessage: ErrorMessage) : DevicesUiState()
 }
 
 data class DevicesUiModel(
@@ -174,4 +197,9 @@ data class DevicesUiModel(
 data class DeviceItemUiModel(
     val info: DeviceInfo,
     val isLoading: Boolean = false
+)
+
+data class ErrorMessage(
+    val config: InAppNotificationView.Config,
+    val duration: Int = GuardianSnackbar.LENGTH_SHORT
 )

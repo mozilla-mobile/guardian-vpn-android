@@ -13,6 +13,7 @@ import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.ui.GuardianSnackbar
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.util.LoginCustomTab
+import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.observerUntilOnDestroy
 import org.mozilla.firefox.vpn.util.viewModel
 
@@ -46,7 +47,7 @@ class OnboardingActivity : AppCompatActivity() {
                 container,
                 InAppNotificationView.Config(
                     style = InAppNotificationView.Style.Red,
-                    text = message
+                    text = StringResource(message)
                 ),
                 GuardianSnackbar.LENGTH_LONG
             )
