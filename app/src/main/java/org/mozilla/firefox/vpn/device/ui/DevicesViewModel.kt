@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
+import java.util.concurrent.Executors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.Executors
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.UserStates
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
@@ -114,7 +114,7 @@ class DevicesViewModel(
                     removeDeletingDevice(device)
                     errorMessage.postValue(ErrorMessage(InAppNotificationView.Config
                             .warning(StringResource(R.string.toast_unable_to_remove_device))
-                            .action( StringResource(R.string.toast_try_again)) {
+                            .action(StringResource(R.string.toast_try_again)) {
                                 dismissMessage.postValue(Unit)
                                 deleteDevice(device)
                             },
@@ -203,4 +203,3 @@ data class ErrorMessage(
     val config: InAppNotificationView.Config,
     val duration: Int = GuardianSnackbar.LENGTH_SHORT
 )
-
