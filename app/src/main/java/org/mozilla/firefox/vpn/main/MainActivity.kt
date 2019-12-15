@@ -3,6 +3,7 @@ package org.mozilla.firefox.vpn.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -10,29 +11,34 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.NavController
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.force_update
+import kotlinx.android.synthetic.main.activity_main.nav_view
+import kotlinx.android.synthetic.main.view_force_update.description
+import kotlinx.android.synthetic.main.view_force_update.manage_btn
+import kotlinx.android.synthetic.main.view_force_update.sign_out_btn
+import kotlinx.android.synthetic.main.view_force_update.update_btn
+import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.UserState
-import org.mozilla.firefox.vpn.UserStates
 import org.mozilla.firefox.vpn.guardianComponent
-import org.mozilla.firefox.vpn.isDeviceLimitReached
-import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
-import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
-import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
+import org.mozilla.firefox.vpn.service.GuardianService
+import org.mozilla.firefox.vpn.util.GooglePlayUtil
+import org.mozilla.firefox.vpn.util.launchUrl
+import org.mozilla.firefox.vpn.util.viewModel
 
 class MainActivity : AppCompatActivity() {
 
+    private val component by lazy {
+        MainComponentImpl(guardianComponent)
+    }
+
+    private val viewModel by viewModel {
+        component.viewModel
+    }
+
     private var currentNavController: LiveData<NavController>? = null
-
-    private val userStates: UserStates by lazy {
-        UserStates(guardianComponent.userStateResolver)
-    }
-
-    private val vpnStateProvider: VpnStateProvider by lazy {
-        VpnManagerStateProvider(guardianComponent.vpnManager)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,19 +48,50 @@ class MainActivity : AppCompatActivity() {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
 
-        userStates.stateObservable.observe(this, Observer {
-            if (it is UserState.Login) {
-                startActivity(OnboardingActivity.getLogoutIntent(this))
-                finish()
-            } else {
-                nav_view.setItemLocked(R.id.settings, it.isDeviceLimitReached())
-            }
+        viewModel.lockSetting.observe(this, Observer {
+            nav_view.setItemLocked(R.id.settings, it)
         })
 
-        vpnStateProvider.stateObservable.observe(this, Observer {
-            when (it) {
-                VpnState.Connected -> updateVpnIcon(R.drawable.ic_vpn_connected)
-                VpnState.Disconnected -> updateVpnIcon(R.drawable.ic_vpn_disconnected)
+        viewModel.vpnIcon.observe(this, Observer {
+            updateVpnIcon(it)
+        })
+
+        viewModel.launchOnboardingPage.observe(this, Observer {
+            val intent = if (it.showLogoutMessage) {
+                OnboardingActivity.getLogoutIntent(this)
+            } else {
+                OnboardingActivity.getStartIntent(this@MainActivity)
+            }
+            startActivity(intent)
+            finish()
+        })
+
+        force_update.apply {
+            description.text = getString(
+                R.string.update_content_1,
+                getString(R.string.application_name)
+            )
+
+            update_btn.setOnClickListener {
+                GooglePlayUtil.launchPlayStore(this@MainActivity)
+            }
+
+            manage_btn.setOnClickListener {
+                lifecycle.coroutineScope.launch {
+                    launchUrl(GuardianService.HOST_FXA)
+                }
+            }
+
+            sign_out_btn.setOnClickListener {
+                viewModel.signOut()
+            }
+        }
+
+        viewModel.showForceUpdate.observe(this, Observer {
+            force_update.visibility = if (it) {
+                View.VISIBLE
+            } else {
+                View.GONE
             }
         })
     }

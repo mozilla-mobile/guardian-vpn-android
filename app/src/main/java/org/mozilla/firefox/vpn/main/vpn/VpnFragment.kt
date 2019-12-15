@@ -1,10 +1,8 @@
 package org.mozilla.firefox.vpn.main.vpn
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +11,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import java.util.concurrent.TimeUnit
-import kotlinx.android.synthetic.main.fragment_vpn.*
+import kotlinx.android.synthetic.main.fragment_vpn.connection_state_view
+import kotlinx.android.synthetic.main.fragment_vpn.country_flag
+import kotlinx.android.synthetic.main.fragment_vpn.country_name
+import kotlinx.android.synthetic.main.fragment_vpn.message_container
+import kotlinx.android.synthetic.main.fragment_vpn.vpn_server_switch
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
 import org.mozilla.firefox.vpn.service.Version
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
+import org.mozilla.firefox.vpn.util.GooglePlayUtil
 import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.getCountryFlag
 import org.mozilla.firefox.vpn.util.viewModel
@@ -157,7 +160,7 @@ class VpnFragment : Fragment() {
                 textAction = InAppNotificationView.TextAction(
                     text = StringResource(R.string.update_update_button_text),
                     action = {
-                        launchPlayStore(context)
+                        GooglePlayUtil.launchPlayStore(context)
                     }),
                 closeAction = {
                     vpnViewModel.onUpdateMessageDismiss(version)
@@ -172,20 +175,5 @@ class VpnFragment : Fragment() {
     private fun dismissUpdateMessage() {
         message_container.visibility = View.GONE
         message_container.removeAllViews()
-    }
-
-    private fun launchPlayStore(context: Context) {
-        val intent = try {
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("market://details?id=${context.packageName}")
-            )
-        } catch (e: ActivityNotFoundException) {
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
-            )
-        }
-        context.startActivity(intent)
     }
 }

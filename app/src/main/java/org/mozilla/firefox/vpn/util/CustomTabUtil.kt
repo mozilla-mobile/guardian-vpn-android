@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.util
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
@@ -89,6 +90,14 @@ suspend fun Fragment.launchUrl(url: String): Boolean {
         val activity = activity ?: return@withContext false
         val session = initCustomTabService(activity) ?: return@withContext false
         launchUrl(activity, session, url)
+        return@withContext true
+    }
+}
+
+suspend fun Activity.launchUrl(url: String): Boolean {
+    return withContext(Dispatchers.Main) {
+        val session = initCustomTabService(this@launchUrl) ?: return@withContext false
+        launchUrl(this@launchUrl, session, url)
         return@withContext true
     }
 }
