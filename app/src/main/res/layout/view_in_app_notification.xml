@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.Guardian.Byline10"
-        android:gravity="center_vertical|start"
+        android:gravity="center"
         android:minHeight="40dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
