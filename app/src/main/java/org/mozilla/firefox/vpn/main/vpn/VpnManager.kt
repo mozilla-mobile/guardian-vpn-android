@@ -39,15 +39,15 @@ class VpnManager(
     val tunnelManager = TunnelManager(GuardianVpnService::class.java)
     var serviceProxy: ServiceProxy? = null
 
-    private val connectRequest = MutableLiveData<ConnectRequest>()
+    private val action = MutableLiveData<Action>()
 
-    private val _stateObservable = connectRequest.switchMap { request ->
+    private val _stateObservable = action.switchMap { request ->
         when (request) {
-            ConnectRequest.Connect -> monitorConnectedState()
-            ConnectRequest.Disconnect -> monitorDisconnectedState()
-            ConnectRequest.ForceConnected -> monitorSignalState()
-            ConnectRequest.ForceDisconnect -> liveData<VpnState> { emit(VpnState.Disconnected) }
-            is ConnectRequest.Switch -> monitorSwitchingState(request.oldServer, request.newServer)
+            Action.Connect -> monitorConnectedState()
+            Action.Disconnect -> monitorDisconnectedState()
+            Action.ConnectImmediately -> monitorSignalState()
+            Action.DisconnectImmediately -> liveData<VpnState> { emit(VpnState.Disconnected) }
+            is Action.Switch -> monitorSwitchingState(request.oldServer, request.newServer)
         }
     }
 
@@ -70,7 +70,7 @@ class VpnManager(
 
         override fun onServiceDown(isRevoked: Boolean) {
             if (isRevoked) {
-                connectRequest.postValue(ConnectRequest.ForceDisconnect)
+                action.postValue(Action.DisconnectImmediately)
             }
             this@VpnManager.serviceProxy = null
             upTime = 0L
@@ -86,9 +86,9 @@ class VpnManager(
         currentDevice: CurrentDevice
     ) = withContext(Dispatchers.Main.immediate) {
         when {
-            isConnected() -> connectRequest.value = ConnectRequest.ForceConnected
+            isConnected() -> action.value = Action.ConnectImmediately
             else -> {
-                connectRequest.value = ConnectRequest.Connect
+                action.value = Action.Connect
                 tunnelManager.turnOn(
                     appContext,
                     Tunnel(TUNNEL_NAME, currentDevice.createConfig(server)),
@@ -103,7 +103,7 @@ class VpnManager(
         newServer: ServerInfo,
         currentDevice: CurrentDevice
     ) = withContext(Dispatchers.Main.immediate) {
-        connectRequest.value = ConnectRequest.Switch(oldServer, newServer)
+        action.value = Action.Switch(oldServer, newServer)
         tunnelManager.turnOn(
             appContext,
             Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer)),
@@ -113,12 +113,12 @@ class VpnManager(
 
     suspend fun disconnect() = withContext(Dispatchers.Main.immediate) {
         tunnelManager.turnOff(appContext)
-        connectRequest.value = ConnectRequest.Disconnect
+        action.value = Action.Disconnect
     }
 
     suspend fun shutdownConnection() = withContext(Dispatchers.Main.immediate) {
         tunnelManager.turnOff(appContext)
-        connectRequest.value = ConnectRequest.ForceDisconnect
+        action.value = Action.DisconnectImmediately
     }
 
     fun isConnected(): Boolean {
@@ -146,7 +146,7 @@ class VpnManager(
 
             if (verifyConnected()) {
                 emit(VpnState.Connected)
-                connectRequest.postValue(ConnectRequest.ForceConnected)
+                action.postValue(Action.ConnectImmediately)
             } else {
                 shutdownConnection()
             }
@@ -159,7 +159,7 @@ class VpnManager(
 
             if (verifySwitched()) {
                 emit(VpnState.Connected)
-                connectRequest.postValue(ConnectRequest.ForceConnected)
+                action.postValue(Action.ConnectImmediately)
             } else {
                 shutdownConnection()
             }
@@ -267,12 +267,13 @@ class VpnManager(
         }
     }
 
-    sealed class ConnectRequest {
-        object Connect : ConnectRequest()
-        class Switch(val oldServer: ServerInfo, val newServer: ServerInfo) : ConnectRequest()
-        object Disconnect : ConnectRequest()
-        object ForceConnected : ConnectRequest()
-        object ForceDisconnect : ConnectRequest()
+    /** Actions for vpn state transfer */
+    sealed class Action {
+        object Connect : Action()
+        class Switch(val oldServer: ServerInfo, val newServer: ServerInfo) : Action()
+        object Disconnect : Action()
+        object ConnectImmediately : Action()
+        object DisconnectImmediately : Action()
     }
 
     companion object {
