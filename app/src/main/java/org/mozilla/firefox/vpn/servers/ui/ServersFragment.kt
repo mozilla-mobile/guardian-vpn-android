@@ -87,6 +87,8 @@ class ServersFragment : BottomSheetDialogFragment() {
                 is VpnState.Switching -> false
                 else -> true
             }
+
+            radio_group.setSelectedServerState(vpnState)
         })
     }
 
