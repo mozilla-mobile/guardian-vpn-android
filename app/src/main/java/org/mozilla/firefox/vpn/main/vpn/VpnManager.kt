@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
@@ -55,8 +56,7 @@ class VpnManager(
         .map { it }
         .distinctBy { v1, v2 -> v1 != v2 }
 
-    private var lastSignalTime = SystemClock.elapsedRealtime()
-    private var lastStableTime = SystemClock.elapsedRealtime()
+    private val connectedStatesVerifier = ConnectedStatesVerifier()
 
     private var upTime = 0L
 
@@ -87,15 +87,16 @@ class VpnManager(
     ) = withContext(Dispatchers.Main.immediate) {
         when {
             isConnected() -> action.value = Action.ConnectImmediately
-            else -> {
-                action.value = Action.Connect
-                tunnelManager.turnOn(
-                    appContext,
-                    Tunnel(TUNNEL_NAME, currentDevice.createConfig(server)),
-                    serviceStateListener
-                )
-            }
+            else -> connectInternal(server, currentDevice)
         }
+    }
+
+    private fun connectInternal(server: ServerInfo, currentDevice: CurrentDevice) {
+        val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(server))
+        tunnelManager.turnOn(appContext, tunnel, serviceStateListener)
+
+        connectedStatesVerifier.reset(MAX_CONNECT_DURATION)
+        action.value = Action.Connect
     }
 
     suspend fun switch(
@@ -103,12 +104,12 @@ class VpnManager(
         newServer: ServerInfo,
         currentDevice: CurrentDevice
     ) = withContext(Dispatchers.Main.immediate) {
+        connectedStatesVerifier.reset(MAX_SWITCH_DURATION)
+
+        val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer))
+        tunnelManager.turnOn(appContext, tunnel, serviceStateListener)
+
         action.value = Action.Switch(oldServer, newServer)
-        tunnelManager.turnOn(
-            appContext,
-            Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer)),
-            serviceStateListener
-        )
     }
 
     suspend fun disconnect() = withContext(Dispatchers.Main.immediate) {
@@ -142,27 +143,15 @@ class VpnManager(
 
     private fun monitorConnectedState(): LiveData<VpnState> {
         return liveData(Dispatchers.IO, 0) {
-            emit(VpnState.Connecting)
-
-            if (verifyConnected()) {
-                emit(VpnState.Connected)
-                action.postValue(Action.ConnectImmediately)
-            } else {
-                shutdownConnection()
-            }
+            emit(VpnState.Connecting as VpnState)
+            action.postValue(Action.ConnectImmediately)
         }
     }
 
     private fun monitorSwitchingState(oldServer: ServerInfo, newServer: ServerInfo): LiveData<VpnState> {
         return liveData(Dispatchers.IO, 0) {
-            emit(VpnState.Switching(oldServer, newServer))
-
-            if (verifySwitched()) {
-                emit(VpnState.Connected)
-                action.postValue(Action.ConnectImmediately)
-            } else {
-                shutdownConnection()
-            }
+            emit(VpnState.Switching(oldServer, newServer) as VpnState)
+            action.postValue(Action.ConnectImmediately)
         }
     }
 
@@ -176,19 +165,15 @@ class VpnManager(
     }
 
     private fun monitorSignalState(): LiveData<VpnState> {
-        lastSignalTime = SystemClock.elapsedRealtime()
-        lastStableTime = SystemClock.elapsedRealtime()
-
         return liveData(Dispatchers.IO, 0) {
             val tunnel = tunnelManager.tunnel ?: return@liveData
 
             coroutineScope {
-                launch(Dispatchers.IO) { runPingLoop(tunnel) }
+                launch { runPingLoop(tunnel) }
 
                 withContext(Dispatchers.Main) {
                     rxChangedFlow(tunnel)
-                        .flatMap { signalStableFlow(it) }
-                        .flatMap { signalStateFlow(it) }
+                        .flatMap { connectedStatesVerifier.verify(it) }
                         .collect { emit(it) }
                 }
             }
@@ -204,55 +189,12 @@ class VpnManager(
 
             var prevRx = serviceProxy.getStatistic(tunnel).totalRx()
             while (true) {
-                delay(RX_DETECT_INTERVAL_MS)
                 val newRx = serviceProxy.getStatistic(tunnel).totalRx()
                 emit(newRx > prevRx)
                 prevRx = newRx
+                delay(RX_DETECT_INTERVAL_MS)
             }
         }
-    }
-
-    private fun signalStableFlow(hasSignal: Boolean): Flow<Boolean> {
-        return flow {
-            val timeDiff = SystemClock.elapsedRealtime() - lastSignalTime
-            when {
-                hasSignal -> {
-                    lastSignalTime = SystemClock.elapsedRealtime()
-                    emit(true)
-                }
-                timeDiff >= UNSTABLE_THRESHOLD_MS -> emit(false)
-                else -> GLog.d(TAG, "${(UNSTABLE_THRESHOLD_MS - timeDiff) / 1000} secs to unstable")
-            }
-        }
-    }
-
-    private fun signalStateFlow(isStable: Boolean): Flow<VpnState> {
-        return flow {
-            val timeDiff = SystemClock.elapsedRealtime() - lastStableTime
-            when {
-                isStable -> {
-                    lastStableTime = SystemClock.elapsedRealtime()
-                    emit(VpnState.Connected)
-                }
-                SystemClock.elapsedRealtime() - lastStableTime > NO_SIGNAL_THRESHOLD_MS -> emit(VpnState.NoSignal)
-                else -> {
-                    GLog.d(TAG, "${(NO_SIGNAL_THRESHOLD_MS - timeDiff) / 1000} secs to no-signal")
-                    emit(VpnState.Unstable)
-                }
-            }
-        }
-    }
-
-    private suspend fun verifyConnected(): Boolean {
-        // TODO: Now we just simply delay 1 second and report connected. Maybe we should block and
-        // test until the internet is reachable before returning true
-        delay(1000)
-        return true
-    }
-
-    private suspend fun verifySwitched(): Boolean {
-        delay(1500)
-        return true
     }
 
     private fun ping(hostAddress: String): Boolean {
@@ -264,6 +206,57 @@ class VpnManager(
             emit(VpnState.Disconnecting)
             delay(1000)
             emit(VpnState.Disconnected)
+        }
+    }
+
+    private class ConnectedStatesVerifier {
+        private var lastSignalTime = SystemClock.elapsedRealtime()
+        private var lastStableTime = SystemClock.elapsedRealtime()
+
+        /** Given a series of signal state (on/off) over a time period, verify() will return one of the three
+         * connected states {connected, unstable, no_signal} */
+        fun verify(hasSignal: Boolean): Flow<VpnState> {
+            return stableFlow(hasSignal).map { verifyConnectedState(it) }
+        }
+
+        fun stableFlow(hasSignal: Boolean) = flow {
+            val timeDiff = SystemClock.elapsedRealtime() - lastSignalTime
+            val isUnstable = timeDiff >= UNSTABLE_THRESHOLD_MS
+
+            when {
+                hasSignal -> {
+                    lastSignalTime = SystemClock.elapsedRealtime()
+                    emit(true)
+                }
+
+                isUnstable -> emit(false)
+
+                else -> GLog.d(TAG, "${(UNSTABLE_THRESHOLD_MS - timeDiff) / 1000} secs to unstable")
+            }
+        }
+
+        fun verifyConnectedState(isStable: Boolean): VpnState {
+            val timeDiff = SystemClock.elapsedRealtime() - lastStableTime
+            val noSignal = timeDiff > NO_SIGNAL_THRESHOLD_MS
+
+            return when {
+                isStable -> {
+                    lastStableTime = SystemClock.elapsedRealtime()
+                    VpnState.Connected
+                }
+
+                noSignal -> VpnState.NoSignal
+
+                else -> {
+                    GLog.d(TAG, "${(NO_SIGNAL_THRESHOLD_MS - timeDiff) / 1000} secs to no-signal")
+                    VpnState.Unstable
+                }
+            }
+        }
+
+        fun reset(initialTolerance: Long) {
+            lastSignalTime = SystemClock.elapsedRealtime() - (UNSTABLE_THRESHOLD_MS - initialTolerance)
+            lastStableTime = SystemClock.elapsedRealtime() - (UNSTABLE_THRESHOLD_MS - initialTolerance)
         }
     }
 
@@ -282,7 +275,11 @@ class VpnManager(
 
         private val UNSTABLE_THRESHOLD_MS = TimeUnit.SECONDS.toMillis(30)
         private val NO_SIGNAL_THRESHOLD_MS = TimeUnit.SECONDS.toMillis(120)
+
         private val RX_DETECT_INTERVAL_MS = TimeUnit.SECONDS.toMillis(1)
         private val PING_INTERVAL_MS = TimeUnit.SECONDS.toMillis(2)
+
+        private val MAX_CONNECT_DURATION = TimeUnit.SECONDS.toMillis(5)
+        private val MAX_SWITCH_DURATION = TimeUnit.SECONDS.toMillis(5)
     }
 }

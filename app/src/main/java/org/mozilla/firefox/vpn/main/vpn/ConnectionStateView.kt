@@ -22,7 +22,13 @@ class ConnectionStateView : CardView {
     private var currentModel: UIModel = UIModel.Disconnected()
 
     private val onCheckedChangedListener =
-        CompoundButton.OnCheckedChangeListener { _, isChecked -> onSwitchListener?.invoke(isChecked) }
+        CompoundButton.OnCheckedChangeListener { button, isChecked ->
+            // every time the onRestoreInstanceState() is called, onCheckedChangedListener will be
+            // triggered, button.isPressed here help to check whether the change is initiated by the user
+            if (button.isPressed) {
+                onSwitchListener?.invoke(isChecked)
+            }
+        }
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
