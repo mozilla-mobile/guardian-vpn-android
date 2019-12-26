@@ -30,9 +30,10 @@ class ServersRadioGroup : RadioGroup {
 
     private val countryFolderViewMap = mutableMapOf<CountryInfo, CountryFolderView>()
     private val serverViewMap = mutableMapOf<ServerInfo, RadioButton>()
+    private val serverStateIcon = ContextCompat.getDrawable(context, R.drawable.ic_error)
 
     private var listener: OnServerCheckListener? = null
-    private lateinit var selectedServer: ServerInfo
+    private var selectedServer: ServerInfo? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_servers_radio_group, this, true)
@@ -73,12 +74,15 @@ class ServersRadioGroup : RadioGroup {
     }
 
     fun setSelectedServerState(state: VpnState) {
-        serverViewMap[selectedServer]?.setCompoundDrawablesWithIntrinsicBounds(null, null,
-            when (state) {
-                is VpnState.Unstable -> ContextCompat.getDrawable(context, R.drawable.ic_error)?.tint(context.color(R.color.yellow50))
-                is VpnState.NoSignal -> ContextCompat.getDrawable(context, R.drawable.ic_error)?.tint(context.color(R.color.red50))
-                else -> null
-            }, null)
+        selectedServer?.let {
+            serverViewMap[it]?.setCompoundDrawablesWithIntrinsicBounds(
+                null, null,
+                when (state) {
+                    is VpnState.Unstable -> serverStateIcon?.tint(context.color(R.color.yellow50))
+                    is VpnState.NoSignal -> serverStateIcon?.tint(context.color(R.color.red50))
+                    else -> null
+                }, null)
+        }
     }
 
     private fun addCountryFolder(countryInfo: CountryInfo) {
