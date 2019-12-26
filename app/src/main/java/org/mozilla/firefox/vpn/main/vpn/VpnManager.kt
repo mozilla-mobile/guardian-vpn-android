@@ -38,7 +38,7 @@ class VpnManager(
 ) : VpnStateProvider {
 
     val tunnelManager = TunnelManager(GuardianVpnService::class.java)
-    var serviceProxy: ServiceProxy? = null
+    private var serviceProxy: ServiceProxy? = null
 
     private val action = MutableLiveData<Action>()
 
@@ -60,23 +60,6 @@ class VpnManager(
 
     private var upTime = 0L
 
-    private val serviceStateListener = object : VpnServiceStateListener {
-        override fun onServiceUp(proxy: ServiceProxy) {
-            this@VpnManager.serviceProxy = proxy
-            if (upTime == 0L) {
-                upTime = SystemClock.elapsedRealtime()
-            }
-        }
-
-        override fun onServiceDown(isRevoked: Boolean) {
-            if (isRevoked) {
-                action.postValue(Action.DisconnectImmediately)
-            }
-            this@VpnManager.serviceProxy = null
-            upTime = 0L
-        }
-    }
-
     fun isGranted(): Boolean {
         return GuardianVpnService.getPermissionIntent(appContext) == null
     }
@@ -93,10 +76,19 @@ class VpnManager(
 
     private fun connectInternal(server: ServerInfo, currentDevice: CurrentDevice) {
         val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(server))
-        tunnelManager.turnOn(appContext, tunnel, serviceStateListener)
+
+        tunnelManager.turnOn(appContext, tunnel, object : VpnServiceStateListener {
+            override fun onServiceUp(proxy: ServiceProxy) {
+                onVpnServiceUp(proxy, true)
+                action.postValue(Action.Connect)
+            }
+
+            override fun onServiceDown(isRevoked: Boolean) {
+                onVpnServiceDown(isRevoked)
+            }
+        })
 
         connectedStatesVerifier.reset(MAX_CONNECT_DURATION)
-        action.value = Action.Connect
     }
 
     suspend fun switch(
@@ -107,9 +99,32 @@ class VpnManager(
         connectedStatesVerifier.reset(MAX_SWITCH_DURATION)
 
         val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer))
-        tunnelManager.turnOn(appContext, tunnel, serviceStateListener)
+        tunnelManager.turnOn(appContext, tunnel, object : VpnServiceStateListener {
+            override fun onServiceUp(proxy: ServiceProxy) {
+                onVpnServiceUp(proxy, false)
+            }
+
+            override fun onServiceDown(isRevoked: Boolean) {
+                onVpnServiceDown(isRevoked)
+            }
+        })
 
         action.value = Action.Switch(oldServer, newServer)
+    }
+
+    private fun onVpnServiceUp(proxy: ServiceProxy, isNewConnection: Boolean) {
+        this@VpnManager.serviceProxy = proxy
+        if (isNewConnection) {
+            upTime = SystemClock.elapsedRealtime()
+        }
+    }
+
+    private fun onVpnServiceDown(isRevoked: Boolean) {
+        if (isRevoked) {
+            action.postValue(Action.DisconnectImmediately)
+        }
+        this@VpnManager.serviceProxy = null
+        upTime = 0L
     }
 
     suspend fun disconnect() = withContext(Dispatchers.Main.immediate) {
