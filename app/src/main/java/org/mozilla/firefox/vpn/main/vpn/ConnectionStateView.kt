@@ -3,10 +3,14 @@ package org.mozilla.firefox.vpn.main.vpn
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.AttributeSet
 import android.view.View
 import android.widget.CompoundButton
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
@@ -27,6 +31,7 @@ class ConnectionStateView : CardView {
             // triggered, button.isPressed here help to check whether the change is initiated by the user
             if (button.isPressed) {
                 onSwitchListener?.invoke(isChecked)
+                vibrate()
             }
         }
 
@@ -92,6 +97,18 @@ class ConnectionStateView : CardView {
 
     fun setDuration(duration: String) {
         this.duration.text = duration
+    }
+
+    private fun vibrate() {
+        val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)
+        vibrator?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                it.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                it.vibrate(100)
+            }
+        }
     }
 
     private fun initGlobeAnimation(oldModel: UIModel, newModel: UIModel) {
