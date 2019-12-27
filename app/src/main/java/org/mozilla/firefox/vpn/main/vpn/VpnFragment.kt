@@ -10,8 +10,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import java.util.ArrayDeque
 import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.fragment_vpn.connection_state_view
+import kotlinx.android.synthetic.main.fragment_vpn.content
 import kotlinx.android.synthetic.main.fragment_vpn.country_flag
 import kotlinx.android.synthetic.main.fragment_vpn.country_name
 import kotlinx.android.synthetic.main.fragment_vpn.message_container
@@ -21,6 +24,7 @@ import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
 import org.mozilla.firefox.vpn.service.Version
+import org.mozilla.firefox.vpn.ui.GuardianSnackbar
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.util.GooglePlayUtil
 import org.mozilla.firefox.vpn.util.StringResource
@@ -36,6 +40,9 @@ class VpnFragment : Fragment() {
     private val vpnViewModel by viewModel { component.viewModel }
 
     private val serversFragment = ServersFragment.newInstance()
+
+    private val snackBars = ArrayDeque<GuardianSnackbar>()
+    private var currentSnackBar: GuardianSnackbar? = null
 
     private val durationObserver = Observer<Long> {
         val duration = String.format(
@@ -55,6 +62,11 @@ class VpnFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeState()
         observeServers()
+
+        vpnViewModel.snackBar.observe(viewLifecycleOwner, Observer {
+            val snackBar = GuardianSnackbar.make(content, it, GuardianSnackbar.LENGTH_SHORT)
+            showSnackBar(snackBar, false)
+        })
 
         vpnViewModel.updateAvailable.observe(viewLifecycleOwner, Observer { version ->
             version
@@ -175,5 +187,25 @@ class VpnFragment : Fragment() {
     private fun dismissUpdateMessage() {
         message_container.visibility = View.GONE
         message_container.removeAllViews()
+    }
+
+    @Suppress("SameParameterValue")
+    private fun showSnackBar(snackBar: GuardianSnackbar, queueIfOccupied: Boolean) {
+        currentSnackBar
+            ?.let { if (queueIfOccupied) { snackBars.offer(snackBar) } }
+            ?: showSnackBar(snackBar)
+    }
+
+    private fun showSnackBar(snackBar: GuardianSnackbar) {
+        currentSnackBar = snackBar
+        snackBar.addCallback(object : BaseTransientBottomBar.BaseCallback<GuardianSnackbar>() {
+            override fun onDismissed(transientBottomBar: GuardianSnackbar?, event: Int) {
+                currentSnackBar = null
+                snackBars.poll()?.let {
+                    showSnackBar(it, true)
+                }
+            }
+        })
+        snackBar.show()
     }
 }

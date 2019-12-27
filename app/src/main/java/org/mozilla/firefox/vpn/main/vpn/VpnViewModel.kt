@@ -1,6 +1,9 @@
 package org.mozilla.firefox.vpn.main.vpn
 
 import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -8,10 +11,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.hadilq.liveevent.LiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.BuildConfig
+import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessageUseCase
@@ -24,12 +29,13 @@ import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.Version
+import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.update.UpdateManager
 import org.mozilla.firefox.vpn.user.data.checkAuth
 import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
 import org.mozilla.firefox.vpn.user.domain.NotifyUserStateUseCase
 import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
-import org.mozilla.firefox.vpn.util.distinctBy
+import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.onSuccess
 import org.mozilla.firefox.vpn.util.then
 
@@ -92,6 +98,8 @@ class VpnViewModel(
                 ?: emit(null)
         }
 
+    val snackBar = LiveEvent<InAppNotificationView.Config>()
+
     /* UIState that triggered by vpn state changed */
     private val _vpnState = vpnStateProvider.stateObservable.map {
         when (it) {
@@ -113,7 +121,7 @@ class VpnViewModel(
     val uiState: LiveData<UIState> = MediatorLiveData<UIState>().apply {
         addSource(_uiState) { value = it }
         addSource(_vpnState) { value = it }
-    }.distinctBy { v1, v2 -> v1::class != v2::class }
+    }
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -148,6 +156,12 @@ class VpnViewModel(
     }
 
     private fun tryConnectVpn(server: ServerInfo) {
+        if (!hasNetwork()) {
+            _uiState.postValue(UIState.Disconnected(UIModel.Disconnected()))
+            snackBar.value = InAppNotificationView.Config.warning(StringResource(R.string.toast_try_again))
+            return
+        }
+
         _uiState.postValue(UIState.Connecting(UIModel.Connecting()))
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -156,6 +170,13 @@ class VpnViewModel(
                 unauthorized = { logout() }
             )
         }
+    }
+
+    private fun hasNetwork(): Boolean {
+        val mgr = getApplication<GuardianApp>()
+            .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return mgr.getNetworkCapabilities(mgr.activeNetwork)
+            ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
     }
 
     private suspend fun connectVpn(server: ServerInfo) {
