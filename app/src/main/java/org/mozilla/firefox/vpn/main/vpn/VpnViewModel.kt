@@ -24,8 +24,8 @@ import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.Version
+import org.mozilla.firefox.vpn.update.UpdateManager
 import org.mozilla.firefox.vpn.user.data.checkAuth
-import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
 import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
 import org.mozilla.firefox.vpn.user.domain.NotifyUserStateUseCase
 import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
@@ -41,12 +41,12 @@ class VpnViewModel(
     private val getServersUseCase: GetServersUseCase,
     private val getSelectedServerUseCase: GetSelectedServerUseCase,
     private val currentDeviceUseCase: CurrentDeviceUseCase,
-    private val getVersionsUseCase: GetVersionsUseCase,
     private val getLatestUpdateMessageUseCase: GetLatestUpdateMessageUseCase,
     private val setLatestUpdateMessageUseCase: SetLatestUpdateMessageUseCase,
     private val refreshUserInfoUseCase: RefreshUserInfoUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val notifyUserStateUseCase: NotifyUserStateUseCase
+    private val notifyUserStateUseCase: NotifyUserStateUseCase,
+    private val updateManager: UpdateManager
 ) : AndroidViewModel(application) {
 
     private val initialServer = MutableLiveData<ServerInfo>()
@@ -79,16 +79,17 @@ class VpnViewModel(
 
     val updateAvailable: LiveData<Version?>
         get() = liveData(Dispatchers.IO) {
-            getVersionsUseCase().onSuccess {
-                val latest = it.latest
-                val latestVersion = latest.version.toInt()
-                val shown = getLatestUpdateMessageUseCase() >= latestVersion
-                if (latestVersion > BuildConfig.VERSION_CODE && !shown) {
-                    emit(latest)
-                } else {
-                    emit(null)
+            updateManager.getLatestUpdate()
+                ?.let { latest ->
+                    val latestVersion = latest.version.toInt()
+                    val shown = getLatestUpdateMessageUseCase() >= latestVersion
+                    if (latestVersion > BuildConfig.VERSION_CODE && !shown) {
+                        emit(latest)
+                    } else {
+                        emit(null)
+                    }
                 }
-            }
+                ?: emit(null)
         }
 
     /* UIState that triggered by vpn state changed */

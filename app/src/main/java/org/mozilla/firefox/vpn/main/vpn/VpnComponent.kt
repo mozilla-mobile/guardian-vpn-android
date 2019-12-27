@@ -8,7 +8,6 @@ import org.mozilla.firefox.vpn.main.vpn.domain.SetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
-import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
 import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
 import org.mozilla.firefox.vpn.user.domain.NotifyUserStateUseCase
 import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
@@ -31,11 +30,11 @@ class VpnComponentImpl(
             getServersUseCase = GetServersUseCase(userRepo, serverRepo),
             getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo),
             currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
-            getVersionsUseCase = GetVersionsUseCase(userRepo),
             setLatestUpdateMessageUseCase = SetLatestUpdateMessageUseCase(prefs),
             getLatestUpdateMessageUseCase = GetLatestUpdateMessageUseCase(prefs),
             refreshUserInfoUseCase = RefreshUserInfoUseCase(userRepo),
             logoutUseCase = LogoutUseCase(userRepo, deviceRepo),
-            notifyUserStateUseCase = NotifyUserStateUseCase(userStateResolver)
+            notifyUserStateUseCase = NotifyUserStateUseCase(userStateResolver),
+            updateManager = updateManager
         )
 }
