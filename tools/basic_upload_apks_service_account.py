@@ -6,8 +6,6 @@ import argparse
 
 """python basic_upload_apks_service_account.py org.mozilla.firefox.vpn app-guardian-release-signed.apk private_key.json"""
 
-TRACK = 'internal'  # Can be 'alpha', beta', 'production' or 'rollout'
-
 # Declare command-line flags.
 argparser = argparse.ArgumentParser(add_help=False)
 argparser.add_argument('package_name',
@@ -18,6 +16,9 @@ argparser.add_argument('apk_file',
                        help='The path to the APK file to upload.')
 argparser.add_argument('json_file',
                        help='json')
+argparser.add_argument('track',
+                       default='internal',
+                       help='The track to upload. Can be "alpha", "beta", "production" or "rollout"')
 # argparser.add_argument('obb_file',
 #                        help='The path to the obb file to upload.')
 
@@ -33,6 +34,7 @@ def main():
 
     package_name = flags.package_name
     apk_file = flags.apk_file
+    track = flags.track
 
     try:
         edit_request = service.edits().insert(body={}, packageName=package_name)
@@ -51,7 +53,7 @@ def main():
 
         track_response = service.edits().tracks().update(
             editId=edit_id,
-            track=TRACK,
+            track=track,
             packageName=package_name,
             body={'releases': [{
                   'versionCodes': [apk_response['versionCode']],
