@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -58,6 +59,14 @@ class ServersFragment : BottomSheetDialogFragment() {
                 peekHeight = 0
                 state = BottomSheetBehavior.STATE_EXPANDED
             }
+        }
+    }
+
+    override fun show(manager: FragmentManager, tag: String?) {
+        if (isAdded) {
+            return
+        } else {
+            super.show(manager, tag)
         }
     }
 
