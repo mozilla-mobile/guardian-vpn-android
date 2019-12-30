@@ -87,8 +87,10 @@ class ServersFragment : BottomSheetDialogFragment() {
                 is VpnState.Switching -> false
                 else -> true
             }
+        })
 
-            radio_group.setSelectedServerState(vpnState)
+        viewModel.selectedServerWithVpnState.observe(viewLifecycleOwner, Observer { pair ->
+            radio_group.setSelectedServerWithState(pair.first, pair.second)
         })
     }
 
