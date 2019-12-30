@@ -12,6 +12,7 @@ import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SetSelectedServerUseCase
 import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.combineWith
 import org.mozilla.firefox.vpn.util.onSuccess
 
 class ServersViewModel(
@@ -36,6 +37,10 @@ class ServersViewModel(
     val selectedServer = _selectedServer
 
     val vpnState = vpnStateProvider.stateObservable
+
+    val selectedServerWithVpnState = selectedServer.combineWith(vpnState) { serverInfo, vpnState ->
+        return@combineWith Pair(serverInfo, vpnState)
+    }
 
     fun updateSelectedServer() {
         getSelectedServerUseCase(servers.value ?: emptyList())

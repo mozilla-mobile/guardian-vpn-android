@@ -33,7 +33,6 @@ class ServersRadioGroup : RadioGroup {
     private val serverStateIcon = ContextCompat.getDrawable(context, R.drawable.ic_error)
 
     private var listener: OnServerCheckListener? = null
-    private var selectedServer: ServerInfo? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_servers_radio_group, this, true)
@@ -63,7 +62,6 @@ class ServersRadioGroup : RadioGroup {
     }
 
     fun setSelectedServer(server: ServerInfo) {
-        selectedServer = server
         serverViewMap[server]?.let {
             it.isChecked = true
             scroll_view.post {
@@ -73,7 +71,7 @@ class ServersRadioGroup : RadioGroup {
         countryFolderViewMap[server.country]?.performClick()
     }
 
-    fun setSelectedServerState(state: VpnState) {
+    fun setSelectedServerWithState(selectedServer: ServerInfo?, state: VpnState) {
         selectedServer?.let {
             serverViewMap[it]?.setCompoundDrawablesWithIntrinsicBounds(
                 null, null,
