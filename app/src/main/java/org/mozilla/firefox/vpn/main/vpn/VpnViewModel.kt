@@ -158,7 +158,7 @@ class VpnViewModel(
     private fun tryConnectVpn(server: ServerInfo) {
         if (!hasNetwork()) {
             _uiState.postValue(UIState.Disconnected(UIModel.Disconnected()))
-            snackBar.value = InAppNotificationView.Config.warning(StringResource(R.string.toast_try_again))
+            snackBar.value = InAppNotificationView.Config.warning(StringResource(R.string.toast_no_network))
             return
         }
 
