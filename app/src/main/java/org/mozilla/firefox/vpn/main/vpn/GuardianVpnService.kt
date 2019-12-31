@@ -5,6 +5,7 @@ import android.content.Intent
 import com.wireguard.android.backend.TunnelManager
 import com.wireguard.android.backend.WireGuardVpnService
 import org.mozilla.firefox.vpn.GuardianApp
+import org.mozilla.firefox.vpn.util.NotificationUtil
 
 class GuardianVpnService : WireGuardVpnService() {
 
@@ -14,6 +15,14 @@ class GuardianVpnService : WireGuardVpnService() {
 
     override val tunnelManager: TunnelManager<*> by lazy {
         component.vpnManager.tunnelManager
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.getStringExtra(EXTRA_COMMAND)) {
+            COMMAND_TURN_ON -> startForeground(NotificationUtil.DEFAULT_NOTIFICATION_ID, NotificationUtil.createBaseBuilder(this).build())
+            COMMAND_TURN_OFF -> stopForeground(false)
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     companion object {

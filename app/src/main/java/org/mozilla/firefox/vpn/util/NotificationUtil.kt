@@ -19,7 +19,7 @@ object NotificationUtil {
 
     private const val MEDIUM_CHANNEL_ID = "medium_channel_id"
     private const val URGENT_CHANNEL_ID = "urgent_channel_id"
-    private const val DEFAULT_NOTIFICATION_ID = 1000
+    const val DEFAULT_NOTIFICATION_ID = 1000
 
     fun init(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -39,7 +39,6 @@ object NotificationUtil {
             .setColor(context.color(R.color.violet90))
             .setAutoCancel(true)
             .setShowWhen(false)
-            .setSubText(context.getString(R.string.windows_notification_subtext))
             .setContentIntent(PendingIntent.getActivity(context, 0, MainActivity.getStartIntent(context), PendingIntent.FLAG_CANCEL_CURRENT))
     }
 
