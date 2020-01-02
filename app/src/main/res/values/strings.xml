@@ -236,5 +236,6 @@
     <string name="windows_notification_vpn_no_signal_title">@string/hero_subtext_no_signal</string>
     <string name="windows_notification_vpn_no_signal_content">@string/windows_notification_vpn_unstable_content</string>
     <string name="toast_unable_to_remove_device">Unable to remove device.</string>
+    <string name="toast_no_network">Please check your network and try again</string>
 
 </resources>
