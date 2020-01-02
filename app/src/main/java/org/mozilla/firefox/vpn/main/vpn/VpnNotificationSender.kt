@@ -50,14 +50,14 @@ class VpnNotificationSender(private val appContext: Context, private val vpnMana
             }
             VpnState.Unstable -> {
                 builder = NotificationUtil.createBaseBuilder(appContext).apply {
-                    setContentTitle(appContext.getString(R.string.windows_notification_vpn_unstable_title))
+                    setContentTitle(appContext.getString(R.string.hero_subtext_unstable))
                     setContentText(appContext.getString(R.string.windows_notification_vpn_unstable_content))
                 }
             }
             VpnState.NoSignal -> {
                 builder = NotificationUtil.createImportantBuilder(appContext).apply {
-                    setContentTitle(appContext.getString(R.string.windows_notification_vpn_no_signal_title))
-                    setContentText(appContext.getString(R.string.windows_notification_vpn_no_signal_content))
+                    setContentTitle(appContext.getString(R.string.hero_subtext_no_signal))
+                    setContentText(appContext.getString(R.string.windows_notification_vpn_unstable_content))
                 }
             }
         }

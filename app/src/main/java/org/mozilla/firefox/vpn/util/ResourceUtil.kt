@@ -9,6 +9,7 @@ import java.util.Locale
 class StringResource {
     var id: Int? = null
     var str: String? = null
+    var formatArgs: Array<out String>? = null
 
     constructor(str: String) {
         this.str = str
@@ -18,8 +19,17 @@ class StringResource {
         this.id = id
     }
 
+    constructor(ftlId: Int, vararg strings: String) {
+        this.id = ftlId
+        this.formatArgs = strings
+    }
+
     fun resolve(context: Context): String? {
-        return str?.let { it } ?: id?.let { context.getString(it).apply { str = this } }
+        formatArgs?.let { return context.getString(this.id!!, *it) }
+        str?.let { return it }
+        id?.let { return context.getString(it) }
+
+        return null
     }
 }
 

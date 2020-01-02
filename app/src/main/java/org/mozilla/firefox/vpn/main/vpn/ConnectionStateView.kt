@@ -49,16 +49,16 @@ class ConnectionStateView : CardView {
         initGlobeAnimation(currentModel, model)
         initRippleAnimation(currentModel, model)
 
-        title.text = context.getString(model.titleId)
+        title.text = model.title.resolve(context)
 
         description.text = when (model) {
-            is UIModel.Connected -> context.getString(model.descriptionId) +
+            is UIModel.Connected -> model.description.resolve(context) +
                     " ${context.getString(R.string.vpn_state_separator)} "
-            is UIModel.Switching -> context.getString(model.descriptionId, model.from, model.to)
+            is UIModel.Switching -> model.description.resolve(context)
             is UIModel.NoSignal,
             is UIModel.Unstable -> " ${context.getString(R.string.vpn_state_separator)} " +
-                    context.getString(model.descriptionId)
-            else -> context.getString(model.descriptionId)
+                    model.description.resolve(context)
+            else -> model.description.resolve(context)
         }
 
         when (model) {
@@ -70,7 +70,7 @@ class ConnectionStateView : CardView {
                 }
                 warning_text.apply {
                     visibility = View.VISIBLE
-                    text = context.getString(model.stateTextId)
+                    text = model.stateText.resolve(context)
                     setTextColor(color)
                 }
             }

@@ -95,7 +95,11 @@ class DevicesFragment : Fragment() {
             (device_list.adapter as? DevicesAdapter)?.setData(uiModel)
         }
 
-        deviceCountView.text = getString(R.string.devices_page_subtitle, uiModel.devices.size, uiModel.maxDevices)
+        deviceCountView.text = getString(
+            R.string.devices_page_subtitle,
+            uiModel.devices.size.toString(),
+            uiModel.maxDevices.toString()
+        )
     }
 
     private fun showError(errorMessage: ErrorMessage) {
