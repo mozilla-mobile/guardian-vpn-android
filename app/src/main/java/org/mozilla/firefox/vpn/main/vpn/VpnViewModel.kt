@@ -219,62 +219,62 @@ class VpnViewModel(
 
     sealed class UIModel(
         val style: Styles,
-        val titleId: Int,
-        val descriptionId: Int,
+        val title: StringResource,
+        val description: StringResource,
         val switchOn: Boolean
     ) {
 
         class Connected : UIModel(
             Styles.Secure,
-            R.string.hero_text_vpn_on,
-            R.string.hero_subtext_secure_protected,
+            StringResource(R.string.hero_text_vpn_on),
+            StringResource(R.string.hero_subtext_secure_protected),
             true
         )
         class Connecting : UIModel(
             Styles.Secure.copy(switchAlpha = 0.5f),
-            R.string.hero_text_connecting,
-            R.string.hero_subtext_protected_shortly,
+            StringResource(R.string.hero_text_connecting),
+            StringResource(R.string.hero_subtext_protected_shortly),
             true
         )
         class Disconnected : UIModel(
             Styles.Insecure,
-            R.string.hero_text_vpn_off,
-            R.string.hero_subtext_turn_on,
+            StringResource(R.string.hero_text_vpn_off),
+            StringResource(R.string.hero_subtext_turn_on),
             false
         )
         class Disconnecting : UIModel(
             Styles.Insecure.copy(switchAlpha = 0.5f),
-            R.string.hero_text_disconnecting,
-            R.string.hero_subtext_disconnected_shortly,
+            StringResource(R.string.hero_text_disconnecting),
+            StringResource(R.string.hero_subtext_disconnected_shortly),
             false
         )
-        class Switching(val from: String, val to: String) : UIModel(
+        class Switching(from: String, to: String) : UIModel(
             Styles.Secure.copy(switchAlpha = 0.5f),
-            R.string.hero_text_switching,
-            R.string.hero_subtext_server_switch,
+            StringResource(R.string.hero_text_switching),
+            StringResource(R.string.hero_subtext_server_switch, from, to),
             true
         )
         abstract class WarningState(
-            titleId: Int,
-            descriptionId: Int,
-            val stateTextId: Int,
+            title: StringResource,
+            description: StringResource,
+            val stateText: StringResource,
             val stateColorId: Int
         ) : UIModel(
             Styles.Secure,
-            titleId,
-            descriptionId,
+            title,
+            description,
             true
         )
         class Unstable : WarningState(
-            R.string.hero_text_vpn_on,
-            R.string.hero_subtext_check_connection,
-            R.string.hero_subtext_unstable,
+            StringResource(R.string.hero_text_vpn_on),
+            StringResource(R.string.hero_subtext_check_connection),
+            StringResource(R.string.hero_subtext_unstable),
             R.color.yellow50
         )
         class NoSignal : WarningState(
-            R.string.hero_text_vpn_on,
-            R.string.hero_subtext_check_connection,
-            R.string.hero_subtext_no_signal,
+            StringResource(R.string.hero_text_vpn_on),
+            StringResource(R.string.hero_subtext_check_connection),
+            StringResource(R.string.hero_subtext_no_signal),
             R.color.red50
         )
 

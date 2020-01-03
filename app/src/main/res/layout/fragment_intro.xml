@@ -64,7 +64,7 @@
         android:layout_marginBottom="48dp"
         android:background="@drawable/selector_bg_primary_button"
         android:gravity="center"
-        android:text="@string/link_account_signin_button_text"
+        android:text="@string/landing_signin_button_text"
         android:textColor="@android:color/white"
         android:visibility="gone"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"

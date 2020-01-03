@@ -123,3 +123,6 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     classpath = configurations.ktlint
     args "-F", "src/**/*.kt"
 }
+
+import org.mozilla.firefox.vpn.CompileFluentTask
+task compileFluentKt(type: CompileFluentTask)
