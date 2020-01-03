@@ -58,11 +58,11 @@ class DevicesFragment : Fragment() {
         initActionBar()
 
         viewModel.devicesUiModel.observe(viewLifecycleOwner, Observer {
-            it ?: return@Observer
             when (it) {
                 is DevicesUiState.StateLoading -> showLoading()
                 is DevicesUiState.StateLoaded -> showData(it.uiModel)
                 is DevicesUiState.StateError -> showError(it.errorMessage)
+                else -> return@Observer
             }
         })
 
