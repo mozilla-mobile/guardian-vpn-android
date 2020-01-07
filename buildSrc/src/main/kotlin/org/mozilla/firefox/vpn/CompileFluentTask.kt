@@ -44,6 +44,7 @@ open class CompileFluentTask : DefaultTask() {
             val resolved = values
                 .resolveInlinedVariable()
                 .resolvePlaceholder()
+                .resolveEscapedStrings()
                 .customizeSpecialStrings()
 
             val resContent = buildStringResource(resolved)
@@ -57,57 +58,68 @@ open class CompileFluentTask : DefaultTask() {
     }
 
     private fun List<Attribute>.resolveInlinedVariable(): List<Attribute> {
-        return map { currentAttr ->
-            when (currentAttr.value) {
-                is StringValue.SimpleString -> {
-                    val result = currentAttr.value.resolvePlaceholder { resolveStringVariable(it) }
-                    Attribute(currentAttr.id, StringValue.SimpleString(result))
-                }
-                is StringValue.Plural -> {
-                    val result = currentAttr.value.resolvePlaceholder { resolveStringVariable(it) }
-                    Attribute(currentAttr.id, StringValue.Plural(currentAttr.value.variable, result))
-                }
-            }
+        return mapStringValues { _, str ->
+            resolvePlaceholder(str) { resolveStringVariable(it) }
         }
     }
 
     private fun List<Attribute>.resolvePlaceholder(): List<Attribute> {
+        return mapSimpleStringValues { id, str ->
+            if (placeholderOrderMap.containsKey(id)) {
+                var newStr = str
+                placeholderOrderMap[id]?.forEach { placeholder, idx ->
+                    val ph = if (placeholderOrderMap[id]?.count() == 1) {
+                        "%s"
+                    } else {
+                        "%${idx + 1}\$s"
+                    }
+                    newStr = newStr.replace(placeholder, ph)
+                }
+                newStr
+            } else {
+                str
+            }
+        }
+    }
+
+    private fun List<Attribute>.resolveEscapedStrings(): List<Attribute> {
+        return mapStringValues { _, str ->
+            resolveEscapedStrings(str)
+        }
+    }
+
+    private fun List<Attribute>.customizeSpecialStrings(): List<Attribute> {
+        return mapSimpleStringValues { id, str ->
+            if (id == "application-name") {
+                "$str Debug"
+            } else {
+                str
+            }
+        }
+    }
+
+    private fun List<Attribute>.mapStringValues(function: (String, String) -> String): List<Attribute> {
+        return mapSimpleStringValues(function).mapPluralStringValues(function)
+    }
+
+    private fun List<Attribute>.mapSimpleStringValues(function: (id: String, str: String) -> String): List<Attribute> {
         return map {
             when (it.value) {
-                is StringValue.SimpleString -> {
-                    if (placeholderOrderMap.containsKey(it.id)) {
-                        var newStr = it.value.value
-                        placeholderOrderMap[it.id]?.forEach { str, idx ->
-                            val ph = if (placeholderOrderMap[it.id]?.count() == 1) {
-                                "%s"
-                            } else {
-                                "%${idx + 1}\$s"
-                            }
-                            newStr = newStr.replace(str, ph)
-                        }
-                        Attribute(it.id, StringValue.SimpleString(newStr))
-                    } else {
-                        it
-                    }
-                }
+                is StringValue.SimpleString -> Attribute(it.id, StringValue.SimpleString(function(it.id, it.value.value)))
                 else -> it
             }
         }
     }
 
-    private fun List<Attribute>.customizeSpecialStrings(): List<Attribute> {
-        return map {
-            when (it.value) {
-                is StringValue.SimpleString -> {
-
-                    if (it.id == "application-name") {
-                        val newStr = it.value.value
-                        Attribute(it.id, StringValue.SimpleString("$newStr Debug"))
-                    } else {
-                        it
-                    }
+    private fun List<Attribute>.mapPluralStringValues(function: (String, String) -> String): List<Attribute> {
+        return map { attr ->
+            when (attr.value) {
+                is StringValue.Plural -> {
+                    Attribute(attr.id, StringValue.Plural(attr.value.variable, attr.value.map.mapValues {
+                        function(attr.id, it.value)
+                    }))
                 }
-                else -> it
+                else -> attr
             }
         }
     }
@@ -139,10 +151,10 @@ open class CompileFluentTask : DefaultTask() {
         }
     }
 
-    private fun StringValue.SimpleString.resolvePlaceholder(resolver: (name: String) -> String?): String {
+    private fun resolvePlaceholder(str: String, resolver: (name: String) -> String?): String {
         val varPattern = """\{([a-zA-Z][a-zA-Z0-9\-_]*)}"""
-        val matcher = Pattern.compile(varPattern).matcher(value)
-        var replaced = value
+        val matcher = Pattern.compile(varPattern).matcher(str)
+        var replaced = str
         while (matcher.find()) {
             val varName = matcher.group(1)
             val varValue = resolver(varName) ?: continue
@@ -151,19 +163,15 @@ open class CompileFluentTask : DefaultTask() {
         return replaced
     }
 
-    private fun StringValue.Plural.resolvePlaceholder(resolver: (name: String) -> String?): Map<String, String> {
-        val varPattern = """\{([a-zA-Z][a-zA-Z0-9]*)}"""
-        return map.mapValues {
-            val value = it.value
-            val matcher = Pattern.compile(varPattern).matcher(value)
-            var replaced = value
-            while (matcher.find()) {
-                val varName = matcher.group(1)
-                val varValue = resolver(varName) ?: continue
-                replaced = replaced.replace("{${varName}}", varValue)
-            }
-            replaced
+    private fun resolveEscapedStrings(str: String): String {
+        val varPattern = """\{"(.+)"}"""
+        val matcher = Pattern.compile(varPattern).matcher(str)
+        var replaced = str
+        while (matcher.find()) {
+            val escapedContent = matcher.group(1)
+            replaced = replaced.replace("{\"${escapedContent}\"}", escapedContent)
         }
+        return replaced
     }
 
     private fun buildStringResource(attrs: List<Attribute>): String {

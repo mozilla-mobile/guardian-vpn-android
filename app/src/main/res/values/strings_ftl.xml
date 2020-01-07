@@ -144,12 +144,12 @@
     <string name="toast_firewall_rules_error">Error creating firewall rules</string>
     <string name="toast_load_configuration_error">Error loading configuration file for VPN</string>
     <string name="toast_open_log_file_error">Can\'t open log file for writing</string>
-    <string name="toast_update_version_message_1">New features are available!{" "}</string>
+    <string name="toast_update_version_message_1">New features are available! </string>
     <string name="toast_update_version_message_2">Update now</string>
-    <string name="toast_no_subscription">No active subscription.{" "}</string>
-    <string name="toast_unable_to_connect">Unable to connect.{" "}</string>
+    <string name="toast_no_subscription">No active subscription. </string>
+    <string name="toast_unable_to_connect">Unable to connect. </string>
     <string name="toast_try_again">Try again</string>
-    <string name="toast_feedback_submitted">Feedback submitted!{" "}</string>
+    <string name="toast_feedback_submitted">Feedback submitted! </string>
     <string name="toast_feedback_undo">Undo</string>
     <string name="viewlog_save_button">Save</string>
     <string name="viewlog_timestamp_header">Timestamp</string>
