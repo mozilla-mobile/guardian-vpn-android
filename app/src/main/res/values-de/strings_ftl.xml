@@ -144,12 +144,12 @@
     <string name="toast_firewall_rules_error">Fehler bei der Erstellung von Firewall-Regeln</string>
     <string name="toast_load_configuration_error">Fehler beim Laden der Konfigurationsdatei für VPN</string>
     <string name="toast_open_log_file_error">Die Protokolldatei hat keine Schreibberechtigung.</string>
-    <string name="toast_update_version_message_1">Neue Funktionen sind verfügbar!{" "}</string>
+    <string name="toast_update_version_message_1">Neue Funktionen sind verfügbar! </string>
     <string name="toast_update_version_message_2">Update starten</string>
-    <string name="toast_no_subscription">Kein aktives Abonnement.{" "}</string>
-    <string name="toast_unable_to_connect">Verbindung kann nicht hergestellt werden.{" "}</string>
+    <string name="toast_no_subscription">Kein aktives Abonnement. </string>
+    <string name="toast_unable_to_connect">Verbindung kann nicht hergestellt werden. </string>
     <string name="toast_try_again">Nochmal versuchen</string>
-    <string name="toast_feedback_submitted">Feedback abgeschickt!{" "}</string>
+    <string name="toast_feedback_submitted">Feedback abgeschickt! </string>
     <string name="toast_feedback_undo">Rückgängig</string>
     <string name="viewlog_save_button">Speichern</string>
     <string name="viewlog_timestamp_header">Uhrzeit</string>
