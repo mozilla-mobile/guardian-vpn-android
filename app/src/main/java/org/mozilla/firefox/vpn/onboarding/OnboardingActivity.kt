@@ -3,11 +3,13 @@ package org.mozilla.firefox.vpn.onboarding
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_onboarding.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.ui.GuardianSnackbar
@@ -20,13 +22,12 @@ import org.mozilla.firefox.vpn.util.viewModel
 class OnboardingActivity : AppCompatActivity() {
 
     private val component by lazy {
-        OnboardingComponentImpl(guardianComponent)
+        OnboardingComponentImpl(coreComponent, guardianComponent)
     }
 
     private val viewModel by viewModel { component.viewModel }
 
     private var shouldLaunchMainPage = false
-    private var isCustomTabLaunched = false
 
     private lateinit var customTab: LoginCustomTab
 
@@ -55,7 +56,6 @@ class OnboardingActivity : AppCompatActivity() {
         })
 
         viewModel.promptLogin.observe(this, Observer {
-            isCustomTabLaunched = true
             customTab.launchUrl(it)
         })
 
@@ -73,13 +73,19 @@ class OnboardingActivity : AppCompatActivity() {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             })
         })
+
+        viewModel.uiModel.observe(this, Observer {
+            loading_view.visibility = if (it.isLoading) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
     }
 
     override fun onResume() {
-        if (isCustomTabLaunched) {
-            viewModel.cancelLoginFlow()
-        }
         super.onResume()
+        viewModel.resumeLoginFlow()
     }
 
     override fun onNewIntent(intent: Intent?) {

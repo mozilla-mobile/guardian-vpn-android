@@ -1,5 +1,7 @@
 package org.mozilla.firefox.vpn.onboarding
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
@@ -10,6 +12,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.domain.AddDeviceUseCase
+import org.mozilla.firefox.vpn.onboarding.domain.ClearPendingLoginInfoUseCase
+import org.mozilla.firefox.vpn.onboarding.domain.GetPendingLoginInfoUseCase
+import org.mozilla.firefox.vpn.onboarding.domain.SetPendingLoginInfoUseCase
 import org.mozilla.firefox.vpn.service.LoginInfo
 import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.user.domain.CreateUserUseCase
@@ -26,13 +31,19 @@ class OnboardingViewModel(
     private val loginInfoUseCase: GetLoginInfoUseCase,
     private val verifyLoginUseCase: VerifyLoginUseCase,
     private val createUserUseCase: CreateUserUseCase,
-    private val addDeviceUseCase: AddDeviceUseCase
+    private val addDeviceUseCase: AddDeviceUseCase,
+    private val setPendingLoginInfoUseCase: SetPendingLoginInfoUseCase,
+    private val getPendingLoginInfoUseCase: GetPendingLoginInfoUseCase,
+    private val clearPendingLoginInfoUseCase: ClearPendingLoginInfoUseCase
 ) : ViewModel() {
 
     val toast = LiveEvent<StringResource>()
     val showLoggedOutMessage = LiveEvent<StringResource>()
     val launchMainPage = LiveEvent<Unit>()
     val promptLogin = LiveEvent<String>()
+
+    private val _uiModel = MutableLiveData<UiModel>()
+    val uiModel: LiveData<UiModel> = _uiModel
 
     private var verificationJob: Job? = null
 
@@ -48,7 +59,16 @@ class OnboardingViewModel(
         viewModelScope.launch(Dispatchers.Main) { getLoginInfo().onSuccess { login(it) } }
     }
 
-    fun cancelLoginFlow() {
+    fun resumeLoginFlow() {
+        _uiModel.value = UiModel(true)
+        viewModelScope.launch(Dispatchers.Main) {
+            getPendingLoginInfoUseCase()
+                ?.let { verifyLogin(it) }
+                ?: run { _uiModel.value = UiModel(false) }
+        }
+    }
+
+    private fun cancelLoginFlow() {
         verificationJob?.cancel("verification cancelled")
     }
 
@@ -57,15 +77,28 @@ class OnboardingViewModel(
     }
 
     private suspend fun login(info: LoginInfo) = withContext(Dispatchers.Main) {
+        setPendingLoginInfoUseCase(info)
         promptLogin.value = info.loginUrl
-        verificationJob = verifyLogin(info).addCompletionHandler { verificationJob = null }
+        verificationJob = verifyLoginAsync(info).addCompletionHandler { verificationJob = null }
     }
 
-    private suspend fun verifyLogin(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
-        when (val result = verifyLoginUseCase(info)) {
+    private suspend fun verifyLogin(info: LoginInfo, retry: Boolean = false) = withContext(Dispatchers.IO) {
+        val result = verifyLoginUseCase(info, retry)
+
+        clearPendingLoginInfoUseCase()
+
+        when (result) {
             is Result.Success -> onLoginSuccess(result.value)
-            is Result.Fail -> GLog.d(TAG, "verify login failed: ${result.exception}")
+            is Result.Fail -> {
+                _uiModel.postValue(UiModel(false))
+                cancelLoginFlow()
+                GLog.d(TAG, "verify login failed: ${result.exception}")
+            }
         }
+    }
+
+    private suspend fun verifyLoginAsync(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
+        verifyLogin(info, true)
     }
 
     private suspend fun onLoginSuccess(
@@ -81,6 +114,10 @@ class OnboardingViewModel(
             launchMainPage.value = Unit
         }
     }
+
+    data class UiModel(
+        val isLoading: Boolean
+    )
 
     companion object {
         private const val TAG = "OnboardingViewModel"
