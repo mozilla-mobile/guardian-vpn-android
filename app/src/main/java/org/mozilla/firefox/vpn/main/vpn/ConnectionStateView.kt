@@ -103,7 +103,7 @@ class ConnectionStateView : CardView {
         val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)
         vibrator?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                it.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                it.vibrate(VibrationEffect.createOneShot(100, VIBRATE_AMP))
             } else {
                 @Suppress("DEPRECATION")
                 it.vibrate(100)
@@ -183,6 +183,10 @@ class ConnectionStateView : CardView {
         switch_btn.setOnCheckedChangeListener(null)
         switch_btn.isChecked = isChecked
         switch_btn.setOnCheckedChangeListener(onCheckedChangedListener)
+    }
+
+    companion object {
+        private const val VIBRATE_AMP = 100
     }
 }
 
