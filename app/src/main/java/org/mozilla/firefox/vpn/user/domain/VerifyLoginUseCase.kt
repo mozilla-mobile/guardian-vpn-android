@@ -13,8 +13,11 @@ class VerifyLoginUseCase(
     private val userRepository: UserRepository
 ) {
 
-    suspend operator fun invoke(info: LoginInfo): Result<LoginResult> {
+    suspend operator fun invoke(info: LoginInfo, retry: Boolean): Result<LoginResult> {
         var result = userRepository.verifyLogin(info)
+        if (!retry) {
+            return result
+        }
 
         while (result is Result.Fail) {
             Log.d(TAG, "verify login fail, result=$result")
