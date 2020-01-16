@@ -28,12 +28,16 @@ class GetServerConfigUseCase(
     }
 }
 
-fun CurrentDevice.toWgInterface(excludeApps: List<String> = emptyList()): Interface {
+fun CurrentDevice.toWgInterface(
+    includedApps: List<String> = emptyList(),
+    excludeApps: List<String> = emptyList()
+): Interface {
     return Interface.Builder().apply {
         setKeyPair(KeyPair(Key.fromBase64(privateKeyBase64)))
         addAddress(InetNetwork.parse(device.ipv4Address))
         addDnsServer(InetAddress.getByAddress(byteArrayOf(1, 1, 1, 1)))
-        excludeApps.forEach { excludeApplication(it) }
+        excludeApplications(excludeApps)
+        includeApplications(includedApps)
     }.build()
 }
 
@@ -47,9 +51,13 @@ fun ServerInfo.toWgPeer(): Peer {
     }.build()
 }
 
-fun CurrentDevice.createConfig(serverInfo: ServerInfo): Config {
+fun CurrentDevice.createConfig(
+    serverInfo: ServerInfo,
+    includedApps: List<String> = emptyList(),
+    excludeApps: List<String> = emptyList()
+): Config {
     return Config.Builder().apply {
-        setInterface(toWgInterface())
+        setInterface(toWgInterface(includedApps, excludeApps))
         addPeers(listOf(serverInfo.toWgPeer()))
     }.build()
 }
