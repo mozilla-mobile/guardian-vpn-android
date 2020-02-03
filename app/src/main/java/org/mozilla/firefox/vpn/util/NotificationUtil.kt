@@ -36,7 +36,7 @@ object NotificationUtil {
     fun createBaseBuilder(context: Context, channel: Channel = Channel.MEDIUM): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, getChannelD(channel))
             .setSmallIcon(R.drawable.ic_notification)
-            .setColor(context.color(R.color.violet90))
+            .setColor(context.color(R.color.purple90))
             .setAutoCancel(true)
             .setShowWhen(false)
             .setContentIntent(PendingIntent.getActivity(context, 0, MainActivity.getStartIntent(context), PendingIntent.FLAG_CANCEL_CURRENT))
