@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/guardian_description"
+        android:text="@string/application_description"
         android:textColor="@color/gray40"
         android:textAppearance="@style/TextAppearance.Guardian.Byline10"
         app:layout_constraintTop_toBottomOf="@id/label_guardian_vpn"
@@ -72,18 +72,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="vpn.01.003" />
 
-    <ImageView
-        android:id="@+id/divider_1"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/gray10"
-        app:layout_constraintTop_toBottomOf="@id/version_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <LinearLayout
         android:id="@+id/btn_terms"
         android:layout_width="0dp"
@@ -92,13 +80,15 @@
         android:paddingEnd="16dp"
         android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/divider_1"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/version_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@string/terms_service_url_title"
