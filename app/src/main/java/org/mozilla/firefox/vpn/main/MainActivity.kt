@@ -67,10 +67,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         force_update.apply {
-            description.text = getString(
-                R.string.update_content_1,
-                getString(R.string.application_name)
-            )
+            description.text = getString(R.string.update_content_1)
 
             update_btn.setOnClickListener {
                 GooglePlayUtil.launchPlayStore(this@MainActivity)
