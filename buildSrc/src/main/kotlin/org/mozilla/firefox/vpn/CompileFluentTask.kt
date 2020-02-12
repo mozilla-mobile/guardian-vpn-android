@@ -89,13 +89,7 @@ open class CompileFluentTask : DefaultTask() {
     }
 
     private fun List<Attribute>.customizeSpecialStrings(): List<Attribute> {
-        return mapSimpleStringValues { id, str ->
-            if (id == "application-name") {
-                "$str Debug"
-            } else {
-                str
-            }
-        }
+        return this
     }
 
     private fun List<Attribute>.mapStringValues(function: (String, String) -> String): List<Attribute> {
