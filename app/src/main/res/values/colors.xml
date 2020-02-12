@@ -17,6 +17,7 @@
     <color name="gray10">#E7E7E7</color>
     <color name="gray5">#F9F9FA</color>
 
+    <color name="red70">#C50042</color>
     <color name="red50">#FF4F5E</color>
     <color name="red40">#FF6A75</color>
     <color name="red5">#FFDFE7</color>
@@ -27,6 +28,7 @@
     <color name="blue60">#0250BB</color>
     <color name="blue50">#0060DF</color>
 
+    <color name="green70">#008787</color>
     <color name="green50">#3FE1B0</color>
     <color name="green50_alpha_40">#663FE1B0</color>
     <color name="green40">#54FFBD</color>

@@ -1,13 +1,9 @@
 package org.mozilla.firefox.vpn.ui
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.view.View
@@ -21,7 +17,8 @@ object InAppNotificationView {
 
     fun inflate(context: Context, config: Config): View {
         return View.inflate(context, R.layout.view_in_app_notification, null).apply {
-            background = background.tint(context.color(config.style.bkgColorId))
+            background = context.getDrawable(config.style.bkgDrawableId)
+
             initText(this, config)
             initTextAction(this, config)
             initCloseButton(this, config)
@@ -38,6 +35,8 @@ object InAppNotificationView {
             return
         }
 
+        view.setOnClickListener { action.action() }
+
         val actionText = action.text.resolve(view.context) ?: return
         val text = "${view.text.text} $actionText"
         val spannable = SpannableString(text)
@@ -49,20 +48,6 @@ object InAppNotificationView {
         val boldSpan = StyleSpan(Typeface.BOLD)
         spannable.setSpan(boldSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
 
-        val clickSpan = object : ClickableSpan() {
-            override fun onClick(widget: View) {
-                action.action()
-            }
-
-            override fun updateDrawState(ds: TextPaint) {
-                ds.color = view.context.color(config.style.textColorId)
-            }
-        }
-        spannable.setSpan(clickSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-
-        view.text.movementMethod = LinkMovementMethod.getInstance()
-        view.text.highlightColor = Color.TRANSPARENT
-
         view.text.text = spannable
     }
 
@@ -72,7 +57,7 @@ object InAppNotificationView {
             return
         }
 
-        view.close.background.tint(view.context.color(config.style.closeAreaColorId))
+        view.close.background = view.context.getDrawable(config.style.closeAreaBkgDrawableId)
         view.close_icon.background.tint(view.context.color(config.style.closeIconColorId))
         view.close.setOnClickListener {
             closeAction()
@@ -97,14 +82,14 @@ object InAppNotificationView {
     )
 
     sealed class Style(
-        val bkgColorId: Int,
+        val bkgDrawableId: Int,
         val textColorId: Int,
-        val closeAreaColorId: Int,
+        val closeAreaBkgDrawableId: Int,
         val closeIconColorId: Int
     ) {
-        object Red : Style(R.color.red40, R.color.gray50, R.color.red50, R.color.gray50)
-        object Blue : Style(R.color.blue50, android.R.color.white, R.color.blue60, android.R.color.white)
-        object Green : Style(R.color.green40, R.color.gray50, R.color.green50, R.color.gray50)
+        object Red : Style(R.drawable.ripple_in_app_notification_red, R.color.gray50, R.drawable.ripple_in_app_notification_close_btn_red, R.color.gray50)
+        object Blue : Style(R.drawable.ripple_in_app_notification_blue, android.R.color.white, R.drawable.ripple_in_app_notification_close_btn_blue, android.R.color.white)
+        object Green : Style(R.drawable.ripple_in_app_notification_green, R.color.gray50, R.drawable.ripple_in_app_notification_close_btn_green, R.color.gray50)
     }
 }
 
