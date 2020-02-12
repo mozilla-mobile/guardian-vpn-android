@@ -1,6 +1,8 @@
 <resources>
     <string name="application_name">Firefox Private Network</string>
     <string name="application_description">Ein schnelles, sicheres und praktisches VPN(Virtuelles Privates Netzwerk).</string>
+    <string name="navigation_close">Close</string>
+    <string name="navigation_back">Backnavigation-open-linknavigation-open-contact-linknavigation-open-support-linknavigation-open-terms-of-servicenavigation-open-privacy-policynavigation-open-debugnavigation-open-log</string>
     <string name="connection_page_title">Verbindungen</string>
     <string name="devices_page_title">Meine Geräte</string>
     <string name="devices_page_subtitle">%1$s von %2$s</string>
@@ -19,7 +21,7 @@
     <string name="hero_text_vpn_on">VPN ist an</string>
     <string name="hero_text_connecting">Verbinden&#8230;</string>
     <string name="hero_text_disconnecting">Trennen&#8230;</string>
-    <string name="hero_text_switching">Wechselt&#8230;</string>
+    <string name="hero_text_switching">Wechselt&#8230;hero-image-vpn-statusdev-mode-ontoggle-vpndecoration-imageshadow-imageconnection-navigation-buttonvpn-status-image</string>
     <string name="hero_subtext_unstable">Instabil</string>
     <string name="hero_subtext_no_signal">Kein Signal</string>
     <string name="hero_subtext_turn_on">Anschalten um das gesamte Gerät zu schützen</string>
@@ -40,6 +42,9 @@
     <string name="tray_disconnected">Getrennt</string>
     <string name="tray_unstable">Instabil</string>
     <string name="tray_no_signal">Kein Signal</string>
+    <string name="tray_menu_exit">Be_enden</string>
+    <string name="tray_menu_show">_Anzeigen</string>
+    <string name="tray_menu_hide">A_usblenden</string>
     <string name="settings_auto_launch">VPN beim Hochfahren des Computers starten</string>
     <string name="settings_unsecured_network_title">Alarm für unsichere Verbindungen</string>
     <string name="settings_unsecured_network_content">Benachrichtigungen bei unsicheren Wlan-Verbindungen</string>
@@ -54,7 +59,7 @@
     <string name="language_additional_title">Zusätzlich</string>
     <string name="connection_connecting">Verbinden&#8230;</string>
     <string name="connection_disconnecting">Trennen&#8230;</string>
-    <string name="connection_switching">Wechselt&#8230;</string>
+    <string name="connection_switching">Wechselt&#8230;hero-image-vpn-statusdev-mode-ontoggle-vpndecoration-imageshadow-imageconnection-navigation-buttonvpn-status-image</string>
     <string name="devices_current_device">Aktuelles Gerät</string>
     <plurals name="devices_add_date_days">
         <item quantity="zero">Heute hinzugefügt</item>
@@ -75,6 +80,7 @@
     <string name="devices_limit_reached_content">Limit erreicht. Um den VPN auf diesem Gerät zu installieren, entferne zunächst ein andere.</string>
     <string name="devices_remove_popup_title">Gerät entfernen?</string>
     <string name="devices_remove_popup_content">Bitte bestätige das Entfernen von %s.</string>
+    <string name="devices_remove">Gerät entfernen</string>
     <string name="popup_cancel_button_text">Abbrechen</string>
     <string name="popup_remove_button_text">Entfernen</string>
     <string name="popup_ok_button_text">Ok</string>
@@ -129,8 +135,10 @@
     <string name="windows_notification_vpn_turn_on_content">Wir verbinden dich mit deinem letzten Standort: %s</string>
     <string name="windows_notification_unsecure_network_title">Unsicheres Netzwerk erkannt</string>
     <string name="windows_notification_unsecure_network_content">"%s" ist nicht sicher. Du solltest Dein VPN einschalten.</string>
-    <string name="windows_notification_captive_portal_title">Guest Wi-Fi portal blocked</string>
-    <string name="windows_notification_captive_portal_content">The guest Wi-Fi network you\'re connected to requires action. Turn off VPN to see portal.</string>
+    <string name="windows_notification_captive_portal_blocked_title">Guest Wi-Fi portal blocked</string>
+    <string name="windows_notification_captive_portal_blocked_content">The guest Wi-Fi network you\'re connected to requires action. Click to turn off VPN to see the portal.</string>
+    <string name="windows_notification_captive_portal_detected_title">Guest Wi-Fi portal detected</string>
+    <string name="windows_notification_captive_portal_detected_content">{$networkName} may not be secure. Click to turn on VPN to secure your device.</string>
     <string name="toast_debug_export_error">Wir sind beim Export Ihrer Debug-Informationen auf einen Fehler gestoßen.</string>
     <string name="toast_add_device_error">Neues Gerät konnte nicht hinzugefügt werden</string>
     <string name="toast_remove_device_error">Gerät konnte nicht entfernt werden</string>
@@ -151,6 +159,9 @@
     <string name="toast_try_again">Nochmal versuchen</string>
     <string name="toast_feedback_submitted">Feedback abgeschickt! </string>
     <string name="toast_feedback_undo">Rückgängig</string>
+    <string name="toast_service_communication_error">Unable to communicate with the Firefox Private Network background service. Click to restart.</string>
+    <string name="toast_service_restart_error">We couldn\'t restart the background service. Please repair your installation of Firefox Private Network.</string>
+    <string name="toast_service_restart_success">The Firefox Private Network background service has been restored.</string>
     <string name="viewlog_save_button">Speichern</string>
     <string name="viewlog_timestamp_header">Uhrzeit</string>
     <string name="viewlog_message_header">Nachricht</string>
