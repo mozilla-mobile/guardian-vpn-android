@@ -303,7 +303,7 @@ class FluentGrammar : Grammar<List<Attribute>>(), FluentParser {
 
     private val pluralParam by -dollar * stringId * -arrow
 
-    private val pluralIndexTagStart by token(""" {4}\[""")
+    private val pluralIndexTagStart by token("""(( {4})|\t)\[""")
     private val pluralIndexTagEnd by token("]")
 
     private val pluralIndexTag by -pluralIndexTagStart * stringId * -pluralIndexTagEnd

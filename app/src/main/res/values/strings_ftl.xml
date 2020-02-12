@@ -1,11 +1,20 @@
 <resources>
     <string name="application_name">Firefox Private Network</string>
     <string name="application_description">A fast, secure and easy to use VPN (Virtual Private Network).</string>
+    <string name="navigation_close">Close</string>
+    <string name="navigation_back">Back</string>
+    <string name="navigation_open_link">Open link</string>
+    <string name="navigation_open_contact_link">Open Contact us link</string>
+    <string name="navigation_open_support_link">Open Help &amp; Support link</string>
+    <string name="navigation_open_terms_of_service">Open Terms of Service link</string>
+    <string name="navigation_open_privacy_policy">Open Privacy Policy link</string>
+    <string name="navigation_open_debug">Open Debug link</string>
+    <string name="navigation_open_log">Open View log link</string>
     <string name="connection_page_title">Connection</string>
     <string name="devices_page_title">My devices</string>
     <string name="devices_page_subtitle">%1$s of %2$s</string>
     <string name="settings_page_title">Settings</string>
-    <string name="get_help_page_title">Get Help</string>
+    <string name="get_help_page_title">Get help</string>
     <string name="about_page_title">About</string>
     <string name="feedback_page_title">Give feedback</string>
     <string name="language_page_title">Language</string>
@@ -20,6 +29,13 @@
     <string name="hero_text_connecting">Connecting&#8230;</string>
     <string name="hero_text_disconnecting">Disconnecting&#8230;</string>
     <string name="hero_text_switching">Switching&#8230;</string>
+    <string name="hero_image_vpn_status">VPN status</string>
+    <string name="dev_mode_on">Dev mode on</string>
+    <string name="toggle_vpn">Toggle VPN</string>
+    <string name="decoration_image">Decoration</string>
+    <string name="shadow_image">Shadow</string>
+    <string name="connection_navigation_button">Connection navigation</string>
+    <string name="vpn_status_image">VPN status</string>
     <string name="hero_subtext_unstable">Unstable</string>
     <string name="hero_subtext_no_signal">No signal</string>
     <string name="hero_subtext_turn_on">Turn it on to protect your entire device</string>
@@ -32,7 +48,7 @@
     <string name="hero_subtext_server_switch_to">to</string>
     <string name="avatar_menu_settings">Settings</string>
     <string name="avatar_menu_manage_account">Manage account</string>
-    <string name="avatar_menu_view_log">View log</string>
+    <string name="avatar_menu_view_log">View Log</string>
     <string name="avatar_menu_feedback">Give feedback</string>
     <string name="avatar_menu_debug">Debug</string>
     <string name="avatar_menu_sign_out">Sign out</string>
@@ -40,6 +56,9 @@
     <string name="tray_disconnected">Disconnected</string>
     <string name="tray_unstable">Unstable</string>
     <string name="tray_no_signal">No signal</string>
+    <string name="tray_menu_exit">E_xit</string>
+    <string name="tray_menu_show">_Show</string>
+    <string name="tray_menu_hide">_Hide</string>
     <string name="settings_auto_launch">Launch VPN app on computer startup</string>
     <string name="settings_unsecured_network_title">Unsecured network alert</string>
     <string name="settings_unsecured_network_content">Get notified if you connect to an unsecured Wi-Fi network</string>
@@ -75,6 +94,7 @@
     <string name="devices_limit_reached_content">You\'ve reached your limit. To install the VPN on this device, you\'ll need to remove one.</string>
     <string name="devices_remove_popup_title">Remove device?</string>
     <string name="devices_remove_popup_content">Please confirm you would like to remove %s.</string>
+    <string name="devices_remove">Remove device</string>
     <string name="popup_cancel_button_text">Cancel</string>
     <string name="popup_remove_button_text">Remove</string>
     <string name="popup_ok_button_text">Ok</string>
@@ -129,8 +149,10 @@
     <string name="windows_notification_vpn_turn_on_content">Connect to your last location: %s.</string>
     <string name="windows_notification_unsecure_network_title">Unsecured Wi-Fi network detected</string>
     <string name="windows_notification_unsecure_network_content">"%s" is not secure. Turn on VPN to secure your device.</string>
-    <string name="windows_notification_captive_portal_title">Guest Wi-Fi portal blocked</string>
-    <string name="windows_notification_captive_portal_content">The guest Wi-Fi network you\'re connected to requires action. Turn off VPN to see portal.</string>
+    <string name="windows_notification_captive_portal_blocked_title">Guest Wi-Fi portal blocked</string>
+    <string name="windows_notification_captive_portal_blocked_content">The guest Wi-Fi network you\'re connected to requires action. Click to turn off VPN to see the portal.</string>
+    <string name="windows_notification_captive_portal_detected_title">Guest Wi-Fi portal detected</string>
+    <string name="windows_notification_captive_portal_detected_content">"%s" may not be secure. Click to turn on VPN to secure your device.</string>
     <string name="toast_debug_export_error">We ran into an error while exporting your debug information.</string>
     <string name="toast_add_device_error">Could not add new device</string>
     <string name="toast_remove_device_error">Could not remove device</string>
@@ -151,6 +173,9 @@
     <string name="toast_try_again">Try again</string>
     <string name="toast_feedback_submitted">Feedback submitted! </string>
     <string name="toast_feedback_undo">Undo</string>
+    <string name="toast_service_communication_error">Unable to communicate with the Firefox Private Network background service. Click to restart.</string>
+    <string name="toast_service_restart_error">We couldn\'t restart the background service. Please repair your installation of Firefox Private Network.</string>
+    <string name="toast_service_restart_success">The Firefox Private Network background service has been restored.</string>
     <string name="viewlog_save_button">Save</string>
     <string name="viewlog_timestamp_header">Timestamp</string>
     <string name="viewlog_message_header">Message</string>
