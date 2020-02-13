@@ -44,6 +44,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        
+        <activity android:name="org.mozilla.firefox.vpn.ui.UiDemoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
 
         <service
             android:name="org.mozilla.firefox.vpn.main.vpn.GuardianVpnService"
