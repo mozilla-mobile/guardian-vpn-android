@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.main.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,12 @@ import coil.transform.CircleCropTransformation
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 import org.mozilla.firefox.vpn.service.GuardianService
+import org.mozilla.firefox.vpn.ui.UiDemoActivity
 import org.mozilla.firefox.vpn.util.launchUrl
 import org.mozilla.firefox.vpn.util.viewModel
 
@@ -50,6 +53,11 @@ class SettingsFragment : Fragment() {
         }
         btn_sign_out.setOnClickListener {
             viewModel.signOut()
+        }
+
+        btn_ui_demo.visibility = if (BuildConfig.DEBUG) { View.VISIBLE } else { View.GONE }
+        btn_ui_demo.setOnClickListener {
+            startActivity(Intent(context, UiDemoActivity::class.java))
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner, Observer { userInfo ->

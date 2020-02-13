@@ -87,9 +87,24 @@ object InAppNotificationView {
         val closeAreaBkgDrawableId: Int,
         val closeIconColorId: Int
     ) {
-        object Red : Style(R.drawable.ripple_in_app_notification_red, R.color.gray50, R.drawable.ripple_in_app_notification_close_btn_red, R.color.gray50)
-        object Blue : Style(R.drawable.ripple_in_app_notification_blue, android.R.color.white, R.drawable.ripple_in_app_notification_close_btn_blue, android.R.color.white)
-        object Green : Style(R.drawable.ripple_in_app_notification_green, R.color.gray50, R.drawable.ripple_in_app_notification_close_btn_green, R.color.gray50)
+        object Red : Style(
+            R.drawable.ripple_in_app_notification_red,
+            R.color.gray50,
+            R.drawable.ripple_in_app_notification_close_btn_red,
+            R.color.gray50
+        )
+        object Blue : Style(
+            R.drawable.ripple_in_app_notification_blue,
+            android.R.color.white,
+            R.drawable.ripple_in_app_notification_close_btn_blue,
+            android.R.color.white
+        )
+        object Green : Style(
+            R.drawable.ripple_in_app_notification_green,
+            R.color.gray50,
+            R.drawable.ripple_in_app_notification_close_btn_green,
+            R.color.gray50
+        )
     }
 }
 
