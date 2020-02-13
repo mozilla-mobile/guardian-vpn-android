@@ -17,11 +17,12 @@
 
     <ImageView
         android:id="@+id/btn_cancel"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:scaleType="centerInside"
+        android:background="@drawable/ripple_rect_radius_4dp"
         android:src="@drawable/ic_cancel"
         android:tint="@color/gray40"
         app:layout_constraintTop_toTopOf="parent"
