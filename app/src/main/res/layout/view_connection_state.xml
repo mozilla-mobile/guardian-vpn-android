@@ -10,10 +10,12 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/ripple"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/vpn_state_card_ripple_height"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
+        android:scaleType="center"
+        app:layout_constraintStart_toStartOf="@+id/globe"
+        app:layout_constraintEnd_toEndOf="@+id/globe"
+        app:layout_constraintTop_toTopOf="@+id/globe"
+        app:layout_constraintBottom_toBottomOf="@+id/globe"
         app:lottie_rawRes="@raw/ripple"
         app:lottie_speed="0.5" />
 
