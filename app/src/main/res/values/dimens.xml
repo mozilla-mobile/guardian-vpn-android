@@ -6,7 +6,7 @@
     <dimen name="vpn_panel_elevation_secure">3dp</dimen>
     <dimen name="vpn_panel_elevation_insecure">2dp</dimen>
 
-    <dimen name="radio_button_text_padding">16dp</dimen>
+    <dimen name="radio_button_text_padding">12dp</dimen>
     <dimen name="radio_button_vertical_padding">12dp</dimen>
     <dimen name="radio_button_left_margin">52dp</dimen>
     <dimen name="vpn_state_card_radius">8dp</dimen>
