@@ -1,14 +1,12 @@
-package org.mozilla.firefox.vpn.ui;
+package org.mozilla.firefox.vpn.ui
 
-import android.app.Activity;
-import android.graphics.Color
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_ui_demo.*
-
-import org.mozilla.firefox.vpn.R;
+import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.util.StringResource
 
 class UiDemoActivity : Activity() {
