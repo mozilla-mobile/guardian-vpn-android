@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -122,6 +123,7 @@ class VpnFragment : Fragment() {
 
     private fun showConnectedState(model: VpnViewModel.UIModel) {
         connection_state_view.applyUiModel(model)
+        connection_state_view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
         startObserveDuration()
     }
 
@@ -131,6 +133,7 @@ class VpnFragment : Fragment() {
 
     private fun showDisconnectedState(model: VpnViewModel.UIModel) {
         connection_state_view.applyUiModel(model)
+        connection_state_view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
         stopObserveDuration()
     }
 
