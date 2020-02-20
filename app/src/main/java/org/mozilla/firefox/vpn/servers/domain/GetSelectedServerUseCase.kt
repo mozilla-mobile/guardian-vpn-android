@@ -27,8 +27,12 @@ class GetSelectedServerUseCase(
     }
 
     private fun defaultServerInfo(servers: List<ServerInfo>): Result<ServerInfo> {
-        return servers.firstOrNull()?.let {
-            Result.Success(it)
-        } ?: Result.Fail(RuntimeException("No server available"))
+        return if (servers.any { it.country.code == "us" }) {
+            Result.Success(servers.filter { it.country.code == "us" }.random())
+        } else {
+            servers.firstOrNull()?.let {
+                Result.Success(it)
+            } ?: Result.Fail(RuntimeException("No server available"))
+        }
     }
 }
