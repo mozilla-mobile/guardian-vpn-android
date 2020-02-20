@@ -45,6 +45,7 @@ class ConnectionStateView : CardView {
     fun applyUiModel(model: UIModel) {
         initGlobeAnimation(currentModel, model)
         initRippleAnimation(currentModel, model)
+        initHapticFeedback(currentModel, model)
 
         title.text = model.title.resolve(context)
 
@@ -150,6 +151,15 @@ class ConnectionStateView : CardView {
             ripple.playOnce(0, 74).then { loop(75, 120) }
         } else if (playEndAnimation) {
             ripple.playOnce(ripple.frame, 210)
+        }
+    }
+
+    private fun initHapticFeedback(oldModel: UIModel, newModel: UIModel) {
+        when {
+            oldModel is UIModel.Connecting && newModel is UIModel.Connected ||
+            oldModel is UIModel.Disconnecting && newModel is UIModel.Disconnected -> {
+                performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+            }
         }
     }
 
