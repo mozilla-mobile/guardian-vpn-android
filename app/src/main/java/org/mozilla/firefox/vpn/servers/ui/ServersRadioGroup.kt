@@ -97,8 +97,8 @@ class ServersRadioGroup : RadioGroup {
             text = serverInfo.city.name
             visibility = View.GONE
             buttonTintList = context.colorStateList(R.color.radio_button)
-            setTextColor(context.color(R.color.gray50))
             setTextAppearance(R.style.TextAppearance_Guardian_Body10)
+            setTextColor(context.color(R.color.gray50))
             setPadding(radioButtonTextPadding, radioButtonVerticalPadding, radioButtonTextPadding, radioButtonVerticalPadding)
             setOnClickListener {
                 listener?.onCheck(serverInfo)
