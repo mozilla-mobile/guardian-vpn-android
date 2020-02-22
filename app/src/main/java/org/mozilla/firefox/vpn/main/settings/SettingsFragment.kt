@@ -51,6 +51,11 @@ class SettingsFragment : Fragment() {
         btn_about.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_about)
         }
+        btn_feedback.setOnClickListener {
+            viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
+                launchUrl(GuardianService.HOST_FEEDBACK)
+            }
+        }
         btn_sign_out.setOnClickListener {
             viewModel.signOut()
         }
