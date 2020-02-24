@@ -12,10 +12,10 @@ import androidx.browser.customtabs.CustomTabsSession
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import kotlin.coroutines.resume
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
 
 class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycleObserver {
 
