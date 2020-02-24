@@ -7,9 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.UserState
 import org.mozilla.firefox.vpn.UserStates
+import org.mozilla.firefox.vpn.splash.domain.RefreshUserInfoUseCase
 import org.mozilla.firefox.vpn.user.data.checkAuth
 import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
-import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
 
 class SplashViewModel(
     refreshUserInfoUseCase: RefreshUserInfoUseCase,
