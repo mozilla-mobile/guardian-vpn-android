@@ -12,10 +12,10 @@ import androidx.browser.customtabs.CustomTabsSession
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
 
 class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycleObserver {
 
@@ -104,21 +104,23 @@ suspend fun Activity.launchUrl(url: String): Boolean {
 
 private suspend fun initCustomTabService(
     context: Context
-) = suspendCoroutine<CustomTabsSession?> {
-    val pkg = getTargetPackage(context) ?: return@suspendCoroutine it.resume(null)
+) = suspendCancellableCoroutine<CustomTabsSession?> {
+    val pkg = getTargetPackage(context) ?: return@suspendCancellableCoroutine it.resume(null)
 
     val isSuccess = CustomTabsClient.bindCustomTabsService(context, pkg, object : CustomTabsServiceConnection() {
 
         override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
-            client.warmup(0)
-            it.resume(client.newSession(null))
+            if (it.isActive) {
+                client.warmup(0)
+                it.resume(client.newSession(null))
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {}
     })
 
     if (!isSuccess) {
-        return@suspendCoroutine it.resume(null)
+        return@suspendCancellableCoroutine it.resume(null)
     }
 }
 
