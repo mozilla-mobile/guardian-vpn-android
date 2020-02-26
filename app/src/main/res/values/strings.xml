@@ -6,8 +6,6 @@
     <string name="launcher_name" translatable="false">Firefox VPN</string>
     <string name="vpn_state_separator" translatable="false">&#8226;</string>
     <string name="vpn_country_switch_hint" translatable="false">Select connection</string>
-    <string name="label_guardian_vpn" translatable="false">Guardian VPN</string>
-    <string name="guardian_description" translatable="false">A fast, secure and trusted virtual private network. Built for people not profits.</string>
     <string name="settings_default_user_name" translatable="false">User</string>
     <string name="windows_notification_channel_medium" translatable="false">Medium</string>
     <string name="windows_notification_channel_urgent" translatable="false">Urgent</string>
