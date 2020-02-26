@@ -217,25 +217,35 @@
 
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
             android:id="@+id/btn_ui_demo"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:gravity="center_vertical"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="horizontal"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="UI demo"
-            android:textAppearance="@style/TextAppearance.Guardian.Header20"
-            android:textColor="@color/gray50"
-            tools:ignore="HardcodedText" />
+            android:paddingEnd="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:layout_marginStart="40dp"
+                android:text="UI demo"
+                android:textAppearance="@style/TextAppearance.Guardian.Header20"
+                android:textColor="@color/gray50"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/btn_sign_out"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
             android:gravity="center"
-            android:layout_marginBottom="16dp"
             android:background="@drawable/ripple_rect_radius_4dp"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
