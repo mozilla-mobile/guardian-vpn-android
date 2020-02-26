@@ -157,8 +157,7 @@ class VpnViewModel(
 
     private fun tryConnectVpn(server: ServerInfo) {
         if (!hasNetwork()) {
-            _uiState.postValue(UIState.Disconnected(UIModel.Disconnected()))
-            snackBar.value = InAppNotificationView.Config.warning(StringResource(R.string.toast_no_network))
+            onConnectFailed()
             return
         }
 
@@ -167,9 +166,15 @@ class VpnViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             refreshUserInfoUseCase().checkAuth(
                 authorized = { connectVpn(server) },
-                unauthorized = { logout() }
+                unauthorized = { logout() },
+                onError = { onConnectFailed() }
             )
         }
+    }
+
+    private fun onConnectFailed() {
+        _uiState.postValue(UIState.Disconnected(UIModel.Disconnected()))
+        snackBar.postValue(InAppNotificationView.Config.warning(StringResource(R.string.toast_no_network)))
     }
 
     private fun hasNetwork(): Boolean {

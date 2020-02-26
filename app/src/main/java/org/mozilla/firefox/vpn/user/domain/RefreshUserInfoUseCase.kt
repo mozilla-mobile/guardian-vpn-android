@@ -9,6 +9,11 @@ class RefreshUserInfoUseCase(
 ) {
 
     suspend operator fun invoke(): Result<UserInfo> {
-        return userRepository.refreshUserInfo()
+        return userRepository.refreshUserInfo(CONNECT_TIMEOUT, READ_TIMEOUT)
+    }
+
+    companion object {
+        private const val CONNECT_TIMEOUT = 3000L
+        private const val READ_TIMEOUT = 3000L
     }
 }
