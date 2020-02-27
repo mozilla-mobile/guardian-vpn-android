@@ -166,6 +166,7 @@ class VpnManager(
     private fun monitorSwitchingState(oldServer: ServerInfo, newServer: ServerInfo): LiveData<VpnState> {
         return liveData(Dispatchers.IO, 0) {
             emit(VpnState.Switching(oldServer, newServer) as VpnState)
+            delay(MIN_SWITCH_DELAY)
             action.postValue(Action.ConnectImmediately)
         }
     }
@@ -296,5 +297,7 @@ class VpnManager(
 
         private val MAX_CONNECT_DURATION = TimeUnit.SECONDS.toMillis(5)
         private val MAX_SWITCH_DURATION = TimeUnit.SECONDS.toMillis(5)
+
+        private val MIN_SWITCH_DELAY = 500L
     }
 }
