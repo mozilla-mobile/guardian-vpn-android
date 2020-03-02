@@ -27,7 +27,7 @@ class VpnComponentImpl(
             vpnManager = vpnManager,
             vpnStateProvider = VpnManagerStateProvider(vpnManager),
             selectedServerProvider = selectedServerProvider,
-            getServersUseCase = GetServersUseCase(userRepo, serverRepo),
+            getServersUseCase = GetServersUseCase(serverRepo),
             getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo),
             currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
             setLatestUpdateMessageUseCase = SetLatestUpdateMessageUseCase(prefs),

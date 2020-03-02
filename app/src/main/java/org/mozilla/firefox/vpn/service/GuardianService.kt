@@ -17,6 +17,7 @@ import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.const.ENDPOINT
+import org.mozilla.firefox.vpn.user.data.SessionManager
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
@@ -25,7 +26,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Url
@@ -38,25 +38,19 @@ interface GuardianService {
     suspend fun verifyLogin(@Url verifyUrl: String): Response<LoginResult>
 
     @GET("api/v1/vpn/account")
-    suspend fun getUserInfo(@Header("Authorization") token: String): Response<User>
+    suspend fun getUserInfo(): Response<User>
 
     @GET("api/v1/vpn/servers")
-    suspend fun getServers(@Header("Authorization") token: String): Response<ServerList>
+    suspend fun getServers(): Response<ServerList>
 
     @GET("api/v1/vpn/versions")
     suspend fun getVersions(): Response<Versions>
 
     @POST("api/v1/vpn/device")
-    suspend fun addDevice(
-        @Body body: DeviceRequestBody,
-        @Header("Authorization") token: String
-    ): Response<DeviceInfo>
+    suspend fun addDevice(@Body body: DeviceRequestBody): Response<DeviceInfo>
 
     @DELETE("api/v1/vpn/device/{pubkey}")
-    suspend fun removeDevice(
-        @Path("pubkey") pubkey: String,
-        @Header("Authorization") token: String
-    ): Response<Unit>
+    suspend fun removeDevice(@Path("pubkey") pubkey: String): Response<Unit>
 
     companion object {
         const val HOST_GUARDIAN = ENDPOINT
@@ -69,15 +63,17 @@ interface GuardianService {
     }
 }
 
-fun GuardianService.Companion.newInstance(): GuardianService {
+fun GuardianService.Companion.newInstance(sessionManager: SessionManager): GuardianService {
     val client = OkHttpClient.Builder()
         .addInterceptor {
             val original = it.request()
             val request = original.newBuilder()
                 .header("User-Agent", getUserAgent())
                 .method(original.method(), original.body())
-                .build()
-            it.proceed(request)
+            if (original.isHttps) {
+                request.addHeader("Authorization", "Bearer ${sessionManager.getUserInfo()?.token}")
+            }
+            it.proceed(request.build())
         }
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY

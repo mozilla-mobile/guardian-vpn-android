@@ -19,7 +19,7 @@ class ServersComponentImpl(
     override val viewModel: ServersViewModel
         get() = ServersViewModel(
             vpnStateProvider = VpnManagerStateProvider(vpnManager),
-            getServersUseCase = GetServersUseCase(userRepo, serverRepo),
+            getServersUseCase = GetServersUseCase(serverRepo),
             setSelectedServerUseCase = SetSelectedServerUseCase(serverRepo, selectedServerProvider),
             getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo)
         )
