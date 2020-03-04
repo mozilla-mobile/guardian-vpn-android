@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import okhttp3.ConnectionPool
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,6 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Url
@@ -38,7 +40,10 @@ interface GuardianService {
     suspend fun verifyLogin(@Url verifyUrl: String): Response<LoginResult>
 
     @GET("api/v1/vpn/account")
-    suspend fun getUserInfo(): Response<User>
+    suspend fun getUserInfo(
+        @Header(TimeoutInterceptor.CONNECT_TIMEOUT) connectTimeout: String,
+        @Header(TimeoutInterceptor.READ_TIMEOUT) readTimeout: String
+    ): Response<User>
 
     @GET("api/v1/vpn/servers")
     suspend fun getServers(): Response<ServerList>
@@ -78,6 +83,7 @@ fun GuardianService.Companion.newInstance(sessionManager: SessionManager): Guard
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
+        .addInterceptor(TimeoutInterceptor())
         .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
         .build()
 
@@ -91,6 +97,53 @@ fun GuardianService.Companion.newInstance(sessionManager: SessionManager): Guard
         .client(client)
         .build()
         .create(GuardianService::class.java)
+}
+
+suspend fun GuardianService.getUserInfo(
+    connectTimeout: Long = 0,
+    readTimeout: Long = 0
+) = getUserInfo(connectTimeout.toString(), readTimeout.toString())
+
+private class TimeoutInterceptor : Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val request = chain.request()
+
+        var connectTimeout = chain.connectTimeoutMillis()
+        var readTimeout = chain.readTimeoutMillis()
+        var writeTimeout = chain.writeTimeoutMillis()
+
+        val connectNew = request.header(CONNECT_TIMEOUT)
+        val readNew = request.header(READ_TIMEOUT)
+        val writeNew = request.header(WRITE_TIMEOUT)
+
+        if (!connectNew.isNullOrEmpty()) {
+            connectTimeout = Integer.valueOf(connectNew)
+        }
+        if (!readNew.isNullOrEmpty()) {
+            readTimeout = Integer.valueOf(readNew)
+        }
+        if (!writeNew.isNullOrEmpty()) {
+            writeTimeout = Integer.valueOf(writeNew)
+        }
+
+        val builder = request.newBuilder()
+        builder.removeHeader(CONNECT_TIMEOUT)
+        builder.removeHeader(READ_TIMEOUT)
+        builder.removeHeader(WRITE_TIMEOUT)
+
+        return chain
+            .withConnectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
+            .withReadTimeout(readTimeout, TimeUnit.MILLISECONDS)
+            .withWriteTimeout(writeTimeout, TimeUnit.MILLISECONDS)
+            .proceed(builder.build())
+    }
+
+    companion object {
+        const val CONNECT_TIMEOUT = "CONNECT_TIMEOUT"
+        const val READ_TIMEOUT = "READ_TIMEOUT"
+        const val WRITE_TIMEOUT = "WRITE_TIMEOUT"
+    }
 }
 
 private fun getUserAgent(): String {
@@ -361,5 +414,5 @@ class ErrorCodeException(val code: Int, val errorBody: ResponseBody?) : RuntimeE
 
 object NetworkException : RuntimeException()
 
-open class UnknownException(val msg: String) : RuntimeException()
+open class UnknownException(private val msg: String) : RuntimeException(msg)
 data class UnknownErrorBody(val body: ResponseBody?) : UnknownException("${body?.string()}")

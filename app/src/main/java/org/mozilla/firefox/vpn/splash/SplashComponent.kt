@@ -2,8 +2,8 @@ package org.mozilla.firefox.vpn.splash
 
 import org.mozilla.firefox.vpn.GuardianComponent
 import org.mozilla.firefox.vpn.UserStates
+import org.mozilla.firefox.vpn.splash.domain.RefreshUserInfoUseCase
 import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
-import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
 
 interface SplashComponent {
     val viewModel: SplashViewModel

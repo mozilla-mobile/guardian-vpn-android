@@ -1,4 +1,4 @@
-package org.mozilla.firefox.vpn.user.domain
+package org.mozilla.firefox.vpn.splash.domain
 
 import org.mozilla.firefox.vpn.user.data.UserInfo
 import org.mozilla.firefox.vpn.user.data.UserRepository
