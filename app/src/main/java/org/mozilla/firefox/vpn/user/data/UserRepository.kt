@@ -12,6 +12,7 @@ import org.mozilla.firefox.vpn.service.UnknownErrorBody
 import org.mozilla.firefox.vpn.service.UnknownException
 import org.mozilla.firefox.vpn.service.User
 import org.mozilla.firefox.vpn.service.Versions
+import org.mozilla.firefox.vpn.service.getUserInfo
 import org.mozilla.firefox.vpn.service.handleError
 import org.mozilla.firefox.vpn.service.resolveBody
 import org.mozilla.firefox.vpn.service.toErrorBody
@@ -82,12 +83,16 @@ class UserRepository(
     /**
      * @return Result.Success(user) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
      */
-    suspend fun refreshUserInfo(): Result<UserInfo> {
+    suspend fun refreshUserInfo(connectTimeout: Long = 0, readTimeout: Long = 0): Result<UserInfo> {
         val userInfo = getUserInfo() ?: return Result.Fail(UnauthorizedException())
         val token = userInfo.token
 
         return try {
-            val response = guardianService.getUserInfo("Bearer $token")
+            val response = guardianService.getUserInfo(
+                "Bearer $token",
+                connectTimeout,
+                readTimeout
+            )
             response.resolveBody()
                 .mapValue {
                     userInfo.copy(

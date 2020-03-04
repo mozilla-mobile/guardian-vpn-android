@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import okhttp3.ConnectionPool
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,7 +39,11 @@ interface GuardianService {
     suspend fun verifyLogin(@Url verifyUrl: String): Response<LoginResult>
 
     @GET("api/v1/vpn/account")
-    suspend fun getUserInfo(@Header("Authorization") token: String): Response<User>
+    suspend fun getUserInfo(
+        @Header("Authorization") token: String,
+        @Header(TimeoutInterceptor.CONNECT_TIMEOUT) connectTimeout: String,
+        @Header(TimeoutInterceptor.READ_TIMEOUT) readTimeout: String
+    ): Response<User>
 
     @GET("api/v1/vpn/servers")
     suspend fun getServers(@Header("Authorization") token: String): Response<ServerList>
@@ -69,6 +74,54 @@ interface GuardianService {
     }
 }
 
+suspend fun GuardianService.getUserInfo(
+    token: String,
+    connectTimeout: Long = 0,
+    readTimeout: Long = 0
+) = getUserInfo(token, connectTimeout.toString(), readTimeout.toString())
+
+private class TimeoutInterceptor : Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val request = chain.request()
+
+        var connectTimeout = chain.connectTimeoutMillis()
+        var readTimeout = chain.readTimeoutMillis()
+        var writeTimeout = chain.writeTimeoutMillis()
+
+        val connectNew = request.header(CONNECT_TIMEOUT)
+        val readNew = request.header(READ_TIMEOUT)
+        val writeNew = request.header(WRITE_TIMEOUT)
+
+        if (!connectNew.isNullOrEmpty()) {
+            connectTimeout = Integer.valueOf(connectNew)
+        }
+        if (!readNew.isNullOrEmpty()) {
+            readTimeout = Integer.valueOf(readNew)
+        }
+        if (!writeNew.isNullOrEmpty()) {
+            writeTimeout = Integer.valueOf(writeNew)
+        }
+
+        val builder = request.newBuilder()
+        builder.removeHeader(CONNECT_TIMEOUT)
+        builder.removeHeader(READ_TIMEOUT)
+        builder.removeHeader(WRITE_TIMEOUT)
+
+        return chain
+            .withConnectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
+            .withReadTimeout(readTimeout, TimeUnit.MILLISECONDS)
+            .withWriteTimeout(writeTimeout, TimeUnit.MILLISECONDS)
+            .proceed(builder.build())
+    }
+
+    companion object {
+        const val CONNECT_TIMEOUT = "CONNECT_TIMEOUT"
+        const val READ_TIMEOUT = "READ_TIMEOUT"
+        const val WRITE_TIMEOUT = "WRITE_TIMEOUT"
+    }
+}
+
 fun GuardianService.Companion.newInstance(): GuardianService {
     val client = OkHttpClient.Builder()
         .addInterceptor {
@@ -82,6 +135,7 @@ fun GuardianService.Companion.newInstance(): GuardianService {
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
+        .addInterceptor(TimeoutInterceptor())
         .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
         .build()
 
@@ -365,5 +419,5 @@ class ErrorCodeException(val code: Int, val errorBody: ResponseBody?) : RuntimeE
 
 object NetworkException : RuntimeException()
 
-open class UnknownException(val msg: String) : RuntimeException()
+open class UnknownException(private val msg: String) : RuntimeException(msg)
 data class UnknownErrorBody(val body: ResponseBody?) : UnknownException("${body?.string()}")
