@@ -26,12 +26,12 @@ class DeviceRepository(
     /**
      * @return Result.Success(deviceInfo) or Result.Fail(UnauthorizedException|DeviceApiError|NetworkException|Otherwise)
      */
-    suspend fun registerDevice(name: String, token: String): Result<DeviceInfo> {
+    suspend fun registerDevice(name: String): Result<DeviceInfo> {
         val keyPair = KeyPair()
 
         return try {
             val response = guardianService.addDevice(
-                DeviceRequestBody(name, keyPair.publicKey.toBase64()), token
+                DeviceRequestBody(name, keyPair.publicKey.toBase64())
             )
             response.resolveBody()
                 .onSuccess {
@@ -57,9 +57,9 @@ class DeviceRepository(
     /**
      * @return Result.Success(Unit) or Result.Fail(UnauthorizedException|DeviceApiError|NetworkException|Otherwise)
      */
-    suspend fun unregisterDevice(pubKey: String, token: String): Result<Unit> {
+    suspend fun unregisterDevice(pubKey: String): Result<Unit> {
         return try {
-            val response = guardianService.removeDevice(pubKey, token)
+            val response = guardianService.removeDevice(pubKey)
             response.resolveBody()
                 .handleError(400) {
                     it?.toErrorBody()

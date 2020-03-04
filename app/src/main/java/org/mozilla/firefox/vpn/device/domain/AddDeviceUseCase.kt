@@ -16,10 +16,9 @@ class AddDeviceUseCase(
     suspend operator fun invoke(): Result<DeviceInfo> {
         return userRepository.refreshUserInfo()
             .then {
-                val token = it.token
                 val devices = it.user.devices
                 val deviceName = findAvailableModelName(devices)
-                deviceRepository.registerDevice(deviceName, "Bearer $token")
+                deviceRepository.registerDevice(deviceName)
             }
             .onSuccess { userRepository.refreshUserInfo() }
     }

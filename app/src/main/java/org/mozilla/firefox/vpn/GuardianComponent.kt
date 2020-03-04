@@ -7,6 +7,7 @@ import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.newInstance
 import org.mozilla.firefox.vpn.update.UpdateManager
+import org.mozilla.firefox.vpn.user.data.SessionManager
 import org.mozilla.firefox.vpn.user.data.UserRepository
 
 interface GuardianComponent {
@@ -23,14 +24,16 @@ class GuardianComponentImpl(
     private val coreComponent: CoreComponent
 ) : GuardianComponent, CoreComponent by coreComponent {
 
-    private val service = GuardianService.newInstance()
+    private val sessionManager = SessionManager(prefs)
+
+    private val service = GuardianService.newInstance(sessionManager)
 
     override val userRepo: UserRepository by lazy {
-        UserRepository(service, coreComponent.prefs)
+        UserRepository(service, sessionManager)
     }
 
     override val deviceRepo: DeviceRepository by lazy {
-        DeviceRepository(service, coreComponent.prefs)
+        DeviceRepository(service, prefs)
     }
 
     override val serverRepo: ServerRepository by lazy {

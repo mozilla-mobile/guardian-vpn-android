@@ -28,16 +28,14 @@ class ServerRepository(
     /**
      * @return Result.Success(serverList) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
      */
-    suspend fun getServers(token: String): Result<List<ServerInfo>> {
+    suspend fun getServers(): Result<List<ServerInfo>> {
         getCachedServers()
             ?.takeIf { System.currentTimeMillis() - it.lastUpdate < TimeUnit.DAYS.toMillis(1) }
             ?.takeIf { it.servers.isNotEmpty() }
             ?.let { return Result.Success(it.servers) }
 
-        val bearerToken = "Bearer $token"
-
         return try {
-            val response = guardianService.getServers(bearerToken)
+            val response = guardianService.getServers()
             response.resolveBody()
                 .mapValue { serverList ->
                     serverList.countries

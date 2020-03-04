@@ -1,7 +1,5 @@
 package org.mozilla.firefox.vpn.user.data
 
-import android.content.SharedPreferences
-import com.google.gson.Gson
 import java.net.UnknownHostException
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.LoginInfo
@@ -28,7 +26,7 @@ import org.mozilla.firefox.vpn.util.onSuccess
 
 class UserRepository(
     private val guardianService: GuardianService,
-    private val prefs: SharedPreferences
+    private val sessionManager: SessionManager
 ) {
 
     /**
@@ -64,20 +62,15 @@ class UserRepository(
     }
 
     fun createUserInfo(user: UserInfo) {
-        val json = Gson().toJson(user)
-        prefs.edit()
-            .putString(PREF_USER_INFO, json)
-            .apply()
+        sessionManager.createUserInfo(user)
     }
 
     fun getUserInfo(): UserInfo? {
-        return prefs.getString(PREF_USER_INFO, null)?.let {
-            Gson().fromJson(it, UserInfo::class.java)
-        }
+        return sessionManager.getUserInfo()
     }
 
     fun removeUserInfo() {
-        prefs.edit().remove(PREF_USER_INFO).apply()
+        sessionManager.removeUserInfo()
     }
 
     /**
@@ -85,14 +78,9 @@ class UserRepository(
      */
     suspend fun refreshUserInfo(connectTimeout: Long = 0, readTimeout: Long = 0): Result<UserInfo> {
         val userInfo = getUserInfo() ?: return Result.Fail(UnauthorizedException())
-        val token = userInfo.token
 
         return try {
-            val response = guardianService.getUserInfo(
-                "Bearer $token",
-                connectTimeout,
-                readTimeout
-            )
+            val response = guardianService.getUserInfo(connectTimeout, readTimeout)
             response.resolveBody()
                 .mapValue {
                     userInfo.copy(
@@ -121,10 +109,6 @@ class UserRepository(
         } catch (e: java.lang.Exception) {
             Result.Fail(UnknownException("Unknown exception=$e"))
         }
-    }
-
-    companion object {
-        private const val PREF_USER_INFO = "user_info"
     }
 }
 

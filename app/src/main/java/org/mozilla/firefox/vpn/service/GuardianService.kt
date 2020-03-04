@@ -18,6 +18,7 @@ import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.const.ENDPOINT
+import org.mozilla.firefox.vpn.user.data.SessionManager
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
@@ -40,28 +41,21 @@ interface GuardianService {
 
     @GET("api/v1/vpn/account")
     suspend fun getUserInfo(
-        @Header("Authorization") token: String,
         @Header(TimeoutInterceptor.CONNECT_TIMEOUT) connectTimeout: String,
         @Header(TimeoutInterceptor.READ_TIMEOUT) readTimeout: String
     ): Response<User>
 
     @GET("api/v1/vpn/servers")
-    suspend fun getServers(@Header("Authorization") token: String): Response<ServerList>
+    suspend fun getServers(): Response<ServerList>
 
     @GET("api/v1/vpn/versions")
     suspend fun getVersions(): Response<Versions>
 
     @POST("api/v1/vpn/device")
-    suspend fun addDevice(
-        @Body body: DeviceRequestBody,
-        @Header("Authorization") token: String
-    ): Response<DeviceInfo>
+    suspend fun addDevice(@Body body: DeviceRequestBody): Response<DeviceInfo>
 
     @DELETE("api/v1/vpn/device/{pubkey}")
-    suspend fun removeDevice(
-        @Path("pubkey") pubkey: String,
-        @Header("Authorization") token: String
-    ): Response<Unit>
+    suspend fun removeDevice(@Path("pubkey") pubkey: String): Response<Unit>
 
     companion object {
         const val HOST_GUARDIAN = ENDPOINT
@@ -74,11 +68,41 @@ interface GuardianService {
     }
 }
 
+fun GuardianService.Companion.newInstance(sessionManager: SessionManager): GuardianService {
+    val client = OkHttpClient.Builder()
+        .addInterceptor {
+            val original = it.request()
+            val request = original.newBuilder()
+                .header("User-Agent", getUserAgent())
+                .method(original.method(), original.body())
+            if (original.isHttps) {
+                request.addHeader("Authorization", "Bearer ${sessionManager.getUserInfo()?.token}")
+            }
+            it.proceed(request.build())
+        }
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
+        .addInterceptor(TimeoutInterceptor())
+        .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
+        .build()
+
+    val gson = GsonBuilder()
+        .registerTypeAdapter(Versions::class.java, VersionsDeserializer())
+        .create()
+
+    return Retrofit.Builder()
+        .baseUrl(HOST_GUARDIAN)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(client)
+        .build()
+        .create(GuardianService::class.java)
+}
+
 suspend fun GuardianService.getUserInfo(
-    token: String,
     connectTimeout: Long = 0,
     readTimeout: Long = 0
-) = getUserInfo(token, connectTimeout.toString(), readTimeout.toString())
+) = getUserInfo(connectTimeout.toString(), readTimeout.toString())
 
 private class TimeoutInterceptor : Interceptor {
 
@@ -120,35 +144,6 @@ private class TimeoutInterceptor : Interceptor {
         const val READ_TIMEOUT = "READ_TIMEOUT"
         const val WRITE_TIMEOUT = "WRITE_TIMEOUT"
     }
-}
-
-fun GuardianService.Companion.newInstance(): GuardianService {
-    val client = OkHttpClient.Builder()
-        .addInterceptor {
-            val original = it.request()
-            val request = original.newBuilder()
-                .header("User-Agent", getUserAgent())
-                .method(original.method(), original.body())
-                .build()
-            it.proceed(request)
-        }
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        })
-        .addInterceptor(TimeoutInterceptor())
-        .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
-        .build()
-
-    val gson = GsonBuilder()
-        .registerTypeAdapter(Versions::class.java, VersionsDeserializer())
-        .create()
-
-    return Retrofit.Builder()
-        .baseUrl(HOST_GUARDIAN)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .client(client)
-        .build()
-        .create(GuardianService::class.java)
 }
 
 private fun getUserAgent(): String {

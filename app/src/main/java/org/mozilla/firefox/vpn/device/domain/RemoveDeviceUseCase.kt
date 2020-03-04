@@ -13,7 +13,7 @@ class RemoveDeviceUseCase(
 
     suspend operator fun invoke(pubKey: String): Result<Unit> {
         return userRepository.refreshUserInfo()
-            .then { deviceRepository.unregisterDevice(pubKey, "Bearer ${it.token}") }
+            .then { deviceRepository.unregisterDevice(pubKey) }
             .onSuccess { userRepository.refreshUserInfo() }
     }
 }

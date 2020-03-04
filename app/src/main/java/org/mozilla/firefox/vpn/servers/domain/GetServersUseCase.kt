@@ -2,19 +2,15 @@ package org.mozilla.firefox.vpn.servers.domain
 
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
-import org.mozilla.firefox.vpn.service.UnauthorizedException
-import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapValue
 
 class GetServersUseCase(
-    private val userRepository: UserRepository,
     private val serverRepository: ServerRepository
 ) {
 
     suspend operator fun invoke(filterStrategy: FilterStrategy): Result<List<ServerInfo>> {
-        val token = userRepository.getUserInfo()?.token ?: return Result.Fail(UnauthorizedException())
-        return serverRepository.getServers(token).mapValue { filterServers(it, filterStrategy) }
+        return serverRepository.getServers().mapValue { filterServers(it, filterStrategy) }
     }
 
     private fun filterServers(servers: List<ServerInfo>, filterStrategy: FilterStrategy): List<ServerInfo> {

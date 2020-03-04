@@ -18,17 +18,14 @@ class SignOutUseCase(
 
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
         vpnManager.shutdownConnection()
-
-        val userInfo = userRepository.getUserInfo() ?: return@withContext
-        userRepository.removeUserInfo()
-
-        removeDeviceAsync("Bearer ${userInfo.token}")
+        removeDeviceAsync()
     }
 
-    private suspend fun removeDeviceAsync(token: String) {
+    private suspend fun removeDeviceAsync() {
         CoroutineScope(coroutineContext + NonCancellable).launch {
             deviceRepository.getDevice()?.let {
-                deviceRepository.unregisterDevice(it.device.pubKey, token)
+                deviceRepository.unregisterDevice(it.device.pubKey)
+                userRepository.removeUserInfo()
             }
         }
     }
