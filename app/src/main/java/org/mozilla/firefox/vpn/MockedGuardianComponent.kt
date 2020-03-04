@@ -1,32 +1,24 @@
 package org.mozilla.firefox.vpn
 
+import com.wireguard.android.backend.TunnelManager
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
+import org.mozilla.firefox.vpn.main.vpn.GuardianVpnService
+import org.mozilla.firefox.vpn.main.vpn.MockVpnManager
 import org.mozilla.firefox.vpn.main.vpn.VpnManager
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
-import org.mozilla.firefox.vpn.service.GuardianService
-import org.mozilla.firefox.vpn.service.newInstance
+import org.mozilla.firefox.vpn.service.MockGuardianService
 import org.mozilla.firefox.vpn.update.UpdateManager
 import org.mozilla.firefox.vpn.user.data.SessionManager
 import org.mozilla.firefox.vpn.user.data.UserRepository
 
-interface GuardianComponent {
-    val userRepo: UserRepository
-    val deviceRepo: DeviceRepository
-    val serverRepo: ServerRepository
-    val vpnManager: VpnManager
-    val userStateResolver: UserStateResolver
-    val selectedServerProvider: SelectedServerProvider
-    val updateManager: UpdateManager
-}
-
-class GuardianComponentImpl(
+class MockedGuardianComponent(
     private val coreComponent: CoreComponent
 ) : GuardianComponent, CoreComponent by coreComponent {
 
     private val sessionManager = SessionManager(prefs)
 
-    var service = GuardianService.newInstance(sessionManager)
+    var service = MockGuardianService()
 
     override val userRepo: UserRepository by lazy {
         UserRepository(service, sessionManager)
@@ -40,13 +32,17 @@ class GuardianComponentImpl(
         ServerRepository(service, prefs)
     }
 
-    override var vpnManager = VpnManager(app)
+    override val tunnelManager: TunnelManager<*> =
+        TunnelManager(GuardianVpnService::class.java)
+    override var vpnManager: VpnManager =
+        MockVpnManager()
 
     override val userStateResolver: UserStateResolver by lazy {
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }
     }
 
-    override val selectedServerProvider: SelectedServerProvider = SelectedServerProvider(serverRepo)
+    override val selectedServerProvider: SelectedServerProvider =
+        SelectedServerProvider(serverRepo)
 
     override val updateManager by lazy { UpdateManager(app) }
 }
