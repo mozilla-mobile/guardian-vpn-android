@@ -141,9 +141,9 @@ class ConnectionStateView : CardView {
         }
 
         val isSwitching = oldModel is UIModel.Switching && newModel is UIModel.Connected
-        val playEnterAnimation = oldModel !is UIModel.Connected &&
+        val playEnterAnimation = (oldModel !is UIModel.Connected &&
                 newModel is UIModel.Connected &&
-                !isSwitching
+                !isSwitching) || ((oldModel is UIModel.NoSignal || oldModel is UIModel.Unstable) && newModel is UIModel.Switching)
         val playEndAnimation = oldModel is UIModel.Connected &&
                 (newModel is UIModel.Disconnecting || newModel is UIModel.Unstable)
 
