@@ -14,7 +14,7 @@ class GuardianVpnService : WireGuardVpnService() {
     }
 
     override val tunnelManager: TunnelManager<*> by lazy {
-        component.vpnManager.tunnelManager
+        component.tunnelManager
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

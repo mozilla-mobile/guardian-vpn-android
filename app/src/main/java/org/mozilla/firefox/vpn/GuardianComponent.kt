@@ -1,6 +1,9 @@
 package org.mozilla.firefox.vpn
 
+import com.wireguard.android.backend.TunnelManager
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
+import org.mozilla.firefox.vpn.main.vpn.GuardianVpnManager
+import org.mozilla.firefox.vpn.main.vpn.GuardianVpnService
 import org.mozilla.firefox.vpn.main.vpn.VpnManager
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
@@ -14,6 +17,7 @@ interface GuardianComponent {
     val userRepo: UserRepository
     val deviceRepo: DeviceRepository
     val serverRepo: ServerRepository
+    val tunnelManager: TunnelManager<*>
     val vpnManager: VpnManager
     val userStateResolver: UserStateResolver
     val selectedServerProvider: SelectedServerProvider
@@ -40,7 +44,8 @@ class GuardianComponentImpl(
         ServerRepository(service, prefs)
     }
 
-    override var vpnManager = VpnManager(app)
+    override val tunnelManager: TunnelManager<*> = TunnelManager(GuardianVpnService::class.java)
+    override var vpnManager: VpnManager = GuardianVpnManager(app, tunnelManager)
 
     override val userStateResolver: UserStateResolver by lazy {
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }

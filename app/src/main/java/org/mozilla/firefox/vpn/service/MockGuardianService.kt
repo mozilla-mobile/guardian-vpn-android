@@ -1,9 +1,9 @@
 package org.mozilla.firefox.vpn.service
 
 import com.google.gson.internal.bind.util.ISO8601Utils
-import retrofit2.Response
 import java.util.Calendar
 import java.util.Date
+import retrofit2.Response
 
 class MockGuardianService : GuardianService {
 
