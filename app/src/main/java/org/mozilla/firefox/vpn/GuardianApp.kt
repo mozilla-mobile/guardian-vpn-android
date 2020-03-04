@@ -2,7 +2,9 @@ package org.mozilla.firefox.vpn
 
 import android.app.Application
 import android.content.Context
+import org.mozilla.firefox.vpn.main.vpn.MockVpnManager
 import org.mozilla.firefox.vpn.main.vpn.VpnNotificationSender
+import org.mozilla.firefox.vpn.service.MockGuardianService
 import org.mozilla.firefox.vpn.util.NotificationUtil
 
 class GuardianApp : Application() {
@@ -21,6 +23,15 @@ class GuardianApp : Application() {
 
         NotificationUtil.init(this)
         vpnNotificationSender = VpnNotificationSender(this, guardianComponent.vpnManager)
+    }
+
+    /**
+     * Mock api response from GuardianService and connection state from VpnManager
+     */
+    private fun GuardianComponentImpl.mockRemote(): GuardianComponentImpl {
+        service = MockGuardianService()
+        vpnManager = MockVpnManager()
+        return this
     }
 }
 
