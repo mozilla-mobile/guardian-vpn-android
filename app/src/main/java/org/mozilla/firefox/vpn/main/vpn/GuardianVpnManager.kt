@@ -297,6 +297,6 @@ class GuardianVpnManager(
         private val MAX_CONNECT_DURATION = TimeUnit.SECONDS.toMillis(5)
         private val MAX_SWITCH_DURATION = TimeUnit.SECONDS.toMillis(5)
 
-        private val MIN_SWITCH_DELAY = 500L
+        private const val MIN_SWITCH_DELAY = 1000L
     }
 }
