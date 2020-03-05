@@ -140,10 +140,12 @@ class ConnectionStateView : CardView {
             }
         }
 
-        val isSwitching = oldModel is UIModel.Switching && newModel is UIModel.Connected
-        val playEnterAnimation = (oldModel !is UIModel.Connected &&
-                newModel is UIModel.Connected &&
-                !isSwitching) || ((oldModel is UIModel.NoSignal || oldModel is UIModel.Unstable) && newModel is UIModel.Switching)
+        val fromInsecure = !oldModel.isSecure()
+
+        val unstableToSwitching = oldModel.isBadSignal() && newModel is UIModel.Switching
+        val insecureToConnected = fromInsecure && newModel is UIModel.Connected
+
+        val playEnterAnimation = insecureToConnected || unstableToSwitching
         val playEndAnimation = oldModel is UIModel.Connected &&
                 (newModel is UIModel.Disconnecting || newModel is UIModel.Unstable)
 
@@ -153,6 +155,12 @@ class ConnectionStateView : CardView {
             ripple.playOnce(ripple.frame, 210)
         }
     }
+
+    private fun UIModel.isBadSignal() = this is UIModel.NoSignal || this is UIModel.Unstable
+
+    private fun UIModel.isSecure() = this.isBadSignal() ||
+            this is UIModel.Connected ||
+            this is UIModel.Switching
 
     private fun initHapticFeedback(oldModel: UIModel, newModel: UIModel) {
         when {
