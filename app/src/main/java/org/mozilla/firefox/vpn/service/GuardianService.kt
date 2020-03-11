@@ -149,7 +149,7 @@ private class TimeoutInterceptor : Interceptor {
 private fun getUserAgent(): String {
     val os = "Android ${Build.VERSION.RELEASE}"
     val abi = Build.SUPPORTED_ABIS.firstOrNull()?.let { it } ?: "no-support-abi"
-    return "Firefox Private Network VPN/${BuildConfig.VERSION_NAME} ($os; $abi)"
+    return "FirefoxPrivateNetworkVPN/${BuildConfig.VERSION_NAME} ($os; $abi)"
 }
 
 data class LoginInfo(
