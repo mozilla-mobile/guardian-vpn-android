@@ -13,7 +13,7 @@ class SelectedServerProvider(private val serverRepo: ServerRepository) : Selecte
     private val _stateObservable = MutableLiveData<ServerInfo>()
     val observable: LiveData<ServerInfo?> = _stateObservable
 
-    val selectedServer: ServerInfo?
+    private val selectedServer: ServerInfo?
         get() {
             return serverRepo.getSelectedServer()?.server
         }
