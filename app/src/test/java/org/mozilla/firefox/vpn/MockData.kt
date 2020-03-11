@@ -44,9 +44,42 @@ val testUSAServerInfo2 = ServerInfo(
     testServer
 )
 
+val testCanadaServerInfo = ServerInfo(
+    CountryInfo(
+        "Canada",
+        "ca"
+    ),
+    CityInfo(
+        "Vancouver",
+        "van",
+        0.0,
+        0.0
+    ),
+    testServer
+)
+
+val testCanadaServerInfo2 = ServerInfo(
+    CountryInfo(
+        "Canada",
+        "ca"
+    ),
+    CityInfo(
+        "Montreal",
+        "mtr",
+        0.0,
+        0.0
+    ),
+    testServer
+)
+
 val testServerInfos = listOf(
     testUSAServerInfo,
     testUSAServerInfo,
     testUSAServerInfo2,
     testUSAServerInfo2
+)
+
+val testServerInfos2 = listOf(
+    testCanadaServerInfo,
+    testCanadaServerInfo2
 )
