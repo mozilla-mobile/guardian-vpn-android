@@ -17,6 +17,7 @@ import org.mozilla.firefox.vpn.main.settings.domain.SignOutUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
+import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.onSuccess
 
 class MainViewModel(
@@ -27,7 +28,12 @@ class MainViewModel(
 ) : ViewModel() {
 
     val showForceUpdate get() = liveData(Dispatchers.IO) {
-        versionsUseCase().onSuccess { emit(it.minimum.version.toInt() > BuildConfig.VERSION_CODE) }
+        versionsUseCase().onSuccess {
+            val current = BuildConfig.VERSION_CODE
+            val minimum = it.minimum.version.toInt()
+            GLog.report(TAG, "version(current=$current, minimum=$minimum)")
+            emit(minimum > current)
+        }
     }
 
     private val signOutAction = MutableLiveData<Unit>()
@@ -63,6 +69,10 @@ class MainViewModel(
             signOutUseCase()
             signOutAction.postValue(Unit)
         }
+    }
+
+    companion object {
+        private const val TAG = "MainViewModel"
     }
 }
 
