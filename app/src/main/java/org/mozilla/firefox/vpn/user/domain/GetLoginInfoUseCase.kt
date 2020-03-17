@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.user.domain
 
+import org.mozilla.firefox.vpn.report.doReport
 import org.mozilla.firefox.vpn.service.LoginInfo
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
@@ -9,6 +10,10 @@ class GetLoginInfoUseCase(
 ) {
 
     suspend operator fun invoke(): Result<LoginInfo> {
-        return userRepository.getLoginInfo()
+        return userRepository.getLoginInfo().doReport(tag = TAG)
+    }
+
+    companion object {
+        private const val TAG = "GetLoginInfoUseCase"
     }
 }

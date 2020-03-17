@@ -35,6 +35,7 @@ import org.mozilla.firefox.vpn.user.data.checkAuth
 import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
 import org.mozilla.firefox.vpn.user.domain.NotifyUserStateUseCase
 import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
+import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.onSuccess
 import org.mozilla.firefox.vpn.util.then
@@ -87,9 +88,11 @@ class VpnViewModel(
         get() = liveData(Dispatchers.IO) {
             updateManager.getLatestUpdate()
                 ?.let { latest ->
+                    val currentVersion = BuildConfig.VERSION_CODE
                     val latestVersion = latest.version.toInt()
+                    GLog.report(TAG, "version(current=$currentVersion, latest=$latestVersion)")
                     val shown = getLatestUpdateMessageUseCase() >= latestVersion
-                    if (latestVersion > BuildConfig.VERSION_CODE && !shown) {
+                    if (latestVersion > currentVersion && !shown) {
                         emit(latest)
                     } else {
                         emit(null)
@@ -311,5 +314,9 @@ class VpnViewModel(
     sealed class Action {
         object Connect : Action()
         object Disconnect : Action()
+    }
+
+    companion object {
+        private const val TAG = "VpnViewModel"
     }
 }
