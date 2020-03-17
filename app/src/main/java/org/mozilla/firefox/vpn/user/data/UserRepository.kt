@@ -5,6 +5,7 @@ import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.LoginInfo
 import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.service.NetworkException
+import org.mozilla.firefox.vpn.service.Subscription
 import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.service.UnknownErrorBody
 import org.mozilla.firefox.vpn.service.UnknownException
@@ -120,10 +121,14 @@ data class UserInfo(
 
 val UserInfo.isSubscribed: Boolean
     get() {
-        val subscription = this.user.subscription
+        return this.user.subscription.isSubscribed
+    }
+
+val Subscription.isSubscribed: Boolean
+    get() {
         val now = TimeUtil.now()
         val renewDate = try {
-            TimeUtil.parse(subscription.vpn.renewsOn, TimeFormat.Iso8601)
+            TimeUtil.parse(vpn.renewsOn, TimeFormat.Iso8601)
         } catch (e: TimeFormatException) {
             GLog.e("[isSubscribed] illegal renewDate format: $e")
             return false
@@ -131,7 +136,7 @@ val UserInfo.isSubscribed: Boolean
         GLog.i("[isSubscribed] current=$now")
         GLog.i("[isSubscribed] renewOn=$renewDate")
 
-        return subscription.vpn.active && now.before(renewDate)
+        return vpn.active && now.before(renewDate)
     }
 
 val UserInfo.isDeviceLimitReached: Boolean

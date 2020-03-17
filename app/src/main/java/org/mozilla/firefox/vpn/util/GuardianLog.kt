@@ -28,6 +28,10 @@ class GLog {
         Log.w(tag, msg)
     })
 
+    object report : BaseLog(Log.WARN, { tag, msg ->
+        i("report_" + tag, msg)
+    })
+
     abstract class BaseLog(
         private val level: Int,
         private val doLog: (tag: String, msg: String) -> Unit
