@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.servers.domain
 
+import org.mozilla.firefox.vpn.report.doReport
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
 import org.mozilla.firefox.vpn.util.Result
@@ -11,6 +12,7 @@ class GetServersUseCase(
 
     suspend operator fun invoke(filterStrategy: FilterStrategy): Result<List<ServerInfo>> {
         return serverRepository.getServers().mapValue { filterServers(it, filterStrategy) }
+            .doReport(TAG)
     }
 
     private fun filterServers(servers: List<ServerInfo>, filterStrategy: FilterStrategy): List<ServerInfo> {
@@ -35,6 +37,10 @@ class GetServersUseCase(
                     .groupBy { it.city }
                     .flatMap { listOf(it.value.first()) }
             }
+    }
+
+    companion object {
+        private const val TAG = "GetServersUseCase"
     }
 }
 
