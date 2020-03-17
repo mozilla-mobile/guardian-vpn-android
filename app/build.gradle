@@ -100,6 +100,7 @@ dependencies {
     implementation 'io.coil-kt:coil:0.7.0'
     implementation 'com.github.hadilq.liveevent:liveevent:1.0.1'
     implementation 'com.airbnb.android:lottie:3.2.2'
+    implementation 'com.github.bosphere.android-filelogger:filelogger:1.0.7'
     ktlint 'com.pinterest:ktlint:0.35.0'
 
     testImplementation 'junit:junit:4.12'

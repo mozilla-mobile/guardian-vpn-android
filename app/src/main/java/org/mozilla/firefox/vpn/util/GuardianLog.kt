@@ -1,9 +1,10 @@
 package org.mozilla.firefox.vpn.util
 
 import android.util.Log
+import com.bosphere.filelogger.FL
 import org.mozilla.firefox.vpn.BuildConfig
 
-private const val TAG_GENERAL_LOG = "Guardian"
+const val TAG_GENERAL_LOG = "Guardian"
 
 @Suppress("ClassName")
 class GLog {
@@ -29,7 +30,7 @@ class GLog {
     })
 
     object report : BaseLog(Log.WARN, { tag, msg ->
-        i("report_" + tag, msg)
+        FL.i(tag, msg)
     })
 
     abstract class BaseLog(
