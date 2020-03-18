@@ -1,9 +1,12 @@
 package org.mozilla.firefox.vpn.servers.domain
 
+import android.util.Log
 import com.google.common.truth.Truth.assertThat
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
 import java.lang.Exception
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -26,6 +29,9 @@ class GetServersUseCaseTest {
     fun setUp() {
         MockKAnnotations.init(this)
         getServersUseCase = GetServersUseCase(serverRepository)
+
+        mockkStatic(Log::class)
+        every { Log.isLoggable(any(), any()) } returns false
     }
 
     @Test
