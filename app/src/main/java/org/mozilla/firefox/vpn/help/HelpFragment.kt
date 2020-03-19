@@ -7,10 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_help.*
+import kotlinx.android.synthetic.main.fragment_help.btn_contact_us
+import kotlinx.android.synthetic.main.fragment_help.btn_debug
+import kotlinx.android.synthetic.main.fragment_help.btn_help_and_support
+import kotlinx.android.synthetic.main.fragment_help.toolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.report.ReportUtil
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.util.launchUrl
 
@@ -33,6 +37,11 @@ class HelpFragment : Fragment() {
         btn_help_and_support.setOnClickListener {
             viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
                 launchUrl(GuardianService.HOST_SUPPORT)
+            }
+        }
+        btn_debug.setOnClickListener {
+            viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
+                activity?.let { ReportUtil.sendLog(it) }
             }
         }
     }

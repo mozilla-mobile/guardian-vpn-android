@@ -86,4 +86,44 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/gray10"
+        app:layout_constraintTop_toBottomOf="@id/btn_help_and_support"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/btn_debug"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/avatar_menu_debug"
+            android:textColor="@color/gray50"
+            android:textAppearance="@style/TextAppearance.Guardian.Header20" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_external_link" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
