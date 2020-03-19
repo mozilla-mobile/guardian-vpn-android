@@ -34,16 +34,20 @@
     </style>
 
     <!-- Font family -->
-    <style name="TextAppearance.Guardian.Metropolis.Regular" parent="TextAppearance.AppCompat.Caption">
+    <style name="TextAppearance.Guardian.Metropolis.Regular" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/metropolis_regular</item>
         <item name="android:fontFamily">@font/metropolis_regular</item>
     </style>
-    <style name="TextAppearance.Guardian.Metropolis.SemiBold" parent="TextAppearance.AppCompat.Caption">
+    <style name="TextAppearance.Guardian.Metropolis.SemiBold" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/metropolis_semibold</item>
         <item name="android:fontFamily">@font/metropolis_semibold</item>
     </style>
-    <style name="TextAppearance.Guardian.Inter.Regular" parent="TextAppearance.AppCompat.Body1">
+    <style name="TextAppearance.Guardian.Inter.Regular" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/inter_regular</item>
         <item name="android:fontFamily">@font/inter_regular</item>
     </style>
-    <style name="TextAppearance.Guardian.Inter.SemiBold" parent="TextAppearance.AppCompat.Body1">
+    <style name="TextAppearance.Guardian.Inter.SemiBold" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/inter_semibold</item>
         <item name="android:fontFamily">@font/inter_semibold</item>
     </style>
 
@@ -90,7 +94,8 @@
     </style>
 
     <!-- TextAppearance for body -->
-    <style name="TextAppearance.Guardian.Text.Body" parent="TextAppearance.AppCompat.Body1">
+    <style name="TextAppearance.Guardian.Text.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/inter_regular</item>
         <item name="android:fontFamily">@font/inter_regular</item>
     </style>
 
