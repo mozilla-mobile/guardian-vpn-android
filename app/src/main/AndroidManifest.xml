@@ -58,6 +58,16 @@
             </intent-filter>
         </service>
 
+        <provider
+            android:name="org.mozilla.firefox.vpn.report.ReportFileProvider"
+            android:authorities="${applicationId}.report"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+
+        </provider>
     </application>
 
 </manifest>
