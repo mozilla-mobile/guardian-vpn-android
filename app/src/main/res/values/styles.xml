@@ -9,6 +9,7 @@
         <!-- TextView -->
         <item name="android:textViewStyle">@style/Widget.Guardian.TextView</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base">
@@ -26,6 +27,15 @@
 
     <style name="BottomSheetModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="android:background">@drawable/bg_bottom_sheet</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogButtonStyle</item>
+    </style>
+
+    <style name="AlertDialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/red50</item>
     </style>
 
     <!-- TextViewStyle for AppTheme -->
