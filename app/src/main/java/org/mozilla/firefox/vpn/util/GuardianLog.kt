@@ -29,9 +29,14 @@ class GLog {
         Log.w(tag, msg)
     })
 
-    object report : BaseLog(Log.WARN, { tag, msg ->
+    object report : BaseLog(Log.DEBUG, { tag, msg ->
         FL.i(tag, msg)
-    })
+        d(tag, msg)
+    }) {
+        override fun checkLoggable(tag: String, level: Int, action: () -> Unit) {
+            action()
+        }
+    }
 
     abstract class BaseLog(
         private val level: Int,
@@ -50,7 +55,7 @@ class GLog {
             }
         }
 
-        private fun checkLoggable(tag: String, level: Int, action: () -> Unit) {
+        open fun checkLoggable(tag: String, level: Int, action: () -> Unit) {
             if (BuildConfig.DEBUG && Log.isLoggable(tag, level)) {
                 action()
             }
