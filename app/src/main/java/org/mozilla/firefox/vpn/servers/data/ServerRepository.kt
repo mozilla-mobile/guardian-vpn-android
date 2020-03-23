@@ -30,7 +30,7 @@ class ServerRepository(
      */
     suspend fun getServers(): Result<List<ServerInfo>> {
         getCachedServers()
-            ?.takeIf { System.currentTimeMillis() - it.lastUpdate < TimeUnit.DAYS.toMillis(1) }
+            ?.takeIf { System.currentTimeMillis() - it.lastUpdate < TimeUnit.HOURS.toMillis(1) }
             ?.takeIf { it.servers.isNotEmpty() }
             ?.let { return Result.Success(it.servers) }
 
