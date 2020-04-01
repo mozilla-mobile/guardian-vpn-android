@@ -4,5 +4,5 @@
 	branch = max/dev/libwg
 [submodule "modules/wireguard"]
 	path = modules/wireguard
-	url = https://git.zx2c4.com/wireguard-android
-	branch = rc/libwg_statistic
+	url = git@github.com:mozilla-services/guardian-vpn-android.git
+	branch = roger/wg_moz_module
