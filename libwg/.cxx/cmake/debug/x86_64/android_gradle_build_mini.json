@@ -1,0 +1,22 @@
+{
+  "buildFiles": [
+    "/Users/lchuang/Project/guardian-vpn-android/app/tools/CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "/Users/lchuang/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64 --target clean"
+  ],
+  "libraries": {
+    "libwg-quick.so-Debug-x86_64": {
+      "artifactName": "libwg-quick.so",
+      "buildCommand": "/Users/lchuang/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64 --target libwg-quick.so",
+      "abi": "x86_64",
+      "output": "/Users/lchuang/Project/guardian-vpn-android/libwg/build/intermediates/cmake/debug/obj/x86_64/libwg-quick.so"
+    },
+    "libwg.so-Debug-x86_64": {
+      "artifactName": "libwg.so",
+      "buildCommand": "/Users/lchuang/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64 --target libwg.so",
+      "abi": "x86_64",
+      "output": "/Users/lchuang/Project/guardian-vpn-android/libwg/build/intermediates/cmake/debug/obj/x86_64/libwg.so"
+    }
+  }
+}

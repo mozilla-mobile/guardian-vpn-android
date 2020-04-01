@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.wireguard.android.model.Tunnel.State" />
+
+        <import type="com.wireguard.android.util.ClipboardUtils" />
+
+        <variable
+            name="fragment"
+            type="com.wireguard.android.fragment.TunnelDetailFragment" />
+
+        <variable
+            name="tunnel"
+            type="com.wireguard.android.model.Tunnel" />
+
+        <variable
+            name="config"
+            type="com.wireguard.config.Config" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/colorBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/colorBackground"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="2dp"
+                app:contentPadding="8dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/interface_title"
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:text="@string/interface_title" />
+
+                    <com.wireguard.android.widget.ToggleSwitch
+                        android:id="@+id/tunnel_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/interface_title"
+                        android:layout_alignParentEnd="true"
+                        app:checked="@{tunnel.state == State.UP}"
+                        app:onBeforeCheckedChanged="@{fragment::setTunnelState}" />
+
+                    <TextView
+                        android:id="@+id/interface_name_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/interface_title"
+                        android:layout_marginTop="8dp"
+                        android:labelFor="@+id/interface_name_text"
+                        android:text="@string/name" />
+
+                    <TextView
+                        android:id="@+id/interface_name_text"
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/interface_name_label"
+                        android:text="@{tunnel.name}" />
+
+                    <TextView
+                        android:id="@+id/public_key_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/interface_name_text"
+                        android:layout_marginTop="8dp"
+                        android:labelFor="@+id/public_key_text"
+                        android:text="@string/public_key" />
+
+                    <TextView
+                        android:id="@+id/public_key_text"
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/public_key_label"
+                        android:contentDescription="@string/public_key_description"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:onClick="@{ClipboardUtils::copyTextView}"
+                        android:text="@{config.interface.keyPair.publicKey.toBase64}" />
+
+                    <TextView
+                        android:id="@+id/addresses_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/public_key_text"
+                        android:layout_marginTop="8dp"
+                        android:labelFor="@+id/addresses_text"
+                        android:text="@string/addresses" />
+
+                    <TextView
+                        android:id="@+id/addresses_text"
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/addresses_label"
+                        android:contentDescription="@string/addresses"
+                        android:text="@{config.interface.addresses}" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/peers_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:divider="@null"
+                android:orientation="vertical"
+                app:items="@{config.peers}"
+                app:layout="@{@layout/tunnel_detail_peer}"
+                tools:ignore="UselessLeaf" />
+        </LinearLayout>
+    </ScrollView>
+</layout>

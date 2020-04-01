@@ -1,0 +1,46 @@
+/*
+ * Copyright © 2019 WireGuard LLC. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 29
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation project(":crypto")
+    implementation project(":utility")
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.annotation:annotation:$annotationsVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation 'androidx.core:core-ktx:1.1.0'
+
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabpVersion"
+    implementation "net.sourceforge.streamsupport:android-retrofuture:$streamsupportVersion"
+    implementation "com.google.code.findbugs:jsr305:$jsr305Version"
+}

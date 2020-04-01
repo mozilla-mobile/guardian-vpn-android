@@ -1,0 +1,10 @@
+CMake Error at CMakeLists.txt:11 (add_executable):
+  Cannot find source file:
+
+    wireguard/src/tools/wg-quick/android.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .m .M .mm .h .hh .h++ .hm .hpp
+  .hxx .in .txx
+
+
+CMake Error: CMake can not determine linker language for target: libwg-quick.so

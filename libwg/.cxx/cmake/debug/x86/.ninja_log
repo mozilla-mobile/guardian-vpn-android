@@ -1,0 +1,24 @@
+# ninja log v5
+0	5485	0	CMakeFiles/libwg-go.so	173cb63d3fbb4901
+5494	5572	0	CMakeFiles/libwg.so.dir/ndk-compat/compat.c.o	e2b236a05d18b1eb
+5490	5592	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/wg.c.o	16a51d3395b3bf7c
+5487	5598	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/pubkey.c.o	5b6b0c172264c973
+5487	5609	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/set.c.o	c063837f5ce2aae1
+5488	5618	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/setconf.c.o	5fed55e88ca7709a
+5486	5623	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/genkey.c.o	1f4e1586b66ff62d
+5489	5627	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/terminal.c.o	45ca702bfb44e408
+5493	5632	0	CMakeFiles/libwg.so.dir/libmnl/src/socket.c.o	30bd2cf7e5cbedf1
+5492	5632	0	CMakeFiles/libwg.so.dir/libmnl/src/callback.c.o	9fa70d0dcc5aa216
+5489	5637	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/showconf.c.o	8acff7156fa5c567
+5492	5677	0	CMakeFiles/libwg.so.dir/libmnl/src/nlmsg.c.o	64631008710fdae8
+5487	5682	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/mnlg.c.o	9352e00a4cb5425e
+5486	5718	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/encoding.c.o	88975038b436ee76
+5491	5726	0	CMakeFiles/libwg.so.dir/libmnl/src/attr.c.o	738393497bf5a473
+5485	5828	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/config.c.o	106eec1b9f8a51fb
+5488	5838	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/show.c.o	e7671874ff429dbc
+5486	5972	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/ipc.c.o	82547028b1a1c9f9
+5486	6069	0	CMakeFiles/libwg.so.dir/wireguard/src/tools/curve25519.c.o	a0baaca56ee48ea5
+6069	6095	0	/Users/lchuang/Project/guardian-vpn-android/libwg/build/intermediates/cmake/debug/obj/x86/libwg.so	590b238c5132355e
+0	38	0	CMakeFiles/libwg-quick.so.dir/ndk-compat/compat.c.o	b3bc2167357d401c
+0	335	0	CMakeFiles/libwg-quick.so.dir/wireguard/src/tools/wg-quick/android.c.o	879ab6938ee02933
+335	358	0	/Users/lchuang/Project/guardian-vpn-android/libwg/build/intermediates/cmake/debug/obj/x86/libwg-quick.so	29bf268285aa3ee
