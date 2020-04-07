@@ -7,7 +7,7 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <!-- TextView -->
-        <item name="android:textViewStyle">@style/Widget.Guardian.TextView</item>
+        <item name="android:textAppearance">@style/TextAppearance.Guardian.Inter.Regular</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
     </style>
@@ -38,27 +38,26 @@
         <item name="android:textColor">@color/red50</item>
     </style>
 
-    <!-- TextViewStyle for AppTheme -->
-    <style name="Widget.Guardian.TextView" parent="@android:style/Widget.Material.TextView">
-        <item name="android:textAppearance">@style/TextAppearance.Guardian.Text.Body</item>
-    </style>
-
     <!-- Font family -->
     <style name="TextAppearance.Guardian.Metropolis.Regular" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/metropolis_regular</item>
         <item name="android:fontFamily">@font/metropolis_regular</item>
+        <item name="android:letterSpacing">0</item>
     </style>
     <style name="TextAppearance.Guardian.Metropolis.SemiBold" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/metropolis_semibold</item>
         <item name="android:fontFamily">@font/metropolis_semibold</item>
+        <item name="android:letterSpacing">0</item>
     </style>
     <style name="TextAppearance.Guardian.Inter.Regular" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/inter_regular</item>
         <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:letterSpacing">0</item>
     </style>
     <style name="TextAppearance.Guardian.Inter.SemiBold" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/inter_semibold</item>
         <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="android:letterSpacing">0</item>
     </style>
 
     <!-- TextAppearance defined in Guardian -->
@@ -101,12 +100,6 @@
 
     <style name="TextAppearance.Guardian.Body20" parent="TextAppearance.Guardian.Inter.SemiBold">
         <item name="android:textSize">15sp</item>
-    </style>
-
-    <!-- TextAppearance for body -->
-    <style name="TextAppearance.Guardian.Text.Body" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="fontFamily">@font/inter_regular</item>
-        <item name="android:fontFamily">@font/inter_regular</item>
     </style>
 
 </resources>
