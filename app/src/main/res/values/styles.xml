@@ -6,16 +6,14 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <!-- TextView -->
+        <item name="android:windowBackground">@color/gray5</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:textAppearance">@style/TextAppearance.Guardian.Inter.Regular</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
-    <style name="AppTheme" parent="AppTheme.Base">
-        <item name="android:windowTranslucentStatus">true</item>-->
-        <item name="android:windowBackground">@color/gray5</item>
-    </style>
+    <style name="AppTheme" parent="AppTheme.Base" />
 
     <style name="AppTheme.Splash" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash_background</item>
