@@ -2,11 +2,9 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme.Base.V23">
-        <item name="android:windowTranslucentStatus">false</item>
+    <style name="AppTheme.Base.V23" parent="AppTheme.Base">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base.V23" />
