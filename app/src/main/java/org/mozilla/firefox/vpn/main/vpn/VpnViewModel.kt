@@ -20,6 +20,7 @@ import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessageUseCase
+import org.mozilla.firefox.vpn.main.vpn.domain.ResolveDispatchableServerUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.SetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
@@ -47,6 +48,7 @@ class VpnViewModel(
     selectedServerProvider: SelectedServerProvider,
     private val getServersUseCase: GetServersUseCase,
     private val getSelectedServerUseCase: GetSelectedServerUseCase,
+    private val resolveDispatchableServerUseCase: ResolveDispatchableServerUseCase,
     private val currentDeviceUseCase: CurrentDeviceUseCase,
     private val getLatestUpdateMessageUseCase: GetLatestUpdateMessageUseCase,
     private val setLatestUpdateMessageUseCase: SetLatestUpdateMessageUseCase,
@@ -188,7 +190,8 @@ class VpnViewModel(
     }
 
     private suspend fun connectVpn(server: ServerInfo) {
-        currentDeviceUseCase()?.let { vpnManager.connect(server, it) }
+        val resolved = resolveDispatchableServerUseCase(server) ?: server
+        currentDeviceUseCase()?.let { vpnManager.connect(resolved, it) }
     }
 
     private fun logout() {
@@ -198,9 +201,8 @@ class VpnViewModel(
 
     private fun switchVpn(oldServer: ServerInfo, newServer: ServerInfo) {
         viewModelScope.launch(Dispatchers.Main.immediate) {
-            currentDeviceUseCase()?.let {
-                vpnManager.switch(oldServer, newServer, it)
-            }
+            val resolved = resolveDispatchableServerUseCase(newServer) ?: newServer
+            currentDeviceUseCase()?.let { vpnManager.switch(oldServer, resolved, it) }
         }
     }
 
