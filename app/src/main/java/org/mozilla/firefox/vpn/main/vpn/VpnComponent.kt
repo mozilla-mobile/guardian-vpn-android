@@ -4,6 +4,7 @@ import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessageUseCase
+import org.mozilla.firefox.vpn.main.vpn.domain.ResolveDispatchableServerUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.SetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
@@ -29,6 +30,7 @@ class VpnComponentImpl(
             selectedServerProvider = selectedServerProvider,
             getServersUseCase = GetServersUseCase(serverRepo),
             getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo),
+            resolveDispatchableServerUseCase = ResolveDispatchableServerUseCase(GetServersUseCase(serverRepo)),
             currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
             setLatestUpdateMessageUseCase = SetLatestUpdateMessageUseCase(prefs),
             getLatestUpdateMessageUseCase = GetLatestUpdateMessageUseCase(prefs),
