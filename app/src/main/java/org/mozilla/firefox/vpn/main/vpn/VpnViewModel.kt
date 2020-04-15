@@ -15,6 +15,7 @@ import com.hadilq.liveevent.LiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.R
@@ -38,14 +39,14 @@ import org.mozilla.firefox.vpn.user.domain.NotifyUserStateUseCase
 import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.StringResource
+import org.mozilla.firefox.vpn.util.getOrNull
 import org.mozilla.firefox.vpn.util.onSuccess
-import org.mozilla.firefox.vpn.util.then
 
 class VpnViewModel(
     application: Application,
     private val vpnManager: VpnManager,
     vpnStateProvider: VpnStateProvider,
-    selectedServerProvider: SelectedServerProvider,
+    private val selectedServerProvider: SelectedServerProvider,
     private val getServersUseCase: GetServersUseCase,
     private val getSelectedServerUseCase: GetSelectedServerUseCase,
     private val resolveDispatchableServerUseCase: ResolveDispatchableServerUseCase,
@@ -58,24 +59,7 @@ class VpnViewModel(
     private val updateManager: UpdateManager
 ) : AndroidViewModel(application) {
 
-    private val initialServer = MutableLiveData<ServerInfo>()
-
-    private var currentServer: ServerInfo? = null
-
-    val selectedServer = MediatorLiveData<ServerInfo?>().apply {
-        addSource(initialServer) { initServer ->
-            currentServer = initServer
-            value = initServer
-
-            addSource(selectedServerProvider.observable) { newServer ->
-                newServer?.let {
-                    onServerSelected(currentServer!!, it)
-                    currentServer = it
-                    value = it
-                }
-            }
-        }
-    }
+    val selectedServer = MediatorLiveData<ServerInfo?>()
 
     val duration by lazy {
         liveData(viewModelScope.coroutineContext + Dispatchers.IO, 0) {
@@ -129,10 +113,26 @@ class VpnViewModel(
     }
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            getServersUseCase(FilterStrategy.ByCity)
-                .then { getSelectedServerUseCase(it) }
-                .onSuccess { initialServer.postValue(it) }
+        viewModelScope.launch(Dispatchers.Main) {
+            initSelectedServer()
+        }
+    }
+
+    private suspend fun initSelectedServer() = withContext(Dispatchers.Main) {
+        val notifyServerChanged = { server: ServerInfo ->
+            selectedServer.value?.let { onServerSwitched(it, server) }
+            selectedServer.value = server
+        }
+
+        val allServers = withContext(Dispatchers.IO) { getServersUseCase(FilterStrategy.ByCity) }
+            .getOrNull() ?: emptyList()
+
+        getSelectedServerUseCase(FilterStrategy.ByCity, allServers).onSuccess { selected ->
+            notifyServerChanged(selected)
+
+            selectedServer.addSource(selectedServerProvider.observable) { newSelected ->
+                newSelected?.let { notifyServerChanged(it) }
+            }
         }
     }
 
@@ -140,7 +140,7 @@ class VpnViewModel(
         when (action) {
             is Action.Connect -> {
                 if (vpnManager.isGranted()) {
-                    currentServer?.let { tryConnectVpn(it) }
+                    selectedServer.value?.let { tryConnectVpn(it) }
                 } else {
                     requestPermission()
                 }
@@ -154,8 +154,8 @@ class VpnViewModel(
         _uiState.value = UIState.Disconnected(UIModel.Disconnected())
     }
 
-    private fun onServerSelected(oldServer: ServerInfo, newServer: ServerInfo) {
-        if (vpnManager.isConnected() && oldServer != newServer) {
+    private fun onServerSwitched(oldServer: ServerInfo?, newServer: ServerInfo) {
+        if (vpnManager.isConnected() && oldServer != null && oldServer != newServer) {
             switchVpn(oldServer, newServer)
         }
     }
