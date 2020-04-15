@@ -43,7 +43,7 @@ class ServersViewModel(
     }
 
     fun updateSelectedServer() {
-        getSelectedServerUseCase(servers.value ?: emptyList())
+        getSelectedServerUseCase(FilterStrategy.ByCity, servers.value ?: emptyList())
             .onSuccess { _selectedServer.value = it }
     }
 
