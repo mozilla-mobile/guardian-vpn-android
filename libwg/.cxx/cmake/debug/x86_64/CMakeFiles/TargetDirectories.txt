@@ -1,5 +1,0 @@
-/Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64/CMakeFiles/edit_cache.dir
-/Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64/CMakeFiles/rebuild_cache.dir
-/Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64/CMakeFiles/libwg-go.so.dir
-/Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64/CMakeFiles/libwg.so.dir
-/Users/lchuang/Project/guardian-vpn-android/libwg/.cxx/cmake/debug/x86_64/CMakeFiles/libwg-quick.so.dir
