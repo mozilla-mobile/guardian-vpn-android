@@ -81,7 +81,15 @@ class LoginCustomTab(private val activity: AppCompatActivity) : DefaultLifecycle
 
     companion object {
         private const val TAG = "LoginCustomTab"
-        private val customTabCandidates = listOf("org.mozilla.fenix", "com.android.chrome")
+        val customTabCandidates = listOf(
+            "org.mozilla.fenix.nightly",
+            "org.mozilla.fenix",
+            "org.mozilla.fennec_aurora",
+            "org.mozilla.firefox_beta",
+            "org.mozilla.firefox",
+            "org.mozilla.focus",
+            "com.android.chrome"
+        )
     }
 }
 
@@ -129,6 +137,5 @@ private fun launchUrl(context: Context, session: CustomTabsSession, url: String)
 }
 
 private fun getTargetPackage(context: Context): String? {
-    val customTabCandidates = listOf("org.mozilla.fenix", "com.android.chrome")
-    return CustomTabsClient.getPackageName(context, customTabCandidates, true)
+    return CustomTabsClient.getPackageName(context, LoginCustomTab.customTabCandidates, true)
 }

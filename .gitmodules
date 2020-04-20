@@ -1,8 +1,8 @@
 [submodule "modules/libwg"]
 	path = modules/libwg
-	url = git@github.com:mozilla-services/guardian-vpn-android.git
+	url = git@github.com:mozilla-mobile/guardian-vpn-android.git
 	branch = max/dev/libwg
 [submodule "modules/wireguard"]
 	path = modules/wireguard
-	url = git@github.com:mozilla-services/guardian-vpn-android.git
+	url = git@github.com:mozilla-mobile/guardian-vpn-android.git
 	branch = roger/wg_moz_module
