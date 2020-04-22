@@ -99,7 +99,14 @@ workflows:
   workflow:
     jobs:
       - build
+          branches:
+            ignore: release
   build_release:
+    jobs:
+      - build_release
+          branches:
+            only: release
+  scheduled_build_release:
     triggers:
       - schedule:
           cron: "0 11 * * *"
