@@ -162,6 +162,7 @@ class VpnViewModel(
 
     private fun tryConnectVpn(server: ServerInfo) {
         if (!hasNetwork()) {
+            GLog.report(TAG, "tryConnectVpn, no-network")
             onConnectFailed()
             return
         }

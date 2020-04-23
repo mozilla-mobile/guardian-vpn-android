@@ -42,11 +42,12 @@ class GuardianVpnManager(
     private val action = MutableLiveData<Action>()
 
     private val _stateObservable = action.switchMap { request ->
+        GLog.report(TAG, "action=${request::class.java.simpleName}")
         when (request) {
-            Action.Connect -> monitorConnectedState()
-            Action.Disconnect -> monitorDisconnectedState()
-            Action.ConnectImmediately -> monitorSignalState()
-            Action.DisconnectImmediately -> liveData<VpnState> { emit(VpnState.Disconnected) }
+            is Action.Connect -> monitorConnectedState(request.server)
+            is Action.Disconnect -> monitorDisconnectedState()
+            is Action.ConnectImmediately -> monitorSignalState(request.server)
+            is Action.DisconnectImmediately -> liveData<VpnState> { emit(VpnState.Disconnected) }
             is Action.Switch -> monitorSwitchingState(request.oldServer, request.newServer)
         }
     }
@@ -54,6 +55,10 @@ class GuardianVpnManager(
     override val stateObservable: LiveData<VpnState> = _stateObservable
         .map { it }
         .distinctBy { v1, v2 -> v1 != v2 }
+        .map {
+            GLog.report(TAG, "state=${it::class.java.simpleName}")
+            it
+        }
 
     private val connectedStatesVerifier = ConnectedStatesVerifier()
 
@@ -68,7 +73,7 @@ class GuardianVpnManager(
         currentDevice: CurrentDevice
     ) = withContext(Dispatchers.Main.immediate) {
         when {
-            isConnected() -> action.value = Action.ConnectImmediately
+            isConnected() -> action.value = Action.ConnectImmediately(server)
             else -> connectInternal(server, currentDevice)
         }
     }
@@ -79,7 +84,7 @@ class GuardianVpnManager(
         tunnelManager.turnOn(appContext, tunnel, object : VpnServiceStateListener {
             override fun onServiceUp(proxy: ServiceProxy) {
                 onVpnServiceUp(proxy, true)
-                action.postValue(Action.Connect)
+                action.postValue(Action.Connect(server))
             }
 
             override fun onServiceDown(isRevoked: Boolean) {
@@ -155,10 +160,10 @@ class GuardianVpnManager(
         return SystemClock.elapsedRealtime() - upTime
     }
 
-    private fun monitorConnectedState(): LiveData<VpnState> {
+    private fun monitorConnectedState(server: ServerInfo): LiveData<VpnState> {
         return liveData(Dispatchers.IO, 0) {
             emit(VpnState.Connecting as VpnState)
-            action.postValue(Action.ConnectImmediately)
+            action.postValue(Action.ConnectImmediately(server))
         }
     }
 
@@ -166,12 +171,12 @@ class GuardianVpnManager(
         return liveData(Dispatchers.IO, 0) {
             emit(VpnState.Switching(oldServer, newServer) as VpnState)
             delay(MIN_SWITCH_DELAY)
-            action.postValue(Action.ConnectImmediately)
+            action.postValue(Action.ConnectImmediately(newServer))
         }
     }
 
-    private suspend fun runPingLoop(tunnel: Tunnel) {
-        val host = tunnel.config.peers.first().endpoint.get().host
+    private suspend fun runPingLoop(server: ServerInfo) {
+        val host = server.server.ipv4Gateway
         while (true) {
             val (pingSuccess, pingSec) = measureElapsedRealtime(TimeUnit.SECONDS) { ping(host) }
             GLog.d(TAG, "ping result=$pingSuccess, seconds=$pingSec")
@@ -179,12 +184,12 @@ class GuardianVpnManager(
         }
     }
 
-    private fun monitorSignalState(): LiveData<VpnState> {
+    private fun monitorSignalState(server: ServerInfo): LiveData<VpnState> {
         return liveData(Dispatchers.IO, 0) {
             val tunnel = tunnelManager.tunnel ?: return@liveData
 
             coroutineScope {
-                launch { runPingLoop(tunnel) }
+                launch { runPingLoop(server) }
 
                 withContext(Dispatchers.Main) {
                     rxChangedFlow(tunnel)
@@ -277,10 +282,10 @@ class GuardianVpnManager(
 
     /** Actions for vpn state transfer */
     sealed class Action {
-        object Connect : Action()
+        class Connect(val server: ServerInfo) : Action()
         class Switch(val oldServer: ServerInfo, val newServer: ServerInfo) : Action()
         object Disconnect : Action()
-        object ConnectImmediately : Action()
+        class ConnectImmediately(val server: ServerInfo) : Action()
         object DisconnectImmediately : Action()
     }
 

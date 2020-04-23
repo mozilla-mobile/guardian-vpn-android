@@ -9,6 +9,7 @@ import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.main.vpn.VpnManager
 import org.mozilla.firefox.vpn.user.data.UserRepository
+import org.mozilla.firefox.vpn.util.GLog
 
 class SignOutUseCase(
     private val deviceRepository: DeviceRepository,
@@ -17,6 +18,7 @@ class SignOutUseCase(
 ) {
 
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
+        GLog.report(TAG, "sign out")
         vpnManager.shutdownConnection()
         removeDeviceAsync()
     }
@@ -28,5 +30,9 @@ class SignOutUseCase(
                 userRepository.removeUserInfo()
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "SignOutUseCase"
     }
 }
