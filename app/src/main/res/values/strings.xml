@@ -12,5 +12,7 @@
     <string name="windows_notification_vpn_unstable_content" translatable="false">Check your connection.</string>
     <string name="toast_unable_to_remove_device" translatable="false">Unable to remove device.</string>
     <string name="toast_no_network" translatable="false">Please check your network and try again</string>
+    <string name="log_report_subject" translatable="false">User Help Request: %1$s/%2$s</string>
+    <string name="log_report_body" translatable="false">User requesting assistance:\n\nDevice name: %1$s\nAdded: %2$s\nDevice public key: %3$s</string>
 
 </resources>

@@ -26,7 +26,7 @@ import org.mozilla.firefox.vpn.util.onSuccess
 object ReportUtil {
     private const val DEFAULT_TAG = "GuardianReport"
     private const val LOG_DIR = "report"
-    private const val LOG_FILE_NAME = "log-report.txt"
+    private const val LOG_FILE_NAME = "debug_logs.txt"
 
     fun initReport(context: Context) {
         val logDir = File(context.filesDir, LOG_DIR)
@@ -54,11 +54,11 @@ object ReportUtil {
         FL.setEnabled(true)
     }
 
-    fun sendLog(activity: Activity): Boolean {
+    fun sendLog(activity: Activity, email: String, subject: String, body: String): Boolean {
         val logFile = getLogFile(activity) ?: return false
         val contentUri: Uri = FileProvider.getUriForFile(activity, getAuthority(activity), logFile)
 
-        val intent = createSendIntent(contentUri)
+        val intent = createSendIntent(contentUri, email, subject, body)
         val pkgMgr = activity.packageManager ?: return false
 
         if (intent.resolveActivity(pkgMgr) != null) {
@@ -91,13 +91,18 @@ object ReportUtil {
         return null
     }
 
-    private fun createSendIntent(fileUri: Uri) = Intent(Intent.ACTION_SEND).apply {
-        val to = arrayOf("some@email.com")
+    private fun createSendIntent(
+        fileUri: Uri,
+        email: String,
+        subject: String,
+        body: String
+    ) = Intent(Intent.ACTION_SEND).apply {
+        val to = arrayOf(email)
         type = ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE
         putExtra(Intent.EXTRA_EMAIL, to)
         putExtra(Intent.EXTRA_STREAM, fileUri)
-        putExtra(Intent.EXTRA_SUBJECT, "subject")
-        putExtra(Intent.EXTRA_TEXT, "mail body")
+        putExtra(Intent.EXTRA_SUBJECT, subject)
+        putExtra(Intent.EXTRA_TEXT, body)
     }
 }
 
