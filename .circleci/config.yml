@@ -98,16 +98,14 @@ workflows:
   version: 2
   workflow:
     jobs:
-      - build
-          filters:
-            branches:
-              ignore: release
+      - build:
+          branches:
+            ignore: release
   build_release:
     jobs:
-      - build_release
-          filters:
-            branches:
-              only: release
+      - build_release:
+          branches:
+            only: release
   scheduled_build_release:
     triggers:
       - schedule:
