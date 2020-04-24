@@ -99,13 +99,15 @@ workflows:
   workflow:
     jobs:
       - build
-          branches:
-            ignore: release
+          filters:
+            branches:
+              ignore: release
   build_release:
     jobs:
       - build_release
-          branches:
-            only: release
+          filters:
+            branches:
+              only: release
   scheduled_build_release:
     triggers:
       - schedule:
