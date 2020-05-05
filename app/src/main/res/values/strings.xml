@@ -1,18 +1,150 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
 
-    <!-- Legacy, need to clean up or up lift to fluent string list -->
-    <string name="label_vpn" translatable="false">VPN</string>
-    <string name="onboarding_logged_out" translatable="false">Logged out and device removed.</string>
-    <string name="launcher_name" translatable="false">Firefox VPN</string>
-    <string name="vpn_state_separator" translatable="false">&#8226;</string>
-    <string name="vpn_country_switch_hint" translatable="false">Select connection</string>
-    <string name="settings_default_user_name" translatable="false">User</string>
-    <string name="windows_notification_channel_medium" translatable="false">Medium</string>
-    <string name="windows_notification_channel_urgent" translatable="false">Urgent</string>
-    <string name="windows_notification_vpn_unstable_content" translatable="false">Check your connection.</string>
-    <string name="toast_unable_to_remove_device" translatable="false">Unable to remove device.</string>
-    <string name="toast_no_network" translatable="false">Please check your network and try again</string>
-    <string name="log_report_subject" translatable="false">User Help Request: %1$s/%2$s</string>
-    <string name="log_report_body" translatable="false">User requesting assistance:\n\nDevice name: %1$s\nAdded: %2$s\nDevice public key: %3$s</string>
+    <!-- This text is shown in the URL bar when it's empty -->
+    <string name="onboarding_logged_out">Logged out and device removed.</string>
+
+    <!-- This text is shown right below the VPN server pull down list -->
+    <string name="vpn_country_switch_hint">Select connection</string>
+
+    <!-- The name of the application -->
+    <string name="application_name">Firefox Private Network</string>
+
+    <!-- The description of the application, users will see this when they launch the app for the 1st time -->
+    <string name="application_description">A fast, secure and easy to use VPN (Virtual Private Network).</string>
+
+
+    <!-- These strings are show in the landing page -->
+    <string name="landing_title">Firefox Private Network</string>
+    <string name="landing_signin_button_text">Get started</string>
+    <string name="nux_learn_more">Learn more</string>
+
+
+    <!-- These strings are used in the Learn More section. They provide more information about
+     the Firefox Private Network. Device level encryption, No Activity logs, Servers in 39 countries, Connect up to
+     5 devices are the title of each Learn More pages -->
+    <string name="nux_title_1">No activity logs</string>
+    <string name="nux_content_1">We\'re Mozilla. We don\'t log your activity and we\'re always on your side.</string>
+    <string name="nux_title_2">Device level encryption</string>
+    <string name="nux_content_2">No one will see your location or activity, even on unsecure Wi-Fi networks.</string>
+    <string name="nux_title_3">Servers in 39 countries</string>
+    <string name="nux_content_3">Stand up to tech bullies and protect your access to the web.</string>
+    <string name="nux_title_4">Connect up to 5 devices</string>
+    <string name="nux_content_4">Stream, download and game. We won\'t restrict your bandwidth.</string>
+
+
+
+    <!-- These are the menu items -->
+    <string name="settings_page_title">Settings</string>
+    <string name="get_help_page_title">Get help</string>
+    <string name="about_page_title">About</string>
+    <string name="feedback_page_title">Give feedback</string>
+    <string name="terms_service_url_title">Terms of Service</string>
+    <string name="privacy_policy_url_title">Privacy Policy</string>
+    <string name="contact_url_title">Contact us</string>
+    <string name="help_support_url_title">Help &amp; Support</string>
+
+
+    <!-- Will diplay these strings when the VPN is Off -->
+    <string name="hero_text_vpn_off">VPN is off</string>
+    <string name="hero_subtext_turn_on">Turn it on to protect your entire device</string>
+
+    <!-- Will diplay these strings when the VPN is On -->
+    <string name="hero_text_vpn_on">VPN is on</string>
+    <string name="hero_subtext_secure_protected">Secure and protected</string>
+
+    <!-- Will show the following strings when you are tring to connect to VPN -->
+    <string name="hero_text_connecting">Connecting&#8230;</string>
+    <string name="hero_subtext_protected_shortly">You will be protected shortly</string>
+
+    <!-- Will show the following strings when you are tring to disconnect to VPN -->
+    <string name="hero_text_disconnecting">Disconnecting&#8230;</string>
+    <string name="hero_subtext_disconnected_shortly">You will be disconnected shortly</string>
+
+    <!-- Will show this when users is switching from one VPN server to another, for example, from Dalla to LA -->
+    <string name="hero_text_switching">Switching&#8230;</string>
+    <string name="hero_subtext_server_switch">From %1$s to %2$s</string>
+
+    <!-- These strings are used to indicate the current network status -->
+    <string name="hero_subtext_unstable">Unstable</string>
+    <string name="hero_subtext_no_signal">No signal</string>
+    <string name="hero_subtext_check_connection">Check connection</string>
+
+
+
+    <string name="connection_page_title">Connection</string>
+
+
+    <!-- These strings are used for the device management pages. It tells you how many devices you have used for VPN. e.g. 4 out of 5 -->
+    <string name="devices_page_title">My devices</string>
+    <string name="devices_page_subtitle">%1$s of %2$s</string>
+
+
+    <!-- String for the button that will launch the browser and take users to the manage acount backend page -->
+    <string name="avatar_menu_manage_account">Manage account</string>
+
+    <!-- application version title -->
+    <string name="about_version_title">Release version</string>
+
+
+    <string name="avatar_menu_debug">Debug</string>
+
+    <!-- String for the button that will let users sign out their current Firefox account -->
+    <string name="avatar_menu_sign_out">Sign out</string>
+
+    <!-- String to indicate the current device that is connecting to VPN server -->
+    <string name="devices_current_device">Current device</string>
+
+
+    <!-- These strings are used for the UI flow when user reach the limitation of the devices that can connect to VPN simultaneously. The UI flow will ask users to select
+    a device to remove, to confrim the remove action, to show the error message if the remove action fails, and ask user to try again  -->
+    <string name="devices_limit_reached_title">Remove a device</string>
+    <string name="devices_limit_reached_content">You\'ve reached your limit. To install the VPN on this device, you\'ll need to remove one.</string>
+    <string name="devices_remove_popup_title">Remove device?</string>
+    <string name="devices_remove_popup_content">Please confirm you would like to remove %s.</string>
+    <string name="popup_cancel_button_text">Cancel</string>
+    <string name="popup_remove_button_text">Remove</string>
+    <string name="toast_unable_to_remove_device">Unable to remove device.</string>
+    <string name="toast_try_again">Try again</string>
+
+
+
+    <!-- Users will see this error message when their current Firefox Private Network app is not compatiable with their Android version -->
+    <string name="update_content_1">You must update your software to continue using Firefox Private Network</string>
+
+    <!-- The string for the default user name -->
+    <string name="settings_default_user_name">User</string>
+
+
+    <!-- The erroe message users will see when they cannot connect to VPN server due to some network issues -->
+    <string name="toast_no_network">Please check your network and try again</string>
+
+
+    <!-- These strings are used in the Android Notification to indicate the current connection status of Android Private Network application -->
+    <string name="windows_notification_channel_medium">Medium</string>
+    <string name="windows_notification_channel_urgent">Urgent</string>
+    <string name="windows_notification_vpn_on_title">VPN is on</string>
+    <string name="windows_notification_vpn_on_content">You\'re secure and protected.</string>
+    <string name="windows_notification_vpn_off_title">VPN is off</string>
+    <string name="windows_notification_vpn_off_content">You disconnected.</string>
+    <string name="windows_notification_vpn_switch_title">From %1$s to %2$s</string>
+    <string name="windows_notification_vpn_switch_content">You switched servers.</string>
+    <string name="windows_notification_vpn_unstable_content">Check your connection.</string>
+
+
+    <!-- Don't see the following strings use anywhere in the code base -->
+    <string name="nux_skip">Skip</string>
+    <string name="update_title">Security Patch</string>
+    <string name="update_content_2">Your connection will not be secure while you update.</string>
+
+
+    <!-- Users will see these strings when there is a newer version available for update -->
+    <string name="toast_update_version_message_1">New features are available! </string>
+    <string name="update_update_button_text">Update now</string>
 
 </resources>
