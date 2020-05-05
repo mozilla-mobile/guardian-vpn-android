@@ -59,6 +59,17 @@ android {
             applicationIdSuffix ".beta"
             versionNameSuffix "-${commitHash()}"
         }
+
+        snapshots {
+
+        }
+    }
+
+    variantFilter { variant ->
+        def flavors = variant.flavors*.name
+        if (flavors.contains("snapshots") && variant.buildType.name == "release") {
+            setIgnore(true)
+        }
     }
 
     androidExtensions {
@@ -107,6 +118,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'tools.fastlane:screengrab:2.0.0'
 }
 
 task ktlint(type: JavaExec, group: "verification") {
