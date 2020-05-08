@@ -27,7 +27,7 @@ class OnboardingActivity : AppCompatActivity() {
 
     private val viewModel by viewModel { component.viewModel }
 
-    private var shouldLaunchMainPage = false
+    private var redirectHandled = false
 
     private lateinit var customTab: LoginCustomTab
 
@@ -60,18 +60,12 @@ class OnboardingActivity : AppCompatActivity() {
         })
 
         viewModel.launchMainPage.observerUntilOnDestroy(this, Observer {
-            // Originally, after receiving this event, we should launch main activity directly. However,
-            // this will make custom tab being pushed to the background, and after the user leaves the
-            // main activity, he will see the custom tab, which is undesired.
-
-            // To close custom tab first, current approach launches OnboardingActivity again with
-            // FLAG_ACTIVITY_CLEAR_TOP to clear the custom tab, and since onNewIntent() will be called
-            // in this case, we launch main activity there
-
-            shouldLaunchMainPage = true
-            startActivity(getStartIntent(this@OnboardingActivity).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            })
+            if (redirectHandled) {
+                handlePreviousFailedRedirection()
+            } else {
+                redirectHandled = true
+                redirectToMainPage()
+            }
         })
 
         viewModel.uiModel.observe(this, Observer {
@@ -90,17 +84,40 @@ class OnboardingActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (shouldLaunchMainPage) {
-            startActivity(MainActivity.getStartIntent(this))
-            finish()
+        if (redirectHandled) {
+            startMainActivity()
         }
     }
 
     fun startLoginFlow() {
+        redirectHandled = false
         viewModel.startLoginFlow()
     }
 
     private fun isLoggedOut() = intent.getBooleanExtra(EXTRA_LOGOUT, false)
+
+    private fun redirectToMainPage() {
+        // Originally, after receiving this event, we should launch main activity directly. However,
+        // this will make custom tab being pushed to the background, and after the user leaves the
+        // main activity, he will see the custom tab, which is undesired.
+
+        // To close custom tab first, current approach launches OnboardingActivity again with
+        // FLAG_ACTIVITY_CLEAR_TOP to clear the custom tab, and since onNewIntent() will be called
+        // in this case, we launch main activity there
+
+        startActivity(getStartIntent(this@OnboardingActivity).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        })
+    }
+
+    private fun handlePreviousFailedRedirection() {
+        startMainActivity()
+    }
+
+    private fun startMainActivity() {
+        startActivity(MainActivity.getStartIntent(this))
+        finish()
+    }
 
     companion object {
         private const val EXTRA_LOGOUT = "logout"

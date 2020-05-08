@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -45,6 +46,8 @@ class OnboardingViewModel(
     private val _uiModel = MutableLiveData<UiModel>()
     val uiModel: LiveData<UiModel> = _uiModel
 
+    private val loginSuccess = AtomicBoolean(false)
+
     private var verificationJob: Job? = null
 
     var isLoggedOut: Boolean = false
@@ -60,12 +63,25 @@ class OnboardingViewModel(
     }
 
     fun resumeLoginFlow() {
-        _uiModel.value = UiModel(true)
-        viewModelScope.launch(Dispatchers.Main) {
-            getPendingLoginInfoUseCase()
-                ?.let { verifyLogin(it) }
-                ?: run { _uiModel.value = UiModel(false) }
+        viewModelScope.launch(Dispatchers.Main.immediate) {
+            _uiModel.value = UiModel(true)
+
+            if (loginSuccess.get()) {
+                // Already being verified by the verifyLoginAsync()
+                gotoMainPage()
+            } else {
+                getPendingLoginInfoUseCase()
+                    ?.let { verifyLoginOnce(it) }
+                    ?: run { _uiModel.value = UiModel(false) }
+            }
         }
+    }
+
+    override fun onCleared() {
+        if (loginSuccess.get()) {
+            clearPendingLoginInfoUseCase()
+        }
+        super.onCleared()
     }
 
     private fun cancelLoginFlow() {
@@ -83,11 +99,7 @@ class OnboardingViewModel(
     }
 
     private suspend fun verifyLogin(info: LoginInfo, retry: Boolean = false) = withContext(Dispatchers.IO) {
-        val result = verifyLoginUseCase(info, retry)
-
-        clearPendingLoginInfoUseCase()
-
-        when (result) {
+        when (val result = verifyLoginUseCase(info, retry)) {
             is Result.Success -> onLoginSuccess(result.value)
             is Result.Fail -> {
                 _uiModel.postValue(UiModel(false))
@@ -97,22 +109,35 @@ class OnboardingViewModel(
         }
     }
 
+    private suspend fun verifyLoginOnce(info: LoginInfo) = withContext(Dispatchers.IO) {
+        verifyLogin(info, false)
+    }
+
     private suspend fun verifyLoginAsync(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
         verifyLogin(info, true)
     }
 
     private suspend fun onLoginSuccess(
         loginResult: LoginResult
-    ) = withContext(Dispatchers.IO) {
+    ) = withContext(Dispatchers.Main) {
+        if (loginSuccess.compareAndSet(false, true)) {
+            setupNewUser(loginResult)
+        }
 
+        gotoMainPage()
+    }
+
+    private suspend fun gotoMainPage() = withContext(Dispatchers.Main.immediate) {
+        launchMainPage.value = Unit
+    }
+
+    private suspend fun setupNewUser(
+        loginResult: LoginResult
+    ) = withContext(Dispatchers.IO) {
         createUserUseCase(loginResult)
 
         addDeviceUseCase()
             .onError { GLog.d(TAG, "add device failed: $it") }
-
-        withContext(Dispatchers.Main) {
-            launchMainPage.value = Unit
-        }
     }
 
     data class UiModel(
