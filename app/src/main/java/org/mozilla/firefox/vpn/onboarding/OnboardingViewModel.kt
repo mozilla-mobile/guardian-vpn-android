@@ -46,6 +46,7 @@ class OnboardingViewModel(
     private val _uiModel = MutableLiveData<UiModel>()
     val uiModel: LiveData<UiModel> = _uiModel
 
+    // See #153 & #204 before modifying the login flow
     private val loginSuccess = AtomicBoolean(false)
 
     private var verificationJob: Job? = null
@@ -93,9 +94,11 @@ class OnboardingViewModel(
     }
 
     private suspend fun login(info: LoginInfo) = withContext(Dispatchers.Main) {
+        // Save login info persistently so it survives even if the view(activity) is recycled
         setPendingLoginInfoUseCase(info)
+
         promptLogin.value = info.loginUrl
-        verificationJob = verifyLoginAsync(info).addCompletionHandler { verificationJob = null }
+        verificationJob = verifyLoginPeriodically(info).addCompletionHandler { verificationJob = null }
     }
 
     private suspend fun verifyLogin(info: LoginInfo, retry: Boolean = false) = withContext(Dispatchers.IO) {
@@ -113,7 +116,7 @@ class OnboardingViewModel(
         verifyLogin(info, false)
     }
 
-    private suspend fun verifyLoginAsync(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun verifyLoginPeriodically(info: LoginInfo) = viewModelScope.launch(Dispatchers.IO) {
         verifyLogin(info, true)
     }
 
