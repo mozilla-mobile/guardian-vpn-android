@@ -20,6 +20,7 @@ android {
         versionCode 1
         versionName "0.9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "boolean", "USE_MOCK", "false"
 
         def circleci_build_number = System.getenv("CIRCLE_BUILD_NUM")
         if (circleci_build_number?.trim()) {
@@ -61,7 +62,7 @@ android {
         }
 
         snapshots {
-
+            buildConfigField "boolean", "USE_MOCK", "true"
         }
     }
 

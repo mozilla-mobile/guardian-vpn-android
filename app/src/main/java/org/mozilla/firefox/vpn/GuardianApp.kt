@@ -22,7 +22,7 @@ class GuardianApp : Application() {
 
         ReportUtil.initReport(this)
 
-        guardianComponent = GuardianComponentImpl(coreComponent)
+        guardianComponent = if (BuildConfig.USE_MOCK) GuardianComponentImpl(coreComponent).mockRemote() else GuardianComponentImpl(coreComponent)
 
         NotificationUtil.init(this)
         vpnNotificationSender = VpnNotificationSender(this, guardianComponent.vpnManager)

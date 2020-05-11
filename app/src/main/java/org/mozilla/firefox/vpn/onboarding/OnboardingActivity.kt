@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_onboarding.*
+import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
@@ -56,7 +57,9 @@ class OnboardingActivity : AppCompatActivity() {
         })
 
         viewModel.promptLogin.observe(this, Observer {
-            customTab.launchUrl(it)
+            if (!BuildConfig.USE_MOCK) {
+                customTab.launchUrl(it)
+            }
         })
 
         viewModel.launchMainPage.observerUntilOnDestroy(this, Observer {

@@ -51,7 +51,9 @@ class GuardianComponentImpl(
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }
     }
 
-    override val selectedServerProvider: SelectedServerProvider = SelectedServerProvider(serverRepo)
+    override val selectedServerProvider: SelectedServerProvider by lazy {
+        SelectedServerProvider(serverRepo)
+    }
 
     override val updateManager by lazy { UpdateManager(app) }
 }
