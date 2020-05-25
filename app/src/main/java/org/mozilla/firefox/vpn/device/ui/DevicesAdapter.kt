@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_device.*
-import kotlinx.android.synthetic.main.item_device.view.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ItemDeviceBinding
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.util.TimeFormat
@@ -54,13 +52,7 @@ class DevicesAdapter(
             .from(parent.context)
             .inflate(R.layout.item_device, parent, false)
 
-        val holder = DevicesViewHolder(itemView)
-
-        holder.itemView.delete.setOnClickListener {
-            onDeleteClicked(holder)
-        }
-
-        return holder
+        return DevicesViewHolder(itemView, ::onDeleteClicked)
     }
 
     private fun onDeleteClicked(holder: DevicesViewHolder) {
@@ -145,34 +137,38 @@ class DevicesAdapter(
 
     class LimitReachHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    class DevicesViewHolder(
-        override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    class DevicesViewHolder(itemView: View, private val deleteListener: (DevicesViewHolder) -> Unit) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding = ItemDeviceBinding.bind(itemView)
+
+        init {
+            binding.delete.setOnClickListener { deleteListener(this) }
+        }
 
         fun bind(deviceUiMode: DeviceItemUiModel, currentDevice: CurrentDevice?) {
             val device = deviceUiMode.info
-            title.text = device.name
-            time.text = getRelativeTime(device.createdAt)
+            binding.title.text = device.name
+            binding.time.text = getRelativeTime(device.createdAt)
 
             val isCurrentDevice = currentDevice?.device == device
             if (isCurrentDevice) {
-                time.text = itemView.context.getString(R.string.devices_current_device)
-                time.setTextColor(itemView.context.color(R.color.blue50))
-                delete.visibility = View.INVISIBLE
-                loading.visibility = View.INVISIBLE
-                item_holder.alpha = 1f
+                binding.time.text = itemView.context.getString(R.string.devices_current_device)
+                binding.time.setTextColor(itemView.context.color(R.color.blue50))
+                binding.delete.visibility = View.INVISIBLE
+                binding.loading.visibility = View.INVISIBLE
+                binding.itemHolder.alpha = 1f
             } else {
-                time.text = getRelativeTime(device.createdAt)
-                time.setTextColor(itemView.context.color(R.color.gray40))
+                binding.time.text = getRelativeTime(device.createdAt)
+                binding.time.setTextColor(itemView.context.color(R.color.gray40))
 
                 if (deviceUiMode.isLoading) {
-                    loading.visibility = View.VISIBLE
-                    delete.visibility = View.INVISIBLE
-                    item_holder.alpha = 0.25f
+                    binding.loading.visibility = View.VISIBLE
+                    binding.delete.visibility = View.INVISIBLE
+                    binding.itemHolder.alpha = 0.25f
                 } else {
-                    loading.visibility = View.INVISIBLE
-                    delete.visibility = View.VISIBLE
-                    item_holder.alpha = 1f
+                    binding.loading.visibility = View.INVISIBLE
+                    binding.delete.visibility = View.VISIBLE
+                    binding.itemHolder.alpha = 1f
                 }
             }
         }
