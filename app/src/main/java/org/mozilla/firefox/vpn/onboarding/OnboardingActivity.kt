@@ -7,9 +7,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.activity_onboarding.*
-import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
+import org.mozilla.firefox.vpn.databinding.ActivityOnboardingBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.MainActivity
 import org.mozilla.firefox.vpn.ui.GuardianSnackbar
@@ -29,11 +28,14 @@ class OnboardingActivity : AppCompatActivity() {
 
     private var redirectHandled = false
 
+    private lateinit var binding: ActivityOnboardingBinding
+
     private lateinit var customTab: LoginCustomTab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_onboarding)
+        binding = ActivityOnboardingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         customTab = LoginCustomTab(this)
 
         viewModel.isLoggedOut = isLoggedOut()
@@ -45,7 +47,7 @@ class OnboardingActivity : AppCompatActivity() {
         viewModel.showLoggedOutMessage.observe(this, Observer {
             val message = it.resolve(this) ?: return@Observer
             val sb = GuardianSnackbar.make(
-                container,
+                binding.container,
                 InAppNotificationView.Config(
                     style = InAppNotificationView.Style.Red,
                     text = StringResource(message)
@@ -69,7 +71,7 @@ class OnboardingActivity : AppCompatActivity() {
         })
 
         viewModel.uiModel.observe(this, Observer {
-            loading_view.visibility = if (it.isLoading) {
+            binding.loadingView.visibility = if (it.isLoading) {
                 View.VISIBLE
             } else {
                 View.GONE
