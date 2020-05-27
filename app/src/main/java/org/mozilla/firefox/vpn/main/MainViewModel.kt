@@ -16,15 +16,20 @@ import org.mozilla.firefox.vpn.isDeviceLimitReached
 import org.mozilla.firefox.vpn.main.settings.domain.SignOutUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
+import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
+import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
 import org.mozilla.firefox.vpn.util.GLog
+import org.mozilla.firefox.vpn.util.Result
+import org.mozilla.firefox.vpn.util.filter
 import org.mozilla.firefox.vpn.util.onSuccess
 
 class MainViewModel(
     private val versionsUseCase: GetVersionsUseCase,
     private val signOutUseCase: SignOutUseCase,
     vpnStateProvider: VpnStateProvider,
-    private val userStates: UserStates
+    userStates: UserStates,
+    private val refreshUserInfoUseCase: RefreshUserInfoUseCase
 ) : ViewModel() {
 
     val showForceUpdate get() = liveData(Dispatchers.IO) {
@@ -36,16 +41,29 @@ class MainViewModel(
         }
     }
 
+    /**
+     * Sign-out action triggered by the sign-out button on the force-update view
+     */
     private val signOutAction = MutableLiveData<Unit>()
+
+    /**
+     * When being observed, retrieve user info once and logout if the user is unauthorized
+     */
+    private val userUnauthorized =
+        liveData(Dispatchers.IO) { emit(refreshUserInfoUseCase()) }
+            .filter { it is Result.Fail && it.exception is UnauthorizedException }
+
+    /**
+     * Observe logout request from UserState
+     */
+    private val logoutRequest = userStates.stateObservable
+        .filter { it is UserState.Login }
 
     val launchOnboardingPage = object : MediatorLiveData<LaunchOnboardingConfig>() {
         init {
+            addSource(userUnauthorized) { value = LaunchOnboardingConfig(true) }
             addSource(signOutAction) { value = LaunchOnboardingConfig(false) }
-            addSource(userStates.stateObservable) {
-                if (it is UserState.Login) {
-                    value = LaunchOnboardingConfig(true)
-                }
-            }
+            addSource(logoutRequest) { value = LaunchOnboardingConfig(true) }
         }
     }
 
