@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.view_country_folder.view.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ViewCountryFolderBinding
 import org.mozilla.firefox.vpn.servers.data.CountryInfo
 import org.mozilla.firefox.vpn.util.getCountryFlag
 
@@ -18,13 +18,11 @@ class CountryFolderView : LinearLayout {
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
+    private val binding: ViewCountryFolderBinding =
+        ViewCountryFolderBinding.inflate(LayoutInflater.from(context), this, true)
+
     private var isFolderOpen = false
-
     private var listener: OnExpandListener? = null
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_country_folder, this, true)
-    }
 
     fun setOnExpandListener(listener: OnExpandListener) {
         this.listener = listener
@@ -32,16 +30,16 @@ class CountryFolderView : LinearLayout {
 
     fun setCountry(country: CountryInfo) {
 
-        country_flag.setImageResource(context.getCountryFlag(country.code))
-        country_name.text = country.name
+        binding.countryFlag.setImageResource(context.getCountryFlag(country.code))
+        binding.countryName.text = country.name
 
         setOnClickListener {
             if (isFolderOpen) {
                 isFolderOpen = false
-                dropdown_arrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_arrow_close))
+                binding.dropdownArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_arrow_close))
             } else {
                 isFolderOpen = true
-                dropdown_arrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_arrow_open))
+                binding.dropdownArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_arrow_open))
             }
             listener?.onExpand(country, isFolderOpen)
         }
