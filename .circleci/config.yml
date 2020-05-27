@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/guardian-vpn-android
     docker:
-    - image: circleci/android:api-29
+    - image: circleci/android:api-29-ndk
     environment:
     - JVM_OPTS: -Xmx3200m
     steps:
