@@ -1,4 +1,6 @@
-version: 2
+version: 2.1
+orbs:
+    circleci-images: circleci/circleci-images@0.2.1
 jobs:
   build:
     working_directory: ~/guardian-vpn-android
