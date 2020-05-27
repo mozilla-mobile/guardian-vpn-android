@@ -8,6 +8,8 @@ jobs:
     - JVM_OPTS: -Xmx3200m
     steps:
     - checkout
+    - circleci-images/install-android-ndk:
+        ndk-version: android-ndk-r21c
     - run:
         name: Pull Submodules
         command: |
@@ -49,6 +51,8 @@ jobs:
     - SIGNED_RELEASE_APK_NAME: app-guardian-release-signed.apk
     steps:
     - checkout
+    - circleci-images/install-android-ndk:
+        ndk-version: android-ndk-r21c
     - run:
         name: Pull Submodules
         command: |
