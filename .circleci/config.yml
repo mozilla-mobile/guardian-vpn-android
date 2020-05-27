@@ -8,7 +8,7 @@ jobs:
     - JVM_OPTS: -Xmx3200m
     steps:
     - checkout
-    - circleci-images/install-ndk:
+    - android/install-ndk:
         ndk-version: android-ndk-r21c
     - run:
         name: Pull Submodules
