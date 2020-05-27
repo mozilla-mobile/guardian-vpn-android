@@ -1,17 +1,13 @@
-version: 2.1
-orbs:
-    circleci-images: circleci/circleci-images@0.2.1
+version: 2
 jobs:
   build:
     working_directory: ~/guardian-vpn-android
     docker:
-    - image: circleci/android:api-29
+    - image: circleci/android:api-29-ndk
     environment:
     - JVM_OPTS: -Xmx3200m
     steps:
     - checkout
-    - android/install-ndk:
-        ndk-version: android-ndk-r21c
     - run:
         name: Pull Submodules
         command: |
