@@ -5,22 +5,30 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.CompoundButton
 import androidx.cardview.widget.CardView
 import androidx.core.graphics.drawable.DrawableCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
-import kotlinx.android.synthetic.main.view_connection_state.view.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ViewConnectionStateBinding
 import org.mozilla.firefox.vpn.main.vpn.VpnViewModel.UIModel
 import org.mozilla.firefox.vpn.util.color
 import org.mozilla.firefox.vpn.util.tint
 
 class ConnectionStateView : CardView {
 
+    constructor(context: Context) : this(context, null)
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
     var onSwitchListener: ((Boolean) -> Unit)? = null
-    private var currentModel: UIModel = UIModel.Disconnected()
+
+    private val binding: ViewConnectionStateBinding = ViewConnectionStateBinding.inflate(LayoutInflater.from(context), this, true)
 
     private val onCheckedChangedListener =
         CompoundButton.OnCheckedChangeListener { button, isChecked ->
@@ -32,14 +40,13 @@ class ConnectionStateView : CardView {
             }
         }
 
-    constructor(context: Context) : this(context, null)
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    private var currentModel: UIModel = UIModel.Disconnected()
+
+    init {
         radius = context.resources.getDimensionPixelSize(R.dimen.vpn_state_card_radius).toFloat()
-        inflate(context, R.layout.view_connection_state, this)
-        switch_btn.setOnCheckedChangeListener(onCheckedChangedListener)
-        ripple.frame = 0
-        warning_icon.setImageDrawable(DrawableCompat.wrap(warning_icon.drawable).mutate())
+        binding.switchBtn.setOnCheckedChangeListener(onCheckedChangedListener)
+        binding.ripple.frame = 0
+        binding.warningIcon.setImageDrawable(DrawableCompat.wrap(binding.warningIcon.drawable).mutate())
     }
 
     fun applyUiModel(model: UIModel) {
@@ -47,9 +54,9 @@ class ConnectionStateView : CardView {
         initRippleAnimation(currentModel, model)
         initHapticFeedback(currentModel, model)
 
-        title.text = model.title.resolve(context)
+        binding.title.text = model.title.resolve(context)
 
-        description.text = when (model) {
+        binding.description.text = when (model) {
             is UIModel.Connected -> model.description.resolve(context) +
                     " ${context.getString(R.string.vpn_state_separator)} "
             is UIModel.Switching -> model.description.resolve(context)
@@ -62,25 +69,25 @@ class ConnectionStateView : CardView {
         when (model) {
             is UIModel.WarningState -> {
                 val color = context.color(model.stateColorId)
-                warning_icon.apply {
+                binding.warningIcon.apply {
                     visibility = View.VISIBLE
                     drawable.tint(color)
                 }
-                warning_text.apply {
+                binding.warningText.apply {
                     visibility = View.VISIBLE
                     text = model.stateText.resolve(context)
                     setTextColor(color)
                 }
             }
             else -> {
-                warning_icon.visibility = View.GONE
-                warning_text.visibility = View.GONE
+                binding.warningIcon.visibility = View.GONE
+                binding.warningText.visibility = View.GONE
             }
         }
 
-        duration.visibility = if (model is UIModel.Connected) { View.VISIBLE } else { View.GONE }
+        binding.duration.visibility = if (model is UIModel.Connected) { View.VISIBLE } else { View.GONE }
 
-        switch_btn.isEnabled = when (model) {
+        binding.switchBtn.isEnabled = when (model) {
             is UIModel.Connecting,
             is UIModel.Disconnecting,
             is UIModel.Switching -> false
@@ -94,7 +101,7 @@ class ConnectionStateView : CardView {
     }
 
     fun setDuration(duration: String) {
-        this.duration.text = duration
+        binding.duration.text = duration
     }
 
     private fun initGlobeAnimation(oldModel: UIModel, newModel: UIModel) {
@@ -103,19 +110,19 @@ class ConnectionStateView : CardView {
                 oldModel is UIModel.NoSignal
 
         if (oldModel is UIModel.Disconnected && newModel is UIModel.Connecting) {
-            globe.playOnce(0, 14)
+            binding.globe.playOnce(0, 14)
         } else if (oldModel is UIModel.Connecting && newModel is UIModel.Connected) {
-            globe.playOnce(15, 29)
+            binding.globe.playOnce(15, 29)
         } else if (oldModel is UIModel.Connected && newModel is UIModel.Switching) {
-            globe.playOnce(30, 44)
+            binding.globe.playOnce(30, 44)
         } else if (oldModel is UIModel.Switching && newModel is UIModel.Connected) {
-            globe.playOnce(45, 59)
+            binding.globe.playOnce(45, 59)
         } else if (fromAnyConnectedState && newModel is UIModel.Disconnecting) {
-            globe.playOnce(60, 74)
+            binding.globe.playOnce(60, 74)
         } else if (oldModel is UIModel.Disconnecting && newModel is UIModel.Disconnected) {
-            globe.playOnce(75, 89)
+            binding.globe.playOnce(75, 89)
         } else if (fromAnyConnectedState && newModel is UIModel.Switching) {
-            globe.playOnce(30, 44)
+            binding.globe.playOnce(30, 44)
         } else {
             val frame = when (newModel) {
                 is UIModel.Disconnected -> 0
@@ -127,7 +134,7 @@ class ConnectionStateView : CardView {
                 is UIModel.Switching -> 30
                 is UIModel.Disconnecting -> 75
             }
-            globe.fixAtFrame(frame)
+            binding.globe.fixAtFrame(frame)
         }
     }
 
@@ -136,7 +143,7 @@ class ConnectionStateView : CardView {
             is UIModel.Connecting,
             is UIModel.Disconnected,
             is UIModel.NoSignal -> {
-                ripple.fixAtFrame(0)
+                binding.ripple.fixAtFrame(0)
             }
         }
 
@@ -150,9 +157,9 @@ class ConnectionStateView : CardView {
                 (newModel is UIModel.Disconnecting || newModel is UIModel.Unstable)
 
         if (playEnterAnimation) {
-            ripple.playOnce(0, 74).then { loop(75, 120) }
+            binding.ripple.playOnce(0, 74).then { loop(75, 120) }
         } else if (playEndAnimation) {
-            ripple.playOnce(ripple.frame, 210)
+            binding.ripple.playOnce(binding.ripple.frame, 210)
         }
     }
 
@@ -172,20 +179,20 @@ class ConnectionStateView : CardView {
     }
 
     private fun applyStyle(style: UIModel.Styles) {
-        container.setBackgroundColor(context.color(style.bkgColorId))
-        title.setTextColor(context.color(style.titleColorId))
-        description.setTextColor(context.color(style.descriptionColorId))
-        duration.setTextColor(context.color(style.descriptionColorId))
+        binding.container.setBackgroundColor(context.color(style.bkgColorId))
+        binding.title.setTextColor(context.color(style.titleColorId))
+        binding.description.setTextColor(context.color(style.descriptionColorId))
+        binding.duration.setTextColor(context.color(style.descriptionColorId))
 
-        switch_btn.alpha = style.switchAlpha
+        binding.switchBtn.alpha = style.switchAlpha
 
         elevation = context.resources.getDimensionPixelSize(style.bkgElevation).toFloat()
     }
 
     private fun switchSilently(isChecked: Boolean) {
-        switch_btn.setOnCheckedChangeListener(null)
-        switch_btn.isChecked = isChecked
-        switch_btn.setOnCheckedChangeListener(onCheckedChangedListener)
+        binding.switchBtn.setOnCheckedChangeListener(null)
+        binding.switchBtn.isChecked = isChecked
+        binding.switchBtn.setOnCheckedChangeListener(onCheckedChangedListener)
     }
 }
 

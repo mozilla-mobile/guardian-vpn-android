@@ -7,8 +7,8 @@ import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.view.View
-import kotlinx.android.synthetic.main.view_in_app_notification.view.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ViewInAppNotificationBinding
 import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.color
 import org.mozilla.firefox.vpn.util.tint
@@ -19,28 +19,29 @@ object InAppNotificationView {
         return View.inflate(context, R.layout.view_in_app_notification, null).apply {
             background = context.getDrawable(config.style.bkgDrawableId)
 
-            initText(this, config)
-            initTextAction(this, config)
-            initCloseButton(this, config)
+            val binding = ViewInAppNotificationBinding.bind(this)
+            initText(binding, config)
+            initTextAction(binding, config)
+            initCloseButton(binding, config)
         }
     }
 
-    private fun initText(view: View, config: Config) {
-        view.text.setTextColor(view.context.color(config.style.textColorId))
-        view.text.text = config.text.resolve(view.context)
+    private fun initText(binding: ViewInAppNotificationBinding, config: Config) {
+        binding.text.setTextColor(binding.root.context.color(config.style.textColorId))
+        binding.text.text = config.text.resolve(binding.root.context)
     }
 
-    private fun initTextAction(view: View, config: Config) {
+    private fun initTextAction(binding: ViewInAppNotificationBinding, config: Config) {
         val action = config.textAction ?: run {
             return
         }
 
-        view.setOnClickListener { action.action() }
+        binding.root.setOnClickListener { action.action() }
 
-        val actionText = action.text.resolve(view.context) ?: return
-        val text = "${view.text.text} $actionText"
+        val actionText = action.text.resolve(binding.root.context) ?: return
+        val text = "${binding.text.text} $actionText"
         val spannable = SpannableString(text)
-        val start = view.text.text.length + 1
+        val start = binding.text.text.length + 1
         val end = start + actionText.length
 
         spannable.setSpan(UnderlineSpan(), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
@@ -48,21 +49,21 @@ object InAppNotificationView {
         val boldSpan = StyleSpan(Typeface.BOLD)
         spannable.setSpan(boldSpan, start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
 
-        view.text.text = spannable
+        binding.text.text = spannable
     }
 
-    private fun initCloseButton(view: View, config: Config) {
+    private fun initCloseButton(binding: ViewInAppNotificationBinding, config: Config) {
         val closeAction = config.closeAction ?: run {
-            view.close_views.visibility = View.GONE
+            binding.closeViews.visibility = View.GONE
             return
         }
 
-        view.close.background = view.context.getDrawable(config.style.closeAreaBkgDrawableId)
-        view.close_icon.background.tint(view.context.color(config.style.closeIconColorId))
-        view.close.setOnClickListener {
+        binding.close.background = binding.root.context.getDrawable(config.style.closeAreaBkgDrawableId)
+        binding.closeIcon.background.tint(binding.root.context.color(config.style.closeIconColorId))
+        binding.close.setOnClickListener {
             closeAction()
         }
-        view.close_views.visibility = View.VISIBLE
+        binding.closeViews.visibility = View.VISIBLE
     }
 
     data class Config(

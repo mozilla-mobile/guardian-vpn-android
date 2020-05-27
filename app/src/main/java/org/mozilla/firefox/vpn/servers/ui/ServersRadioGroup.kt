@@ -9,8 +9,8 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.view_servers_radio_group.view.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ViewServersRadioGroupBinding
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.servers.data.CountryInfo
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
@@ -24,6 +24,7 @@ class ServersRadioGroup : RadioGroup {
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
+    private val binding: ViewServersRadioGroupBinding = ViewServersRadioGroupBinding.inflate(LayoutInflater.from(context), this, true)
     private val radioButtonTextPadding = resources.getDimensionPixelSize(R.dimen.radio_button_text_padding)
     private val radioButtonVerticalPadding = resources.getDimensionPixelSize(R.dimen.radio_button_vertical_padding)
     private val radioButtonLeftMargin = resources.getDimensionPixelSize(R.dimen.radio_button_left_margin)
@@ -34,14 +35,10 @@ class ServersRadioGroup : RadioGroup {
 
     private var listener: OnServerCheckListener? = null
 
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_servers_radio_group, this, true)
-    }
-
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
-        for (index in 0 until servers_group.childCount) {
-            servers_group.getChildAt(index).isEnabled = enabled
+        for (index in 0 until binding.serversGroup.childCount) {
+            binding.serversGroup.getChildAt(index).isEnabled = enabled
         }
     }
 
@@ -64,8 +61,8 @@ class ServersRadioGroup : RadioGroup {
     fun setSelectedServer(server: ServerInfo) {
         serverViewMap[server]?.let {
             it.isChecked = true
-            scroll_view.post {
-                scroll_view.scrollTo(0, it.y.toInt() - scroll_view.measuredHeight / 2)
+            binding.scrollView.post {
+                binding.scrollView.scrollTo(0, it.y.toInt() - binding.scrollView.measuredHeight / 2)
             }
         }
         countryFolderViewMap[server.country]?.performClick()
@@ -87,7 +84,7 @@ class ServersRadioGroup : RadioGroup {
         val countryFolderView = CountryFolderView(context)
         countryFolderView.setCountry(countryInfo)
         countryFolderView.setOnExpandListener(onExpandListener)
-        servers_group.addView(countryFolderView, LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+        binding.serversGroup.addView(countryFolderView, LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         countryFolderViewMap[countryInfo] = countryFolderView
     }
 
@@ -106,15 +103,15 @@ class ServersRadioGroup : RadioGroup {
         }
         val params = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         params.setMargins(radioButtonLeftMargin, 0, 0, 0)
-        servers_group.addView(radioButton, params)
+        binding.serversGroup.addView(radioButton, params)
         serverViewMap[serverInfo] = radioButton
     }
 
     private val onExpandListener = object : CountryFolderView.OnExpandListener {
         override fun onExpand(country: CountryInfo, isExpand: Boolean) {
-            for (index in 0 until servers_group.childCount) {
-                if (servers_group.getChildAt(index).tag == country.code) {
-                    servers_group.getChildAt(index).visibility = if (isExpand) View.VISIBLE else View.GONE
+            for (index in 0 until binding.serversGroup.childCount) {
+                if (binding.serversGroup.getChildAt(index).tag == country.code) {
+                    binding.serversGroup.getChildAt(index).visibility = if (isExpand) View.VISIBLE else View.GONE
                 }
             }
         }
