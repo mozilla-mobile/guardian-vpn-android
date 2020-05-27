@@ -18,7 +18,7 @@
         app:navigationIcon="@drawable/ic_back" />
 
     <LinearLayout
-        android:id="@+id/btn_contact_us"
+        android:id="@+id/contact_us_btn"
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:paddingStart="16dp"
@@ -53,12 +53,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:background="@color/gray10"
-        app:layout_constraintTop_toBottomOf="@id/btn_contact_us"
+        app:layout_constraintTop_toBottomOf="@id/contact_us_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
-        android:id="@+id/btn_help_and_support"
+        android:id="@+id/help_and_support_btn"
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:paddingStart="16dp"
@@ -87,18 +87,18 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/btn_debug"
+        android:id="@+id/debug_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:foreground="?attr/selectableItemBackground"
-        app:layout_constraintTop_toBottomOf="@id/btn_help_and_support"
+        app:layout_constraintTop_toBottomOf="@id/help_and_support_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
 
         <ImageView
-            android:id="@+id/divider_debug"
+            android:id="@+id/debug_divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="@color/gray10"
