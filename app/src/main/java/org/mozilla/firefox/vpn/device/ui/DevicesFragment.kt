@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.fragment_devices.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.FragmentDevicesBinding
 import org.mozilla.firefox.vpn.device.DevicesComponentImpl
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.getSupportActionBar
@@ -21,6 +21,7 @@ import org.mozilla.firefox.vpn.main.setSupportActionBar
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.ui.GuardianSnackbar
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
+import org.mozilla.firefox.vpn.util.viewLifecycle
 import org.mozilla.firefox.vpn.util.viewModel
 
 class DevicesFragment : Fragment() {
@@ -34,19 +35,19 @@ class DevicesFragment : Fragment() {
     }
 
     private lateinit var deviceCountView: TextView
+
+    private var binding: FragmentDevicesBinding by viewLifecycle()
+
     private var snackBar: GuardianSnackbar? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_devices, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentDevicesBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
@@ -76,23 +77,23 @@ class DevicesFragment : Fragment() {
     }
 
     private fun showLoading() {
-        loading_view.visibility = View.VISIBLE
-        device_list.visibility = View.INVISIBLE
+        binding.loadingView.visibility = View.VISIBLE
+        binding.deviceList.visibility = View.INVISIBLE
     }
 
     private fun showData(uiModel: DevicesUiModel) {
-        loading_view.visibility = View.INVISIBLE
-        device_list.visibility = View.VISIBLE
+        binding.loadingView.visibility = View.INVISIBLE
+        binding.deviceList.visibility = View.VISIBLE
 
-        if (device_list.adapter == null) {
-            device_list.adapter = DevicesAdapter(uiModel) { device ->
+        if (binding.deviceList.adapter == null) {
+            binding.deviceList.adapter = DevicesAdapter(uiModel) { device ->
                 val context = activity ?: return@DevicesAdapter
                 showDeleteDialog(context, device) {
                     viewModel.deleteDevice(device)
                 }
             }
         } else {
-            (device_list.adapter as? DevicesAdapter)?.setData(uiModel)
+            (binding.deviceList.adapter as? DevicesAdapter)?.setData(uiModel)
         }
 
         deviceCountView.text = getString(
@@ -103,8 +104,8 @@ class DevicesFragment : Fragment() {
     }
 
     private fun showError(errorMessage: ErrorMessage) {
-        loading_view.visibility = View.INVISIBLE
-        device_list.visibility = View.INVISIBLE
+        binding.loadingView.visibility = View.INVISIBLE
+        binding.deviceList.visibility = View.INVISIBLE
         showSnackBar(errorMessage.config, errorMessage.duration)
     }
 
@@ -121,7 +122,7 @@ class DevicesFragment : Fragment() {
         setHasOptionsMenu(true)
 
         activity?.apply {
-            setSupportActionBar(toolbar)
+            setSupportActionBar(binding.toolbar)
             getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
         }
     }
@@ -137,7 +138,7 @@ class DevicesFragment : Fragment() {
 
     private fun showSnackBar(config: InAppNotificationView.Config, duration: Int) {
         snackBar?.dismiss()
-        snackBar = GuardianSnackbar.make(content, config, duration)
+        snackBar = GuardianSnackbar.make(binding.content, config, duration)
         snackBar?.show()
     }
 
