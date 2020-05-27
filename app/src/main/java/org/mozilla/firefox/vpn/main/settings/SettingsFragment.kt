@@ -11,16 +11,17 @@ import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
 import coil.api.load
 import coil.transform.CircleCropTransformation
-import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.FragmentSettingsBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.ui.UiDemoActivity
 import org.mozilla.firefox.vpn.util.launchUrl
+import org.mozilla.firefox.vpn.util.viewLifecycle
 import org.mozilla.firefox.vpn.util.viewModel
 
 class SettingsFragment : Fragment() {
@@ -31,56 +32,59 @@ class SettingsFragment : Fragment() {
 
     private val viewModel by viewModel { component.viewModel }
 
+    private var binding: FragmentSettingsBinding by viewLifecycle()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btn_my_devices.setOnClickListener {
+        binding.myDevicesBtn.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_devices)
         }
-        btn_manage_account.setOnClickListener {
+        binding.manageAccountBtn.setOnClickListener {
             viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
                 launchUrl(GuardianService.HOST_FXA)
             }
         }
-        btn_get_help.setOnClickListener {
+        binding.getHelpBtn.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_help)
         }
-        btn_about.setOnClickListener {
+        binding.aboutBtn.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_about)
         }
-        btn_feedback.setOnClickListener {
+        binding.feedbackBtn.setOnClickListener {
             viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
                 launchUrl(GuardianService.HOST_FEEDBACK)
             }
         }
-        btn_sign_out.setOnClickListener {
+        binding.signOutBtn.setOnClickListener {
             viewModel.signOut()
         }
 
-        btn_ui_demo.visibility = if (BuildConfig.DEBUG) { View.VISIBLE } else { View.GONE }
-        btn_ui_demo.setOnClickListener {
+        binding.uiDemoBtn.visibility = if (BuildConfig.DEBUG) { View.VISIBLE } else { View.GONE }
+        binding.uiDemoBtn.setOnClickListener {
             startActivity(Intent(context, UiDemoActivity::class.java))
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner, Observer { userInfo ->
             val userName = userInfo.user.displayName
-            profile_name?.text = if (userName.isNotEmpty()) {
+            binding.profileName.text = if (userName.isNotEmpty()) {
                 userName
             } else {
                 getString(R.string.settings_default_user_name)
             }
-            profile_email?.text = userInfo.user.email
-            profile_image?.load(userInfo.user.avatar) {
+            binding.profileEmail.text = userInfo.user.email
+            binding.profileImage.load(userInfo.user.avatar) {
                 crossfade(true)
                 transformations(CircleCropTransformation())
             }
         })
 
         viewModel.showDeviceLimitReached.observe(viewLifecycleOwner, Observer {
-            device_warning.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
+            binding.deviceWarning.visibility = if (it) { View.VISIBLE } else { View.INVISIBLE }
         })
 
         viewModel.gotoMainPage.observe(viewLifecycleOwner, Observer {
