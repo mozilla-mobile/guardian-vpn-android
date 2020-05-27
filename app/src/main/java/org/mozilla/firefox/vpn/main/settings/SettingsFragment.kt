@@ -21,7 +21,7 @@ import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.ui.UiDemoActivity
 import org.mozilla.firefox.vpn.util.launchUrl
-import org.mozilla.firefox.vpn.util.viewLifecycle
+import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
 
 class SettingsFragment : Fragment() {
@@ -32,7 +32,7 @@ class SettingsFragment : Fragment() {
 
     private val viewModel by viewModel { component.viewModel }
 
-    private var binding: FragmentSettingsBinding by viewLifecycle()
+    private var binding: FragmentSettingsBinding by viewBinding()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSettingsBinding.inflate(inflater, container, false)

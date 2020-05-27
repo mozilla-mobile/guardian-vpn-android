@@ -9,11 +9,11 @@ import androidx.navigation.Navigation
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.databinding.FragmentEntranceBinding
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
-import org.mozilla.firefox.vpn.util.viewLifecycle
+import org.mozilla.firefox.vpn.util.viewBinding
 
 class EntranceFragment : Fragment() {
 
-    private var binding: FragmentEntranceBinding by viewLifecycle()
+    private var binding: FragmentEntranceBinding by viewBinding()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEntranceBinding.inflate(inflater, container, false)

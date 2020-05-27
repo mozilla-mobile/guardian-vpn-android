@@ -17,7 +17,7 @@ import org.mozilla.firefox.vpn.databinding.FragmentServersBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
-import org.mozilla.firefox.vpn.util.viewLifecycle
+import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
 
 class ServersFragment : BottomSheetDialogFragment() {
@@ -28,7 +28,7 @@ class ServersFragment : BottomSheetDialogFragment() {
 
     private val viewModel by viewModel { component.viewModel }
 
-    private var binding: FragmentServersBinding by viewLifecycle()
+    private var binding: FragmentServersBinding by viewBinding()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentServersBinding.inflate(inflater, container, false)

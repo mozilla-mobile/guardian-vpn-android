@@ -14,7 +14,7 @@ import kotlin.reflect.KProperty
 * See https://developer.android.com/reference/kotlin/androidx/lifecycle/Lifecycle#init
 *
 * Usage:
-* `private var binding: TheViewBinding by viewLifecycle()`
+* `private var binding: TheViewBinding by viewBinding()`
 */
 
 /**
@@ -24,7 +24,7 @@ import kotlin.reflect.KProperty
  * @throws IllegalStateException If the getter is invoked before the binding is set,
  *                               or after onDestroyView an exception is thrown.
  */
-fun <T> Fragment.viewLifecycle(): ReadWriteProperty<Fragment, T> =
+fun <T> Fragment.viewBinding(): ReadWriteProperty<Fragment, T> =
     object : ReadWriteProperty<Fragment, T>, DefaultLifecycleObserver {
 
         private var binding: T? = null
@@ -33,9 +33,9 @@ fun <T> Fragment.viewLifecycle(): ReadWriteProperty<Fragment, T> =
             // Observe the view lifecycle of the Fragment.
             // The view lifecycle owner is null before onCreateView and after onDestroyView.
             // The observer is automatically removed after the onDestroy event.
-            this@viewLifecycle
+            this@viewBinding
                 .viewLifecycleOwnerLiveData
-                .observe(this@viewLifecycle, Observer { owner: LifecycleOwner? ->
+                .observe(this@viewBinding, Observer { owner: LifecycleOwner? ->
                     owner?.lifecycle?.addObserver(this)
                 })
         }

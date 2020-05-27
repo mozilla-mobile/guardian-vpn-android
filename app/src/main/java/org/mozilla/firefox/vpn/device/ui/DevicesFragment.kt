@@ -21,7 +21,7 @@ import org.mozilla.firefox.vpn.main.setSupportActionBar
 import org.mozilla.firefox.vpn.service.DeviceInfo
 import org.mozilla.firefox.vpn.ui.GuardianSnackbar
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
-import org.mozilla.firefox.vpn.util.viewLifecycle
+import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
 
 class DevicesFragment : Fragment() {
@@ -36,7 +36,7 @@ class DevicesFragment : Fragment() {
 
     private lateinit var deviceCountView: TextView
 
-    private var binding: FragmentDevicesBinding by viewLifecycle()
+    private var binding: FragmentDevicesBinding by viewBinding()
 
     private var snackBar: GuardianSnackbar? = null
 

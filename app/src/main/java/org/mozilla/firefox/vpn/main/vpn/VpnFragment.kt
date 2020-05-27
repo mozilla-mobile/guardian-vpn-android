@@ -24,7 +24,7 @@ import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.util.GooglePlayUtil
 import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.getCountryFlag
-import org.mozilla.firefox.vpn.util.viewLifecycle
+import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
 
 class VpnFragment : Fragment() {
@@ -51,7 +51,7 @@ class VpnFragment : Fragment() {
         binding.connectionStateView.setDuration(duration)
     }
 
-    private var binding: FragmentVpnBinding by viewLifecycle()
+    private var binding: FragmentVpnBinding by viewBinding()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentVpnBinding.inflate(inflater, container, false)
