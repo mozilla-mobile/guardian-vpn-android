@@ -43,12 +43,12 @@
         android:textColor="@color/gray40"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
         app:layout_constraintTop_toBottomOf="@id/entrance_title"
-        app:layout_constraintBottom_toTopOf="@id/btn_auth"
+        app:layout_constraintBottom_toTopOf="@id/auth_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/btn_auth"
+        android:id="@+id/auth_btn"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginStart="32dp"
@@ -59,12 +59,12 @@
         android:text="@string/landing_signin_button_text"
         android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
-        app:layout_constraintBottom_toTopOf="@+id/btn_intro"
+        app:layout_constraintBottom_toTopOf="@+id/intro_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/btn_intro"
+        android:id="@+id/intro_btn"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginBottom="16dp"
