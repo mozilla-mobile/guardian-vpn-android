@@ -2,18 +2,10 @@ package org.mozilla.firefox.vpn.splash
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.UserState
 import org.mozilla.firefox.vpn.UserStates
-import org.mozilla.firefox.vpn.splash.domain.RefreshUserInfoUseCase
-import org.mozilla.firefox.vpn.user.data.checkAuth
-import org.mozilla.firefox.vpn.user.domain.LogoutUseCase
 
 class SplashViewModel(
-    refreshUserInfoUseCase: RefreshUserInfoUseCase,
-    logoutUseCase: LogoutUseCase,
     userStates: UserStates
 ) : ViewModel() {
 
@@ -22,22 +14,14 @@ class SplashViewModel(
     val showMainPage = MutableLiveData<Unit>()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            val oldState = userStates.state
-            refreshUserInfoUseCase().checkAuth(
-                unauthorized = {
-                    logoutUseCase()
-                }
-            )
-
-            when (userStates.state) {
-                UserState.Login -> if (oldState != UserState.Login) {
-                    showLoggedOutOnboarding.postValue(Unit)
-                } else {
-                    showOnboarding.postValue(Unit)
-                }
-                else -> showMainPage.postValue(Unit)
+        val oldState = userStates.state
+        when (userStates.state) {
+            UserState.Login -> if (oldState != UserState.Login) {
+                showLoggedOutOnboarding.value = Unit
+            } else {
+                showOnboarding.value = Unit
             }
+            else -> showMainPage.value = Unit
         }
     }
 }

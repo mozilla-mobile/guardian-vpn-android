@@ -29,6 +29,16 @@ fun <T> LiveData<T>.distinctBy(selector: (v1: T, v2: T) -> Boolean) = object : M
     }
 }
 
+fun <T> LiveData<T>.filter(selector: (v: T) -> Boolean) = object : MediatorLiveData<T>() {
+    init {
+        addSource(this@filter) { newValue ->
+            if (selector(newValue)) {
+                this.value = newValue
+            }
+        }
+    }
+}
+
 fun <T, A, B> LiveData<A>.combineWith(other: LiveData<B>, onChange: (A, B) -> T): MediatorLiveData<T> {
     var source1emitted = false
     var source2emitted = false

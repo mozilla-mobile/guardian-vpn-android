@@ -5,6 +5,7 @@ import org.mozilla.firefox.vpn.UserStates
 import org.mozilla.firefox.vpn.main.settings.domain.SignOutUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.user.domain.GetVersionsUseCase
+import org.mozilla.firefox.vpn.user.domain.RefreshUserInfoUseCase
 
 interface MainComponent {
     val viewModel: MainViewModel
@@ -18,6 +19,7 @@ class MainComponentImpl(
             versionsUseCase = GetVersionsUseCase(userRepo),
             signOutUseCase = SignOutUseCase(deviceRepo, userRepo, vpnManager),
             vpnStateProvider = VpnManagerStateProvider(vpnManager),
-            userStates = UserStates(userStateResolver)
+            userStates = UserStates(userStateResolver),
+            refreshUserInfoUseCase = RefreshUserInfoUseCase(userRepo)
         )
 }
