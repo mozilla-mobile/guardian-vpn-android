@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.databinding.FragmentIntroBinding
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
-import org.mozilla.firefox.vpn.util.viewLifecycle
+import org.mozilla.firefox.vpn.util.viewBinding
 
 class IntroFragment : Fragment() {
 
-    private var binding: FragmentIntroBinding by viewLifecycle()
+    private var binding: FragmentIntroBinding by viewBinding()
 
     private lateinit var adapter: IntroListAdapter
 

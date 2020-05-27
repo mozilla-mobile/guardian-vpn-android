@@ -16,7 +16,7 @@ import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.report.ReportUtil
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.util.launchUrl
-import org.mozilla.firefox.vpn.util.viewLifecycle
+import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
 
 class HelpFragment : Fragment() {
@@ -27,7 +27,7 @@ class HelpFragment : Fragment() {
 
     private val viewModel by viewModel { component.viewModel }
 
-    private var binding: FragmentHelpBinding by viewLifecycle()
+    private var binding: FragmentHelpBinding by viewBinding()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentHelpBinding.inflate(inflater, container, false)
