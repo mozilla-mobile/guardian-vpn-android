@@ -51,7 +51,7 @@
                 tools:text="janedoe@gmail.com" />
 
             <TextView
-                android:id="@+id/btn_manage_account"
+                android:id="@+id/manage_account_btn"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="32dp"
@@ -70,7 +70,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
-            android:id="@+id/btn_my_devices"
+            android:id="@+id/my_devices_btn"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="24dp"
@@ -116,7 +116,7 @@
             android:background="@color/gray10" />
 
         <LinearLayout
-            android:id="@+id/btn_get_help"
+            android:id="@+id/get_help_btn"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:foreground="?attr/selectableItemBackground"
@@ -150,7 +150,7 @@
             android:background="@color/gray10" />
 
         <LinearLayout
-            android:id="@+id/btn_about"
+            android:id="@+id/about_btn"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:foreground="?attr/selectableItemBackground"
@@ -184,7 +184,7 @@
             android:background="@color/gray10" />
 
         <LinearLayout
-            android:id="@+id/btn_feedback"
+            android:id="@+id/feedback_btn"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:foreground="?attr/selectableItemBackground"
@@ -218,7 +218,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/btn_ui_demo"
+            android:id="@+id/ui_demo_btn"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:foreground="?attr/selectableItemBackground"
@@ -239,7 +239,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/btn_sign_out"
+            android:id="@+id/sign_out_btn"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="center"

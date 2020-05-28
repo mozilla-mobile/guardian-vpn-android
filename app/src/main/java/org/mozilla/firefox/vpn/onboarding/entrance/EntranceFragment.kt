@@ -6,23 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import kotlinx.android.synthetic.main.fragment_entrance.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.FragmentEntranceBinding
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
+import org.mozilla.firefox.vpn.util.viewBinding
 
 class EntranceFragment : Fragment() {
 
+    private var binding: FragmentEntranceBinding by viewBinding()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_entrance, container, false)
+        binding = FragmentEntranceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        btn_auth.setOnClickListener {
+        binding.authBtn.setOnClickListener {
             val activity = activity as? OnboardingActivity ?: return@setOnClickListener
             activity.startLoginFlow()
         }
-        btn_intro.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_intro))
+        binding.introBtn.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_intro))
     }
 }

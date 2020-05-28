@@ -13,14 +13,9 @@ import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import java.util.ArrayDeque
 import java.util.concurrent.TimeUnit
-import kotlinx.android.synthetic.main.fragment_vpn.connection_state_view
-import kotlinx.android.synthetic.main.fragment_vpn.content
-import kotlinx.android.synthetic.main.fragment_vpn.country_flag
-import kotlinx.android.synthetic.main.fragment_vpn.country_name
-import kotlinx.android.synthetic.main.fragment_vpn.message_container
-import kotlinx.android.synthetic.main.fragment_vpn.vpn_server_switch
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
+import org.mozilla.firefox.vpn.databinding.FragmentVpnBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.servers.ui.ServersFragment
 import org.mozilla.firefox.vpn.service.Version
@@ -29,6 +24,7 @@ import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.util.GooglePlayUtil
 import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.getCountryFlag
+import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
 
 class VpnFragment : Fragment() {
@@ -42,6 +38,7 @@ class VpnFragment : Fragment() {
     private val serversFragment = ServersFragment.newInstance()
 
     private val snackBars = ArrayDeque<GuardianSnackbar>()
+
     private var currentSnackBar: GuardianSnackbar? = null
 
     private val durationObserver = Observer<Long> {
@@ -51,11 +48,14 @@ class VpnFragment : Fragment() {
             TimeUnit.MILLISECONDS.toMinutes(it) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(it) % TimeUnit.MINUTES.toSeconds(1)
         )
-        connection_state_view.setDuration(duration)
+        binding.connectionStateView.setDuration(duration)
     }
 
+    private var binding: FragmentVpnBinding by viewBinding()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_vpn, container, false)
+        binding = FragmentVpnBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,7 +64,7 @@ class VpnFragment : Fragment() {
         observeServers()
 
         vpnViewModel.snackBar.observe(viewLifecycleOwner, Observer {
-            val snackBar = GuardianSnackbar.make(content, it, GuardianSnackbar.LENGTH_SHORT)
+            val snackBar = GuardianSnackbar.make(binding.content, it, GuardianSnackbar.LENGTH_SHORT)
             showSnackBar(snackBar, false)
         })
 
@@ -74,7 +74,7 @@ class VpnFragment : Fragment() {
                 ?: dismissUpdateMessage()
         })
 
-        connection_state_view.onSwitchListener = { isChecked ->
+        binding.connectionStateView.onSwitchListener = { isChecked ->
             if (isChecked) {
                 vpnViewModel.executeAction(VpnViewModel.Action.Connect)
             } else {
@@ -82,7 +82,7 @@ class VpnFragment : Fragment() {
             }
         }
 
-        vpn_server_switch.setOnClickListener {
+        binding.vpnServerSwitch.setOnClickListener {
             serversFragment.show(childFragmentManager, serversFragment.tag)
         }
     }
@@ -117,33 +117,33 @@ class VpnFragment : Fragment() {
     }
 
     private fun showConnectingState(model: VpnViewModel.UIModel) {
-        connection_state_view.applyUiModel(model)
+        binding.connectionStateView.applyUiModel(model)
     }
 
     private fun showConnectedState(model: VpnViewModel.UIModel) {
-        connection_state_view.applyUiModel(model)
+        binding.connectionStateView.applyUiModel(model)
         startObserveDuration()
     }
 
     private fun showDisconnectingState(model: VpnViewModel.UIModel) {
-        connection_state_view.applyUiModel(model)
+        binding.connectionStateView.applyUiModel(model)
     }
 
     private fun showDisconnectedState(model: VpnViewModel.UIModel) {
-        connection_state_view.applyUiModel(model)
+        binding.connectionStateView.applyUiModel(model)
         stopObserveDuration()
     }
 
     private fun showSwitchingState(model: VpnViewModel.UIModel) {
-        connection_state_view.applyUiModel(model)
+        binding.connectionStateView.applyUiModel(model)
     }
 
     private fun showNoSignalState(model: VpnViewModel.UIModel) {
-        connection_state_view.applyUiModel(model)
+        binding.connectionStateView.applyUiModel(model)
     }
 
     private fun showUnstableState(model: VpnViewModel.UIModel) {
-        connection_state_view.applyUiModel(model)
+        binding.connectionStateView.applyUiModel(model)
     }
 
     private fun startObserveDuration() {
@@ -157,8 +157,8 @@ class VpnFragment : Fragment() {
     private fun observeServers() {
         vpnViewModel.selectedServer.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
-                country_flag.setImageResource(context!!.getCountryFlag(it.country.code))
-                country_name.text = it.city.name
+                binding.countryFlag.setImageResource(context!!.getCountryFlag(it.country.code))
+                binding.countryName.text = it.city.name
             }
         })
     }
@@ -180,13 +180,13 @@ class VpnFragment : Fragment() {
                 }
             )
         )
-        message_container.addView(messageView)
-        message_container.visibility = View.VISIBLE
+        binding.messageContainer.addView(messageView)
+        binding.messageContainer.visibility = View.VISIBLE
     }
 
     private fun dismissUpdateMessage() {
-        message_container.visibility = View.GONE
-        message_container.removeAllViews()
+        binding.messageContainer.visibility = View.GONE
+        binding.messageContainer.removeAllViews()
     }
 
     @Suppress("SameParameterValue")

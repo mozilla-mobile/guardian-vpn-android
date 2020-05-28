@@ -11,12 +11,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_servers.*
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.coreComponent
+import org.mozilla.firefox.vpn.databinding.FragmentServersBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
+import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
 
 class ServersFragment : BottomSheetDialogFragment() {
@@ -27,16 +28,19 @@ class ServersFragment : BottomSheetDialogFragment() {
 
     private val viewModel by viewModel { component.viewModel }
 
+    private var binding: FragmentServersBinding by viewBinding()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_servers, container, false)
+        binding = FragmentServersBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        radio_group.setOnServerCheckListener(onServerCheckListener)
+        binding.radioGroup.setOnServerCheckListener(onServerCheckListener)
 
-        btn_cancel.setOnClickListener {
+        binding.cancelBtn.setOnClickListener {
             dismiss()
         }
 
@@ -73,24 +77,24 @@ class ServersFragment : BottomSheetDialogFragment() {
     private fun observeServers() {
         viewModel.servers.observe(viewLifecycleOwner, Observer { servers ->
             servers?.let {
-                radio_group.setServers(it)
+                binding.radioGroup.setServers(it)
                 viewModel.updateSelectedServer()
             }
         })
 
         viewModel.selectedServer.observe(viewLifecycleOwner, Observer {
-            radio_group.setSelectedServer(it)
+            binding.radioGroup.setSelectedServer(it)
         })
 
         viewModel.vpnState.observe(viewLifecycleOwner, Observer { vpnState ->
-            connection_text.text = when (vpnState) {
+            binding.connectionText.text = when (vpnState) {
                 is VpnState.Connecting -> getString(R.string.hero_text_connecting)
                 is VpnState.Disconnecting -> getString(R.string.hero_text_disconnecting)
                 is VpnState.Switching -> getString(R.string.hero_text_switching)
                 else -> getString(R.string.connection_page_title)
             }
 
-            radio_group.isEnabled = when (vpnState) {
+            binding.radioGroup.isEnabled = when (vpnState) {
                 is VpnState.Connecting,
                 is VpnState.Disconnecting,
                 is VpnState.Switching -> false
@@ -99,7 +103,7 @@ class ServersFragment : BottomSheetDialogFragment() {
         })
 
         viewModel.selectedServerWithVpnState.observe(viewLifecycleOwner, Observer { pair ->
-            radio_group.setSelectedServerWithState(pair.first, pair.second)
+            binding.radioGroup.setSelectedServerWithState(pair.first, pair.second)
         })
     }
 

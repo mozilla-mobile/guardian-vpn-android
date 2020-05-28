@@ -4,9 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_intro.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ItemIntroBinding
 import org.mozilla.firefox.vpn.onboarding.intro.IntroListAdapter.IntroViewHolder
 
 class IntroListAdapter : RecyclerView.Adapter<IntroViewHolder>() {
@@ -18,7 +17,9 @@ class IntroListAdapter : RecyclerView.Adapter<IntroViewHolder>() {
 
     override fun getItemCount(): Int = 4
 
-    class IntroViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    class IntroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val binding = ItemIntroBinding.bind(itemView)
 
         private val introImageList = listOf(
             R.drawable.ic_intro_1,
@@ -42,9 +43,9 @@ class IntroListAdapter : RecyclerView.Adapter<IntroViewHolder>() {
         )
 
         fun bind(position: Int) {
-            intro_image.setImageResource(introImageList[position])
-            intro_title.setText(introTitleList[position])
-            intro_description.setText(introDescriptionList[position])
+            binding.introImage.setImageResource(introImageList[position])
+            binding.introTitle.setText(introTitleList[position])
+            binding.introDescription.setText(introDescriptionList[position])
         }
     }
 }

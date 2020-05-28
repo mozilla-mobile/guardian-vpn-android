@@ -6,8 +6,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.view_indicator.view.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ViewIndicatorBinding
 
 class IndicatorView : LinearLayout {
 
@@ -17,19 +17,14 @@ class IndicatorView : LinearLayout {
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private val activeIndicator: Drawable?
-    private val inactiveIndicator: Drawable?
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.view_indicator, this, true)
-
-        activeIndicator = ContextCompat.getDrawable(context, R.drawable.ic_indicator_active)
-        inactiveIndicator = ContextCompat.getDrawable(context, R.drawable.ic_indicator_inactive)
-    }
+    private val binding: ViewIndicatorBinding =
+        ViewIndicatorBinding.inflate(LayoutInflater.from(context), this, true)
+    private val activeIndicator: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_indicator_active)
+    private val inactiveIndicator: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_indicator_inactive)
 
     fun updateIndicatorStatus(position: Int) {
-        indicator_1.setImageDrawable(if (position == 0) activeIndicator else inactiveIndicator)
-        indicator_2.setImageDrawable(if (position == 1) activeIndicator else inactiveIndicator)
-        indicator_3.setImageDrawable(if (position == 2) activeIndicator else inactiveIndicator)
+        binding.indicator1.setImageDrawable(if (position == 0) activeIndicator else inactiveIndicator)
+        binding.indicator2.setImageDrawable(if (position == 1) activeIndicator else inactiveIndicator)
+        binding.indicator3.setImageDrawable(if (position == 2) activeIndicator else inactiveIndicator)
     }
 }

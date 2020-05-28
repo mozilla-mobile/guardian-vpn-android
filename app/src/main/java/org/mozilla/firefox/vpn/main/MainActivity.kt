@@ -13,14 +13,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.NavController
-import kotlinx.android.synthetic.main.activity_main.force_update
-import kotlinx.android.synthetic.main.activity_main.nav_view
-import kotlinx.android.synthetic.main.view_force_update.description
-import kotlinx.android.synthetic.main.view_force_update.manage_btn
-import kotlinx.android.synthetic.main.view_force_update.sign_out_btn
-import kotlinx.android.synthetic.main.view_force_update.update_btn
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.ActivityMainBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 import org.mozilla.firefox.vpn.service.GuardianService
@@ -40,16 +35,19 @@ class MainActivity : AppCompatActivity() {
 
     private var currentNavController: LiveData<NavController>? = null
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
 
         viewModel.lockSetting.observe(this, Observer {
-            nav_view.setItemLocked(R.id.settings, it)
+            binding.navView.setItemLocked(R.id.settings, it)
         })
 
         viewModel.vpnIcon.observe(this, Observer {
@@ -66,26 +64,26 @@ class MainActivity : AppCompatActivity() {
             finish()
         })
 
-        force_update.apply {
+        binding.forceUpdate.apply {
             description.text = getString(R.string.update_content_1)
 
-            update_btn.setOnClickListener {
+            updateBtn.setOnClickListener {
                 GooglePlayUtil.launchPlayStore(this@MainActivity)
             }
 
-            manage_btn.setOnClickListener {
+            manageBtn.setOnClickListener {
                 lifecycle.coroutineScope.launch {
                     launchUrl(GuardianService.HOST_FXA)
                 }
             }
 
-            sign_out_btn.setOnClickListener {
+            signOutBtn.setOnClickListener {
                 viewModel.signOut()
             }
         }
 
         viewModel.showForceUpdate.observe(this, Observer {
-            force_update.visibility = if (it) {
+            binding.forceUpdate.root.visibility = if (it) {
                 View.VISIBLE
             } else {
                 View.GONE
@@ -94,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateVpnIcon(resId: Int) {
-        nav_view.menu.findItem(R.id.vpn).icon = ContextCompat.getDrawable(this, resId)
+        binding.navView.menu.findItem(R.id.vpn).icon = ContextCompat.getDrawable(this, resId)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -106,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (nav_view.isLocked(R.id.settings) && isOnMainSetting()) {
+        if (binding.navView.isLocked(R.id.settings) && isOnMainSetting()) {
             finish()
         } else {
             super.onBackPressed()
@@ -124,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         val navGraphIds = listOf(R.navigation.vpn, R.navigation.settings)
 
         // Setup the bottom navigation view with a list of navigation graphs
-        val controller = nav_view.setupWithNavController(
+        val controller = binding.navView.setupWithNavController(
             navGraphIds = navGraphIds,
             fragmentManager = supportFragmentManager,
             containerId = R.id.nav_host_container,

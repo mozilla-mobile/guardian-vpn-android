@@ -9,26 +9,30 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_intro.*
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.databinding.FragmentIntroBinding
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
+import org.mozilla.firefox.vpn.util.viewBinding
 
 class IntroFragment : Fragment() {
+
+    private var binding: FragmentIntroBinding by viewBinding()
 
     private lateinit var adapter: IntroListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_intro, container, false)
+        binding = FragmentIntroBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        btn_close.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_entrance))
-        btn_skip.setOnClickListener {
-            intro_list.smoothScrollToPosition(adapter.itemCount - 1)
+        binding.closeBtn.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_entrance))
+        binding.skipBtn.setOnClickListener {
+            binding.introList.smoothScrollToPosition(adapter.itemCount - 1)
         }
-        btn_auth.setOnClickListener {
+        binding.authBtn.setOnClickListener {
             val activity = activity as? OnboardingActivity ?: return@setOnClickListener
             activity.startLoginFlow()
         }
@@ -36,25 +40,25 @@ class IntroFragment : Fragment() {
 
     private fun initRecyclerView() {
         adapter = IntroListAdapter()
-        intro_list.adapter = adapter
+        binding.introList.adapter = adapter
         val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(intro_list)
-        indicator_view.updateIndicatorStatus(0)
+        snapHelper.attachToRecyclerView(binding.introList)
+        binding.indicatorView.updateIndicatorStatus(0)
 
-        intro_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.introList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                     if (position == adapter.itemCount - 1) {
-                        indicator_view.visibility = View.GONE
-                        btn_skip.visibility = View.GONE
-                        btn_auth.visibility = View.VISIBLE
+                        binding.indicatorView.visibility = View.GONE
+                        binding.skipBtn.visibility = View.GONE
+                        binding.authBtn.visibility = View.VISIBLE
                     } else {
-                        indicator_view.updateIndicatorStatus(position)
-                        indicator_view.visibility = View.VISIBLE
-                        btn_skip.visibility = View.VISIBLE
-                        btn_auth.visibility = View.GONE
+                        binding.indicatorView.updateIndicatorStatus(position)
+                        binding.indicatorView.visibility = View.VISIBLE
+                        binding.skipBtn.visibility = View.VISIBLE
+                        binding.authBtn.visibility = View.GONE
                     }
                 }
             }
