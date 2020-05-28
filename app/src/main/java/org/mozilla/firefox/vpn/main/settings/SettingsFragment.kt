@@ -41,13 +41,16 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.myDevicesBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_settings_main_to_devices)
-        }
         binding.manageAccountBtn.setOnClickListener {
             viewLifecycleOwner.lifecycle.coroutineScope.launch(Dispatchers.Main) {
                 launchUrl(GuardianService.HOST_FXA)
             }
+        }
+        binding.myDevicesBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_main_to_devices)
+        }
+        binding.appTunnelingBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_main_to_app_tunneling)
         }
         binding.getHelpBtn.setOnClickListener {
             findNavController().navigate(R.id.action_settings_main_to_help)

@@ -17,6 +17,10 @@
             app:destination="@id/settings_devices" />
 
         <action
+            android:id="@+id/action_settings_main_to_app_tunneling"
+            app:destination="@id/settings_app_tunneling" />
+
+        <action
             android:id="@+id/action_settings_main_to_help"
             app:destination="@id/settings_help" />
 
@@ -30,6 +34,12 @@
         android:name="org.mozilla.firefox.vpn.device.ui.DevicesFragment"
         android:label="@string/devices_page_title"
         tools:layout="@layout/fragment_devices" />
+
+    <fragment
+        android:id="@+id/settings_app_tunneling"
+        android:name="org.mozilla.firefox.vpn.apptunneling.ui.AppTunnelingFragment"
+        android:label="App permissions"
+        tools:layout="@layout/fragment_app_tunneling" />
 
     <fragment
         android:id="@+id/settings_help"
