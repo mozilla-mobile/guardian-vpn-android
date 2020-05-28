@@ -1,6 +1,13 @@
+plugins {
+    id "com.jetbrains.python.envs" version "0.0.26"
+}
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+
+ext.gleanGenerateMarkdownDocs = true
+ext.gleanDocsDirectory = "$rootDir/docs"
+apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 def commitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -98,6 +105,8 @@ dependencies {
     implementation 'com.github.hadilq.liveevent:liveevent:1.0.1'
     implementation 'com.airbnb.android:lottie:3.2.2'
     implementation 'com.github.bosphere.android-filelogger:filelogger:1.0.7'
+    implementation "org.mozilla.components:service-glean:39.0.1"
+
     ktlint 'com.pinterest:ktlint:0.35.0'
 
     testImplementation 'junit:junit:4.12'
