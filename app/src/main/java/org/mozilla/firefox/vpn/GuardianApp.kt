@@ -2,6 +2,8 @@ package org.mozilla.firefox.vpn
 
 import android.app.Application
 import android.content.Context
+import mozilla.components.service.glean.Glean
+import org.mozilla.firefox.vpn.main.settings.domain.SetGleanUseCase.Companion.PREF_BOOL_GLEAN_ENABLED
 import org.mozilla.firefox.vpn.main.vpn.MockVpnManager
 import org.mozilla.firefox.vpn.main.vpn.VpnNotificationSender
 import org.mozilla.firefox.vpn.report.ReportUtil
@@ -26,6 +28,9 @@ class GuardianApp : Application() {
 
         NotificationUtil.init(this)
         vpnNotificationSender = VpnNotificationSender(this, guardianComponent.vpnManager)
+
+        val enableGlean = coreComponent.prefs.getBoolean(PREF_BOOL_GLEAN_ENABLED, false)
+        Glean.initialize(this, enableGlean)
     }
 
     /**

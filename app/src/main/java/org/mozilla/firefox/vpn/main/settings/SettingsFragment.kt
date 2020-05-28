@@ -14,8 +14,10 @@ import coil.transform.CircleCropTransformation
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.components.service.glean.Glean
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 import org.mozilla.firefox.vpn.service.GuardianService
@@ -26,7 +28,7 @@ import org.mozilla.firefox.vpn.util.viewModel
 class SettingsFragment : Fragment() {
 
     private val component by lazy {
-        SettingsComponentImpl(activity!!.guardianComponent)
+        SettingsComponentImpl(activity!!.coreComponent, activity!!.guardianComponent)
     }
 
     private val viewModel by viewModel { component.viewModel }
@@ -64,6 +66,9 @@ class SettingsFragment : Fragment() {
         btn_ui_demo.setOnClickListener {
             startActivity(Intent(context, UiDemoActivity::class.java))
         }
+        switch_glean.setOnCheckedChangeListener { _, check ->
+            viewModel.setGleanEnable(check)
+        }
 
         viewModel.userInfo.observe(viewLifecycleOwner, Observer { userInfo ->
             val userName = userInfo.user.displayName
@@ -86,6 +91,11 @@ class SettingsFragment : Fragment() {
         viewModel.gotoMainPage.observe(viewLifecycleOwner, Observer {
             startActivity(OnboardingActivity.getStartIntent(view.context))
             activity?.finish()
+        })
+
+        viewModel.isGleanEnabled.observe(viewLifecycleOwner, Observer {
+            switch_glean.isChecked = it
+            Glean.setUploadEnabled(it)
         })
     }
 }
