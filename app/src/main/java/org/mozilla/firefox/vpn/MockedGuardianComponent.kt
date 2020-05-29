@@ -1,6 +1,7 @@
 package org.mozilla.firefox.vpn
 
 import com.wireguard.android.backend.TunnelManager
+import org.mozilla.firefox.vpn.apptunneling.data.AppTunnelingRepository
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.main.vpn.GuardianVpnService
 import org.mozilla.firefox.vpn.main.vpn.MockVpnManager
@@ -30,6 +31,10 @@ class MockedGuardianComponent(
 
     override val serverRepo: ServerRepository by lazy {
         ServerRepository(service, prefs)
+    }
+
+    override val appTunnelingRepo: AppTunnelingRepository by lazy {
+        AppTunnelingRepository(app.packageManager, prefs)
     }
 
     override val tunnelManager: TunnelManager<*> =
