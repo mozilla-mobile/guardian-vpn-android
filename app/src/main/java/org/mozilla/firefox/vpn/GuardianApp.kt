@@ -22,6 +22,8 @@ class GuardianApp : Application() {
 
         ReportUtil.initReport(this)
 
+        CrashHandler.init()
+
         guardianComponent = GuardianComponentImpl(coreComponent)
 
         NotificationUtil.init(this)
