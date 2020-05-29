@@ -113,7 +113,7 @@ class ServersFragment : BottomSheetDialogFragment() {
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                dismiss()
+                dismissAllowingStateLoss()
             }
         }
     }
