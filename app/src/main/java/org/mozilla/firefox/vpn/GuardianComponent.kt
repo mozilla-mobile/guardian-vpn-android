@@ -1,6 +1,7 @@
 package org.mozilla.firefox.vpn
 
 import com.wireguard.android.backend.TunnelManager
+import org.mozilla.firefox.vpn.apptunneling.data.AppTunnelingRepository
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.main.vpn.GuardianVpnManager
 import org.mozilla.firefox.vpn.main.vpn.GuardianVpnService
@@ -17,6 +18,7 @@ interface GuardianComponent {
     val userRepo: UserRepository
     val deviceRepo: DeviceRepository
     val serverRepo: ServerRepository
+    val appTunnelingRepo: AppTunnelingRepository
     val tunnelManager: TunnelManager<*>
     val vpnManager: VpnManager
     val userStateResolver: UserStateResolver
@@ -42,6 +44,10 @@ class GuardianComponentImpl(
 
     override val serverRepo: ServerRepository by lazy {
         ServerRepository(service, prefs)
+    }
+
+    override val appTunnelingRepo: AppTunnelingRepository by lazy {
+        AppTunnelingRepository(app.packageManager, prefs)
     }
 
     override val tunnelManager: TunnelManager<*> = TunnelManager(GuardianVpnService::class.java)
