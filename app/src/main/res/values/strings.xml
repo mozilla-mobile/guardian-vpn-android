@@ -147,4 +147,10 @@
     <string name="toast_update_version_message_1">New features are available! </string>
     <string name="update_update_button_text">Update now</string>
 
+
+    <!-- String for spilt tunneling -->
+    <string name="app_tunneling_page_title">App permissions</string>
+    <string name="app_tunneling_switch_title">Protect specific apps</string>
+    <string name="app_tunneling_switch_description">Choose which apps use the VPN</string>
+
 </resources>
