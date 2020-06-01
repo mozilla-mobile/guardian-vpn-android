@@ -38,7 +38,7 @@
     <fragment
         android:id="@+id/settings_app_tunneling"
         android:name="org.mozilla.firefox.vpn.apptunneling.ui.AppTunnelingFragment"
-        android:label="App permissions"
+        android:label="@string/app_tunneling_page_title"
         tools:layout="@layout/fragment_app_tunneling" />
 
     <fragment

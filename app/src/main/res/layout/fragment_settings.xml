@@ -138,7 +138,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="App permissions"
+                android:text="@string/app_tunneling_page_title"
                 android:textAppearance="@style/TextAppearance.Guardian.Header20"
                 android:textColor="@color/gray50" />
 
