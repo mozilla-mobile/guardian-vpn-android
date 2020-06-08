@@ -15,5 +15,4 @@ class RemoveExcludeAppUseCase(
     suspend operator fun invoke(packageNameSet: Set<String>) = withContext(Dispatchers.IO) {
         appTunnelingRepository.removePackageExcludes(packageNameSet)
     }
-
 }

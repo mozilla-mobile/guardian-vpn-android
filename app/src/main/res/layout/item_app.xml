@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
     android:foreground="?attr/selectableItemBackground">
 
     <ImageView
@@ -31,13 +33,17 @@
 
     <TextView
         android:id="@+id/app_package_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:textColor="@color/gray40"
         android:textAppearance="@style/TextAppearance.Guardian.Byline10"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:layout_constraintTop_toBottomOf="@id/app_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/app_name"
+        app:layout_constraintEnd_toStartOf="@id/app_checkbox"
         tools:text="org.mozilla.firfox.vpn"/>
 
     <CheckBox
