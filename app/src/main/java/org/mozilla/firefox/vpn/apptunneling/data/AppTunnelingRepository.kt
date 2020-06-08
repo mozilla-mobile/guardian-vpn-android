@@ -81,6 +81,4 @@ class AppTunnelingRepository(
             putStringSet(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
         }
     }
-
-
 }

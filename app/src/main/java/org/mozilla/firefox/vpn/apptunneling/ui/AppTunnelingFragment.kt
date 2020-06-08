@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import org.mozilla.firefox.vpn.apptunneling.AppTunnelingComponentImpl
 import org.mozilla.firefox.vpn.databinding.FragmentAppTunnelingBinding
 import org.mozilla.firefox.vpn.guardianComponent
@@ -30,5 +32,16 @@ class AppTunnelingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        viewModel.uiModel.observe(viewLifecycleOwner, Observer {
+            if (binding.expandableList.adapter == null) {
+                binding.expandableList.adapter = ExpandableAdapter(it)
+            } else {
+                (binding.expandableList.adapter as? ExpandableAdapter)?.setData(it)
+            }
+        })
     }
 }

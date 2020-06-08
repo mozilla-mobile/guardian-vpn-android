@@ -82,13 +82,15 @@
 
     </androidx.cardview.widget.CardView>
 
-    <ExpandableListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/expandable_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/app_tunneling_switch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

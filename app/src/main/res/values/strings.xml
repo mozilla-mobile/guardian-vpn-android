@@ -152,5 +152,13 @@
     <string name="app_tunneling_page_title">App permissions</string>
     <string name="app_tunneling_switch_title">Protect specific apps</string>
     <string name="app_tunneling_switch_description">Choose which apps use the VPN</string>
+    <string name="app_tunneling_protected_title_expand">Protected</string>
+    <string name="app_tunneling_protected_title_collapse">Protected (%s)</string>
+    <string name="app_tunneling_protected_description"><![CDATA[These apps <u>will</u> use the VPN]]></string>
+    <string name="app_tunneling_protected_action_text">Protect all</string>
+    <string name="app_tunneling_unprotected_title_expand">Unprotected</string>
+    <string name="app_tunneling_unprotected_title_collapse">Unprotected (%s)</string>
+    <string name="app_tunneling_unprotected_description"><![CDATA[These apps <u>will not</u> use the VPN]]></string>
+    <string name="app_tunneling_unprotected_action_text">Unprotect all</string>
 
 </resources>

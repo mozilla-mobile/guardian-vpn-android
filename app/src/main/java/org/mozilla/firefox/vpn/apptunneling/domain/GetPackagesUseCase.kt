@@ -12,5 +12,4 @@ class GetPackagesUseCase(
         withContext(Dispatchers.IO) {
             appTunnelingRepository.getPackages(includeInternalApps)
         }
-
 }
