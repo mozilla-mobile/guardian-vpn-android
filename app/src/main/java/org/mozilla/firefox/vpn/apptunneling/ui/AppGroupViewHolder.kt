@@ -9,13 +9,15 @@ import org.mozilla.firefox.vpn.databinding.ItemAppGroupBinding
 
 class AppGroupViewHolder(
     itemView: View,
-    private val clickListener: (AppGroupViewHolder) -> Unit
+    private val onAppGroupClicked: (AppGroupViewHolder) -> Unit,
+    private val onAppGroupActionClicked: (AppGroupViewHolder) -> Unit
 ) : RecyclerView.ViewHolder(itemView) {
 
     private val binding = ItemAppGroupBinding.bind(itemView)
 
     init {
-        binding.root.setOnClickListener { clickListener(this) }
+        binding.root.setOnClickListener { onAppGroupClicked(this) }
+        binding.groupAction.setOnClickListener { onAppGroupActionClicked(this) }
     }
 
     fun bind(appGroupItem: AppGroup) {
