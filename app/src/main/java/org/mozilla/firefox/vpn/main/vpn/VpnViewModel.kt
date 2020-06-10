@@ -10,6 +10,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.hadilq.liveevent.LiveEvent
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +60,29 @@ class VpnViewModel(
     private val updateManager: UpdateManager
 ) : AndroidViewModel(application) {
 
-    val selectedServer = MediatorLiveData<ServerInfo?>()
+    private val loadSelectedServer = liveData(Dispatchers.Main) {
+        @Suppress("RemoveExplicitTypeArguments")
+        val allServers = withContext(Dispatchers.IO) { getServersUseCase(FilterStrategy.ByCity) }
+            .getOrNull() ?: emptyList<ServerInfo>()
+
+        getSelectedServerUseCase(FilterStrategy.ByCity, allServers)
+            .onSuccess { emit(it) }
+    }
+
+    val selectedServer = loadSelectedServer.switchMap { selected ->
+        object : MediatorLiveData<ServerInfo>() {
+            init {
+                value = selected
+                addSource(selectedServerProvider.observable) { newServer ->
+                    val oldServer = value
+                    if (oldServer != null && newServer != null) {
+                        switchServer(oldServer, newServer)
+                    }
+                    value = newServer
+                }
+            }
+        }
+    }
 
     val duration by lazy {
         liveData(viewModelScope.coroutineContext + Dispatchers.IO, 0) {
@@ -112,30 +135,6 @@ class VpnViewModel(
         addSource(_vpnState) { value = it }
     }
 
-    init {
-        viewModelScope.launch(Dispatchers.Main) {
-            initSelectedServer()
-        }
-    }
-
-    private suspend fun initSelectedServer() = withContext(Dispatchers.Main) {
-        val notifyServerChanged = { server: ServerInfo ->
-            selectedServer.value?.let { onServerSwitched(it, server) }
-            selectedServer.value = server
-        }
-
-        val allServers = withContext(Dispatchers.IO) { getServersUseCase(FilterStrategy.ByCity) }
-            .getOrNull() ?: emptyList()
-
-        getSelectedServerUseCase(FilterStrategy.ByCity, allServers).onSuccess { selected ->
-            notifyServerChanged(selected)
-
-            selectedServer.addSource(selectedServerProvider.observable) { newSelected ->
-                newSelected?.let { notifyServerChanged(it) }
-            }
-        }
-    }
-
     fun executeAction(action: Action) {
         when (action) {
             is Action.Connect -> {
@@ -154,7 +153,7 @@ class VpnViewModel(
         _uiState.value = UIState.Disconnected(UIModel.Disconnected())
     }
 
-    private fun onServerSwitched(oldServer: ServerInfo?, newServer: ServerInfo) {
+    private fun switchServer(oldServer: ServerInfo?, newServer: ServerInfo) {
         if (vpnManager.isConnected() && oldServer != null && oldServer != newServer) {
             switchVpn(oldServer, newServer)
         }
