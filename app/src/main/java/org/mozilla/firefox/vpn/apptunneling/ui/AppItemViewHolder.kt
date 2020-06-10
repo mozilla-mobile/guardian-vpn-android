@@ -5,9 +5,16 @@ import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.firefox.vpn.apptunneling.ui.ExpandableItem.AppItem
 import org.mozilla.firefox.vpn.databinding.ItemAppBinding
 
-class AppItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class AppItemViewHolder(
+    itemView: View,
+    private val onAppItemChecked: (AppItemViewHolder) -> Unit
+) : RecyclerView.ViewHolder(itemView) {
 
     private val binding = ItemAppBinding.bind(itemView)
+
+    init {
+        binding.appCheckbox.setOnClickListener { onAppItemChecked(this) }
+    }
 
     fun bind(appItem: AppItem) {
         binding.appName.text = appItem.applicationInfo.loadLabel(binding.root.context.packageManager).toString()

@@ -9,7 +9,8 @@ import org.mozilla.firefox.vpn.apptunneling.ui.ExpandableItem.AppGroup
 import org.mozilla.firefox.vpn.apptunneling.ui.ExpandableItem.AppItem
 
 class ExpandableAdapter(
-    private var uiModel: AppTunnelingUiModel
+    private var uiModel: AppTunnelingUiModel,
+    private val expandableItemCallback: ExpandableItemCallback
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items: MutableList<ExpandableItem> = uiModel.toExpandableList()
@@ -27,14 +28,16 @@ class ExpandableAdapter(
                 AppItemViewHolder(
                     LayoutInflater
                         .from(parent.context)
-                        .inflate(R.layout.item_app, parent, false)
+                        .inflate(R.layout.item_app, parent, false),
+                    ::onAppGroupActionClicked
                 )
             else ->
                 AppGroupViewHolder(
                     LayoutInflater
                         .from(parent.context)
                         .inflate(R.layout.item_app_group, parent, false),
-                    ::onAppGroupClicked
+                    ::onAppGroupClicked,
+                    ::onAppGroupActionClicked
                 )
         }
     }
@@ -69,6 +72,28 @@ class ExpandableAdapter(
             (items[holder.adapterPosition] as AppGroup).isExpanded = true
         }
         notifyItemChanged(holder.adapterPosition)
+    }
+
+    private fun onAppGroupActionClicked(holder: AppGroupViewHolder) {
+        val appGroupItem = items[holder.adapterPosition] as AppGroup
+        val packageNameSet = appGroupItem.appItems.map { it.applicationInfo.packageName }.toSet()
+
+        if (appGroupItem.type == AppGroupType.UNPROTECTED) {
+            expandableItemCallback.onProtectAllClicked(packageNameSet)
+        } else {
+            expandableItemCallback.onUnprotectAllClicked(packageNameSet)
+        }
+    }
+
+    private fun onAppGroupActionClicked(holder: AppItemViewHolder) {
+        val appItem = items[holder.adapterPosition] as AppItem
+        val packageName = appItem.applicationInfo.packageName
+
+        if (appItem.type == AppGroupType.UNPROTECTED) {
+            expandableItemCallback.onUnprotectedAppChecked(packageName)
+        } else {
+            expandableItemCallback.onProtectedAppChecked(packageName)
+        }
     }
 
     private fun AppTunnelingUiModel.toExpandableList(): MutableList<ExpandableItem> {
@@ -111,7 +136,7 @@ class ExpandableAdapter(
                 val newItem = newList[newItemPosition]
                 val oldItem = oldList[oldItemPosition]
                 if (newItem is AppGroup && oldItem is AppGroup) {
-                    return newItem.type == oldItem.type
+                    return newItem.type == oldItem.type && newItem.isExpanded == oldItem.isExpanded
                 }
                 if (newItem is AppItem && oldItem is AppItem) {
                     return newItem.type == oldItem.type && newItem.applicationInfo == oldItem.applicationInfo
@@ -119,5 +144,12 @@ class ExpandableAdapter(
                 return true
             }
         })
+    }
+
+    interface ExpandableItemCallback {
+        fun onProtectedAppChecked(packageName: String)
+        fun onProtectAllClicked(packageNameSet: Set<String>)
+        fun onUnprotectedAppChecked(packageName: String)
+        fun onUnprotectAllClicked(packageNameSet: Set<String>)
     }
 }

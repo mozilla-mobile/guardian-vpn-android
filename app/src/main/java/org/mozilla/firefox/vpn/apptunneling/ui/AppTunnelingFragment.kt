@@ -38,10 +38,29 @@ class AppTunnelingFragment : Fragment() {
 
         viewModel.uiModel.observe(viewLifecycleOwner, Observer {
             if (binding.expandableList.adapter == null) {
-                binding.expandableList.adapter = ExpandableAdapter(it)
+                binding.expandableList.adapter = ExpandableAdapter(it, onExpandableItemCallback)
             } else {
                 (binding.expandableList.adapter as? ExpandableAdapter)?.setData(it)
             }
         })
+    }
+
+    private val onExpandableItemCallback = object : ExpandableAdapter.ExpandableItemCallback {
+
+        override fun onProtectedAppChecked(packageName: String) {
+            viewModel.addExcludeApp(packageName)
+        }
+
+        override fun onProtectAllClicked(packageNameSet: Set<String>) {
+            viewModel.removeExcludeApp(packageNameSet)
+        }
+
+        override fun onUnprotectedAppChecked(packageName: String) {
+            viewModel.removeExcludeApp(packageName)
+        }
+
+        override fun onUnprotectAllClicked(packageNameSet: Set<String>) {
+            viewModel.addExcludeApp(packageNameSet)
+        }
     }
 }
