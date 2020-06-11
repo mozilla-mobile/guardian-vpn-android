@@ -32,9 +32,6 @@ class AppTunnelingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
-        }
 
         viewModel.uiModel.observe(viewLifecycleOwner, Observer {
             if (binding.expandableList.adapter == null) {
@@ -43,6 +40,20 @@ class AppTunnelingFragment : Fragment() {
                 (binding.expandableList.adapter as? ExpandableAdapter)?.setData(it)
             }
         })
+
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        binding.switchBtn.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.infoView.root.visibility = View.GONE
+                binding.expandableList.visibility = View.VISIBLE
+            } else {
+                binding.infoView.root.visibility = View.VISIBLE
+                binding.expandableList.visibility = View.GONE
+            }
+        }
     }
 
     private val onExpandableItemCallback = object : ExpandableAdapter.ExpandableItemCallback {

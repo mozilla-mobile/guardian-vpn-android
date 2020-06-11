@@ -136,10 +136,13 @@ class ExpandableAdapter(
                 val newItem = newList[newItemPosition]
                 val oldItem = oldList[oldItemPosition]
                 if (newItem is AppGroup && oldItem is AppGroup) {
-                    return newItem.type == oldItem.type && newItem.isExpanded == oldItem.isExpanded
+                    return newItem.type == oldItem.type &&
+                            newItem.appItems == oldItem.appItems &&
+                            newItem.isExpanded == oldItem.isExpanded
                 }
                 if (newItem is AppItem && oldItem is AppItem) {
-                    return newItem.type == oldItem.type && newItem.applicationInfo == oldItem.applicationInfo
+                    return newItem.type == oldItem.type &&
+                            newItem.applicationInfo == oldItem.applicationInfo
                 }
                 return true
             }

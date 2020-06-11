@@ -27,30 +27,35 @@ sealed class AppGroupConfig(
     val arrowDrawableId: Int,
     val titleResId: Int,
     val descriptionResId: Int,
-    val actionResId: Int
+    val actionResId: Int,
+    val infoResId: Int
 ) {
     object ProtectedGroupExpanded : AppGroupConfig(
         R.drawable.ic_arrow_open,
         R.string.app_tunneling_protected_title_expand,
         R.string.app_tunneling_protected_description,
-        R.string.app_tunneling_unprotected_action_text
+        R.string.app_tunneling_unprotected_action_text,
+        R.string.app_tunneling_protected_info
     )
     object ProtectedGroupCollapse : AppGroupConfig(
         R.drawable.ic_arrow_close,
         R.string.app_tunneling_protected_title_collapse,
         R.string.app_tunneling_protected_description,
-        R.string.app_tunneling_unprotected_action_text
+        R.string.app_tunneling_unprotected_action_text,
+        R.string.app_tunneling_protected_info
     )
     object UnprotectedGroupExpanded : AppGroupConfig(
         R.drawable.ic_arrow_open,
         R.string.app_tunneling_unprotected_title_expand,
         R.string.app_tunneling_unprotected_description,
-        R.string.app_tunneling_protected_action_text
+        R.string.app_tunneling_protected_action_text,
+        R.string.app_tunneling_unprotected_info
     )
     object UnprotectedGroupCollapse : AppGroupConfig(
         R.drawable.ic_arrow_close,
         R.string.app_tunneling_unprotected_title_collapse,
         R.string.app_tunneling_unprotected_description,
-        R.string.app_tunneling_protected_action_text
+        R.string.app_tunneling_protected_action_text,
+        R.string.app_tunneling_unprotected_info
     )
 }
