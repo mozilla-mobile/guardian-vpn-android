@@ -4,7 +4,8 @@ import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import androidx.core.content.edit
+import org.mozilla.firefox.vpn.BuildConfig
+import org.mozilla.firefox.vpn.util.putStringSetSafe
 
 class AppTunnelingRepository(
     private val packageManager: PackageManager,
@@ -24,6 +25,8 @@ class AppTunnelingRepository(
             )
         }.filter {
             includeInternalApps or ((it.flags and ApplicationInfo.FLAG_SYSTEM) == 0)
+        }.filter {
+            it.packageName != BuildConfig.APPLICATION_ID
         }
 
         return packageList
@@ -41,9 +44,7 @@ class AppTunnelingRepository(
         if (packageNameSet.isNotEmpty()) {
             packageSet.removeAll(packageNameSet)
         }
-        sharedPreferences.edit(true) {
-            putStringSet(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
-        }
+        sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
     }
 
     fun removePackageExcludes(packageName: String) {
@@ -53,9 +54,7 @@ class AppTunnelingRepository(
         if (packageName.isNotEmpty()) {
             packageSet.remove(packageName)
         }
-        sharedPreferences.edit(true) {
-            putStringSet(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
-        }
+        sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
     }
 
     fun addPackageExcludes(packageNameSet: Set<String>) {
@@ -65,9 +64,7 @@ class AppTunnelingRepository(
         if (packageNameSet.isNotEmpty()) {
             packageSet.addAll(packageNameSet)
         }
-        sharedPreferences.edit(true) {
-            putStringSet(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
-        }
+        sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
     }
 
     fun addPackageExcludes(packageName: String) {
@@ -77,8 +74,6 @@ class AppTunnelingRepository(
         if (packageName.isNotEmpty()) {
             packageSet.add(packageName)
         }
-        sharedPreferences.edit(true) {
-            putStringSet(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
-        }
+        sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
     }
 }
