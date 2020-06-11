@@ -48,6 +48,13 @@ class AppGroupViewHolder(
             binding.groupTitle.text = context.getString(config.titleResId)
             binding.groupDescription.visibility = View.VISIBLE
             binding.groupAction.visibility = View.VISIBLE
+
+            if (appGroupItem.appItems.isEmpty()) {
+                binding.infoView.root.visibility = View.VISIBLE
+                binding.infoView.infoText.text = context.getString(config.infoResId)
+            } else {
+                binding.infoView.root.visibility = View.GONE
+            }
         } else {
             binding.groupTitle.text = String.format(context.getString(config.titleResId), appGroupItem.appItems.size)
             binding.groupDescription.visibility = View.GONE
