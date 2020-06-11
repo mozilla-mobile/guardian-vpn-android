@@ -53,7 +53,10 @@ class AppTunnelingFragment : Fragment() {
                 binding.infoView.root.visibility = View.VISIBLE
                 binding.expandableList.visibility = View.GONE
             }
+            viewModel.switchAppTunneling(isChecked)
         }
+
+        binding.switchBtn.isChecked = viewModel.getAppTunnelingSwitchState()
     }
 
     private val onExpandableItemCallback = object : ExpandableAdapter.ExpandableItemCallback {

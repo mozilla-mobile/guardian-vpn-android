@@ -14,6 +14,7 @@ class AppTunnelingRepository(
 
     companion object {
         const val PREF_KEY_STRINGSET_EXCLUDE = "key_stringset_apptunneling_exclude_list"
+        const val PREF_KEY_USE_APP_TUNNELING = "key_use_app_tunneling"
     }
 
     fun getPackages(includeInternalApps: Boolean): List<ApplicationInfo> {
@@ -75,5 +76,13 @@ class AppTunnelingRepository(
             packageSet.add(packageName)
         }
         sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
+    }
+
+    fun getAppTunnelingSwitchState(): Boolean {
+        return sharedPreferences.getBoolean(PREF_KEY_USE_APP_TUNNELING, false)
+    }
+
+    fun switchAppTunneling(isChecked: Boolean) {
+        sharedPreferences.edit().putBoolean(PREF_KEY_USE_APP_TUNNELING, isChecked).apply()
     }
 }
