@@ -1,3 +1,3 @@
 package org.mozilla.firefox.vpn.const
 
-const val ENDPOINT = "https://stage.guardian.nonprod.cloudops.mozgcp.net"
+const val ENDPOINT = "https://stage-vpn.guardian.nonprod.cloudops.mozgcp.net"
