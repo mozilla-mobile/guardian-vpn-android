@@ -9,7 +9,7 @@ buildscript {
         annotationsVersion = '1.0.1'
         databindingVersion = '3.3.1'
         jsr305Version = '3.0.2'
-        streamsupportVersion = '1.7.0'
+        streamsupportVersion = '1.7.2'
         threetenabpVersion = '1.1.1'
     }
     repositories {
@@ -18,7 +18,7 @@ buildscript {
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
