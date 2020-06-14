@@ -10,7 +10,10 @@ enum class AppGroupType {
     PROTECTED, UNPROTECTED
 }
 
-sealed class ExpandableItem(val itemType: Int) {
+sealed class ExpandableItem(
+    val itemType: Int,
+    var isEnabled: Boolean = true
+) {
     data class AppGroup(
         val type: AppGroupType,
         var appItems: List<AppItem> = listOf(),

@@ -44,6 +44,7 @@ class AppGroupViewHolder(
         binding.dropdownArrow.setImageDrawable(ContextCompat.getDrawable(context, config.arrowDrawableId))
         binding.groupDescription.text = HtmlCompat.fromHtml(context.getString(config.descriptionResId), 0)
         binding.groupAction.text = context.getString(config.actionResId)
+
         if (appGroupItem.isExpanded) {
             binding.groupTitle.text = context.getString(config.titleResId)
             binding.groupDescription.visibility = View.VISIBLE
@@ -59,6 +60,17 @@ class AppGroupViewHolder(
             binding.groupTitle.text = String.format(context.getString(config.titleResId), appGroupItem.appItems.size)
             binding.groupDescription.visibility = View.GONE
             binding.groupAction.visibility = View.GONE
+            binding.infoView.root.visibility = View.GONE
+        }
+
+        if (appGroupItem.isEnabled) {
+            binding.root.setOnClickListener { onAppGroupClicked(this) }
+            binding.groupAction.setOnClickListener { onAppGroupActionClicked(this) }
+            binding.groupAction.alpha = 1f
+        } else {
+            binding.root.setOnClickListener(null)
+            binding.groupAction.setOnClickListener(null)
+            binding.groupAction.alpha = 0.5f
         }
     }
 }

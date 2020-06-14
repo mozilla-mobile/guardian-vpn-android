@@ -8,6 +8,7 @@ import org.mozilla.firefox.vpn.apptunneling.domain.GetPackagesUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.RemoveExcludeAppUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.SwitchAppTunnelingUseCase
 import org.mozilla.firefox.vpn.apptunneling.ui.AppTunnelingViewModel
+import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 
 interface AppTunnelingComponent {
     val viewModel: AppTunnelingViewModel
@@ -19,6 +20,7 @@ class AppTunnelingComponentImpl(
 
     override val viewModel: AppTunnelingViewModel
         get() = AppTunnelingViewModel(
+            vpnStateProvider = VpnManagerStateProvider(vpnManager),
             getPackagesUseCase = GetPackagesUseCase(appTunnelingRepo),
             getExcludeAppUseCase = GetExcludeAppUseCase(appTunnelingRepo),
             addExcludeAppUseCase = AddExcludeAppUseCase(appTunnelingRepo),
