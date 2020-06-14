@@ -82,7 +82,7 @@
     </androidx.cardview.widget.CardView>
 
     <include
-        layout="@layout/view_infomation"
+        layout="@layout/view_information"
         android:id="@+id/info_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

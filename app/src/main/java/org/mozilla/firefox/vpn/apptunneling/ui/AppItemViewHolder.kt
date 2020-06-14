@@ -21,5 +21,6 @@ class AppItemViewHolder(
         binding.appPackageName.text = appItem.applicationInfo.packageName
         binding.appIcon.setImageDrawable(appItem.applicationInfo.loadIcon(binding.root.context.packageManager))
         binding.appCheckbox.isChecked = appItem.type == AppGroupType.PROTECTED
+        binding.appCheckbox.isEnabled = appItem.isEnabled
     }
 }

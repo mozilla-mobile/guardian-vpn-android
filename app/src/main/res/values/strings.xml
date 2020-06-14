@@ -163,5 +163,7 @@
     <string name="app_tunneling_unprotected_description"><![CDATA[These apps <u>will not</u> use the VPN]]></string>
     <string name="app_tunneling_unprotected_action_text">Unprotect all</string>
     <string name="app_tunneling_unprotected_info">Unselect apps from below to unprotect</string>
+    <string name="app_tunneling_switch_on_warning">VPN must be off before enabling or editing</string>
+    <string name="app_tunneling_switch_off_warning">VPN must be off before enabling</string>
 
 </resources>

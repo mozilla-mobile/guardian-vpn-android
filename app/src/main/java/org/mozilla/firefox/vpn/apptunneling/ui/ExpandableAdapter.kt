@@ -22,6 +22,11 @@ class ExpandableAdapter(
         items = newList
     }
 
+    fun setEnabled(isEnabled: Boolean) {
+        items.forEach { it.isEnabled = isEnabled }
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             APP_ITEM ->
@@ -98,14 +103,10 @@ class ExpandableAdapter(
 
     private fun AppTunnelingUiModel.toExpandableList(): MutableList<ExpandableItem> {
         val list = mutableListOf<ExpandableItem>()
-        val excludeAppItems =
-            packageList
-                .filter { excludeList.contains(it.packageName) }
-                .map { AppItem(AppGroupType.UNPROTECTED, it) }
-        val includeAppItems =
-            packageList
-                .filterNot { excludeList.contains(it.packageName) }
-                .map { AppItem(AppGroupType.PROTECTED, it) }
+        val (exclude, include) = packageList.partition { excludeList.contains(it.packageName) }
+        val excludeAppItems = exclude.map { AppItem(AppGroupType.UNPROTECTED, it) }
+        val includeAppItems = include.map { AppItem(AppGroupType.PROTECTED, it) }
+
         list.add(AppGroup(AppGroupType.UNPROTECTED, excludeAppItems))
         list.addAll(excludeAppItems)
         list.add(AppGroup(AppGroupType.PROTECTED, includeAppItems))
@@ -138,11 +139,13 @@ class ExpandableAdapter(
                 if (newItem is AppGroup && oldItem is AppGroup) {
                     return newItem.type == oldItem.type &&
                             newItem.appItems == oldItem.appItems &&
-                            newItem.isExpanded == oldItem.isExpanded
+                            newItem.isExpanded == oldItem.isExpanded &&
+                            newItem.isEnabled == oldItem.isEnabled
                 }
                 if (newItem is AppItem && oldItem is AppItem) {
                     return newItem.type == oldItem.type &&
-                            newItem.applicationInfo == oldItem.applicationInfo
+                            newItem.applicationInfo == oldItem.applicationInfo &&
+                            newItem.isEnabled == oldItem.isEnabled
                 }
                 return true
             }
