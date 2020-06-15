@@ -9,10 +9,10 @@ class RemoveExcludeAppUseCase(
 ) {
 
     suspend operator fun invoke(packageName: String) = withContext(Dispatchers.IO) {
-        appTunnelingRepository.removePackageExcludes(packageName)
+        appTunnelingRepository.removePackageExcluded(setOf(packageName))
     }
 
     suspend operator fun invoke(packageNameSet: Set<String>) = withContext(Dispatchers.IO) {
-        appTunnelingRepository.removePackageExcludes(packageNameSet)
+        appTunnelingRepository.removePackageExcluded(packageNameSet)
     }
 }

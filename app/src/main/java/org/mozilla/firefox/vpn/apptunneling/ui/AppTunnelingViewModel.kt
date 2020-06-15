@@ -72,7 +72,7 @@ class AppTunnelingViewModel(
         return getAppTunnelingSwitchStateUseCase()
     }
 
-    fun switchAppTunneling(isChecked: Boolean) {
+    fun switchAppTunneling(isChecked: Boolean): Job = viewModelScope.launch(Dispatchers.Main.immediate) {
         switchStateUseCase(isChecked)
     }
 

@@ -20,6 +20,8 @@ import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.R
+import org.mozilla.firefox.vpn.apptunneling.domain.GetAppTunnelingSwitchStateUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.GetExcludeAppUseCase
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.ResolveDispatchableServerUseCase
@@ -31,6 +33,7 @@ import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
+import org.mozilla.firefox.vpn.servers.domain.createConfig
 import org.mozilla.firefox.vpn.service.Version
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.update.UpdateManager
@@ -57,6 +60,8 @@ class VpnViewModel(
     private val refreshUserInfoUseCase: RefreshUserInfoUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val notifyUserStateUseCase: NotifyUserStateUseCase,
+    private val getAppTunnelingSwitchStateUseCase: GetAppTunnelingSwitchStateUseCase,
+    private val getExcludeAppUseCase: GetExcludeAppUseCase,
     private val updateManager: UpdateManager
 ) : AndroidViewModel(application) {
 
@@ -191,7 +196,10 @@ class VpnViewModel(
 
     private suspend fun connectVpn(server: ServerInfo) {
         val resolved = resolveDispatchableServerUseCase(server) ?: server
-        currentDeviceUseCase()?.let { vpnManager.connect(resolved, it) }
+        val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase().toList() else emptyList()
+        currentDeviceUseCase()?.let {
+            vpnManager.connect(resolved, it.createConfig(resolved, excludeApps = excludeApps))
+        }
     }
 
     private fun logout() {
@@ -202,7 +210,10 @@ class VpnViewModel(
     private fun switchVpn(oldServer: ServerInfo, newServer: ServerInfo) {
         viewModelScope.launch(Dispatchers.Main.immediate) {
             val resolved = resolveDispatchableServerUseCase(newServer) ?: newServer
-            currentDeviceUseCase()?.let { vpnManager.switch(oldServer, resolved, it) }
+            val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase().toList() else emptyList()
+            currentDeviceUseCase()?.let {
+                vpnManager.switch(oldServer, resolved, it.createConfig(resolved, excludeApps = excludeApps))
+            }
         }
     }
 

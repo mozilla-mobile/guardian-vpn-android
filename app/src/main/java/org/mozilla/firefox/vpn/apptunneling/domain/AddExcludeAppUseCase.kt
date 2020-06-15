@@ -9,10 +9,10 @@ class AddExcludeAppUseCase(
 ) {
 
     suspend operator fun invoke(packageName: String) = withContext(Dispatchers.IO) {
-        appTunnelingRepository.addPackageExcludes(packageName)
+        appTunnelingRepository.addPackageExcluded(setOf(packageName))
     }
 
     suspend operator fun invoke(packageNameSet: Set<String>) = withContext(Dispatchers.IO) {
-        appTunnelingRepository.addPackageExcludes(packageNameSet)
+        appTunnelingRepository.addPackageExcluded(packageNameSet)
     }
 }
