@@ -2,6 +2,8 @@ package org.mozilla.firefox.vpn.main.vpn
 
 import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
+import org.mozilla.firefox.vpn.apptunneling.domain.GetAppTunnelingSwitchStateUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.GetExcludeAppUseCase
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessageUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.ResolveDispatchableServerUseCase
@@ -37,6 +39,8 @@ class VpnComponentImpl(
             refreshUserInfoUseCase = RefreshUserInfoUseCase(userRepo),
             logoutUseCase = LogoutUseCase(userRepo, deviceRepo),
             notifyUserStateUseCase = NotifyUserStateUseCase(userStateResolver),
+            getAppTunnelingSwitchStateUseCase = GetAppTunnelingSwitchStateUseCase(appTunnelingRepo),
+            getExcludeAppUseCase = GetExcludeAppUseCase(appTunnelingRepo),
             updateManager = updateManager
         )
 }

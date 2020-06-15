@@ -19,27 +19,23 @@ class AppTunnelingRepository(
 
     fun getPackages(includeInternalApps: Boolean): List<ApplicationInfo> {
         val applicationInfoList = packageManager.getInstalledApplications(0)
-        val packageList = applicationInfoList.filter {
+        return applicationInfoList.filter {
             PERMISSION_GRANTED == packageManager.checkPermission(
                 android.Manifest.permission.INTERNET,
                 it.packageName
             )
         }.filter {
-            includeInternalApps or ((it.flags and ApplicationInfo.FLAG_SYSTEM) == 0)
+            includeInternalApps || ((it.flags and ApplicationInfo.FLAG_SYSTEM) == 0)
         }.filter {
             it.packageName != BuildConfig.APPLICATION_ID
-        }
-
-        return packageList
+        }.sortedBy { it.loadLabel(packageManager).toString() }
     }
 
-    fun getPackageExcludes(): Set<String> {
-        val packageSet =
-            sharedPreferences.getStringSet(PREF_KEY_STRINGSET_EXCLUDE, null) ?: HashSet<String>()
-        return packageSet
+    fun getPackageExcluded(): Set<String> {
+        return sharedPreferences.getStringSet(PREF_KEY_STRINGSET_EXCLUDE, null) ?: HashSet()
     }
 
-    fun removePackageExcludes(packageNameSet: Set<String>) {
+    fun removePackageExcluded(packageNameSet: Set<String>) {
         val packageSet =
             sharedPreferences.getStringSet(PREF_KEY_STRINGSET_EXCLUDE, null) ?: HashSet<String>()
         if (packageNameSet.isNotEmpty()) {
@@ -48,32 +44,12 @@ class AppTunnelingRepository(
         sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
     }
 
-    fun removePackageExcludes(packageName: String) {
-        val packageSet =
-            sharedPreferences.getStringSet(PREF_KEY_STRINGSET_EXCLUDE, null) ?: HashSet<String>()
-
-        if (packageName.isNotEmpty()) {
-            packageSet.remove(packageName)
-        }
-        sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
-    }
-
-    fun addPackageExcludes(packageNameSet: Set<String>) {
+    fun addPackageExcluded(packageNameSet: Set<String>) {
         val packageSet =
             sharedPreferences.getStringSet(PREF_KEY_STRINGSET_EXCLUDE, null) ?: HashSet<String>()
 
         if (packageNameSet.isNotEmpty()) {
             packageSet.addAll(packageNameSet)
-        }
-        sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
-    }
-
-    fun addPackageExcludes(packageName: String) {
-        val packageSet =
-            sharedPreferences.getStringSet(PREF_KEY_STRINGSET_EXCLUDE, null) ?: HashSet<String>()
-
-        if (packageName.isNotEmpty()) {
-            packageSet.add(packageName)
         }
         sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
     }

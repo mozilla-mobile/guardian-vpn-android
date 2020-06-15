@@ -9,6 +9,6 @@ class GetExcludeAppUseCase(
 ) {
 
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
-        appTunnelingRepository.getPackageExcludes()
+        appTunnelingRepository.getPackageExcluded()
     }
 }

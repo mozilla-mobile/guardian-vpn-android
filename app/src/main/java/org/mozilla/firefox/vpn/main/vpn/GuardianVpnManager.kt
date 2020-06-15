@@ -12,6 +12,7 @@ import com.wireguard.android.backend.Tunnel
 import com.wireguard.android.backend.TunnelManager
 import com.wireguard.android.backend.VpnServiceStateListener
 import com.wireguard.android.backend.isUp
+import com.wireguard.config.Config
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -22,11 +23,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
-import org.mozilla.firefox.vpn.servers.domain.createConfig
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.PingUtil
 import org.mozilla.firefox.vpn.util.distinctBy
@@ -70,16 +69,16 @@ class GuardianVpnManager(
 
     override suspend fun connect(
         server: ServerInfo,
-        currentDevice: CurrentDevice
+        serverConfig: Config
     ) = withContext(Dispatchers.Main.immediate) {
         when {
             isConnected() -> action.value = Action.ConnectImmediately(server)
-            else -> connectInternal(server, currentDevice)
+            else -> connectInternal(server, serverConfig)
         }
     }
 
-    private fun connectInternal(server: ServerInfo, currentDevice: CurrentDevice) {
-        val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(server))
+    private fun connectInternal(server: ServerInfo, serverConfig: Config) {
+        val tunnel = Tunnel(TUNNEL_NAME, serverConfig)
 
         tunnelManager.turnOn(appContext, tunnel, object : VpnServiceStateListener {
             override fun onServiceUp(proxy: ServiceProxy) {
@@ -98,11 +97,11 @@ class GuardianVpnManager(
     override suspend fun switch(
         oldServer: ServerInfo,
         newServer: ServerInfo,
-        currentDevice: CurrentDevice
+        serverConfig: Config
     ) = withContext(Dispatchers.Main.immediate) {
         connectedStatesVerifier.reset(MAX_SWITCH_DURATION)
 
-        val tunnel = Tunnel(TUNNEL_NAME, currentDevice.createConfig(newServer))
+        val tunnel = Tunnel(TUNNEL_NAME, serverConfig)
         tunnelManager.turnOn(appContext, tunnel, object : VpnServiceStateListener {
             override fun onServiceUp(proxy: ServiceProxy) {
                 onVpnServiceUp(proxy, false)
