@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/blue50"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintTop_toTopOf="@id/dropdown_arrow"
         app:layout_constraintBottom_toBottomOf="@id/dropdown_arrow"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,5 +1,6 @@
 package org.mozilla.firefox.vpn.apptunneling.ui
 
+import android.content.pm.ApplicationInfo
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -34,7 +35,7 @@ class ExpandableAdapter(
                     LayoutInflater
                         .from(parent.context)
                         .inflate(R.layout.item_app, parent, false),
-                    ::onAppGroupActionClicked
+                    ::onAppItemActionClicked
                 )
             else ->
                 AppGroupViewHolder(
@@ -81,6 +82,9 @@ class ExpandableAdapter(
 
     private fun onAppGroupActionClicked(holder: AppGroupViewHolder) {
         val appGroupItem = items[holder.adapterPosition] as AppGroup
+
+        if (appGroupItem.appItems.isEmpty()) return
+
         val packageNameSet = appGroupItem.appItems.map { it.applicationInfo.packageName }.toSet()
 
         if (appGroupItem.type == AppGroupType.UNPROTECTED) {
@@ -90,14 +94,13 @@ class ExpandableAdapter(
         }
     }
 
-    private fun onAppGroupActionClicked(holder: AppItemViewHolder) {
+    private fun onAppItemActionClicked(holder: AppItemViewHolder) {
         val appItem = items[holder.adapterPosition] as AppItem
-        val packageName = appItem.applicationInfo.packageName
 
         if (appItem.type == AppGroupType.UNPROTECTED) {
-            expandableItemCallback.onUnprotectedAppChecked(packageName)
+            expandableItemCallback.onUnprotectedAppChecked(appItem.applicationInfo)
         } else {
-            expandableItemCallback.onProtectedAppChecked(packageName)
+            expandableItemCallback.onProtectedAppChecked(appItem.applicationInfo)
         }
     }
 
@@ -121,8 +124,13 @@ class ExpandableAdapter(
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 val newItem = newList[newItemPosition]
                 val oldItem = oldList[oldItemPosition]
-
-                return newItem.itemType == oldItem.itemType
+                if (newItem is AppGroup && oldItem is AppGroup) {
+                    return newItem.type == oldItem.type
+                }
+                if (newItem is AppItem && oldItem is AppItem) {
+                    return newItem.applicationInfo.packageName == oldItem.applicationInfo.packageName
+                }
+                return false
             }
 
             override fun getOldListSize(): Int {
@@ -137,25 +145,23 @@ class ExpandableAdapter(
                 val newItem = newList[newItemPosition]
                 val oldItem = oldList[oldItemPosition]
                 if (newItem is AppGroup && oldItem is AppGroup) {
-                    return newItem.type == oldItem.type &&
-                            newItem.appItems == oldItem.appItems &&
+                    return newItem.appItems == oldItem.appItems &&
                             newItem.isExpanded == oldItem.isExpanded &&
                             newItem.isEnabled == oldItem.isEnabled
                 }
                 if (newItem is AppItem && oldItem is AppItem) {
                     return newItem.type == oldItem.type &&
-                            newItem.applicationInfo == oldItem.applicationInfo &&
                             newItem.isEnabled == oldItem.isEnabled
                 }
-                return true
+                return false
             }
         })
     }
 
     interface ExpandableItemCallback {
-        fun onProtectedAppChecked(packageName: String)
+        fun onProtectedAppChecked(applicationInfo: ApplicationInfo)
+        fun onUnprotectedAppChecked(applicationInfo: ApplicationInfo)
         fun onProtectAllClicked(packageNameSet: Set<String>)
-        fun onUnprotectedAppChecked(packageName: String)
         fun onUnprotectAllClicked(packageNameSet: Set<String>)
     }
 }
