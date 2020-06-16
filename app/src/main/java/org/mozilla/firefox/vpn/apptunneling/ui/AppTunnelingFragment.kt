@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.apptunneling.AppTunnelingComponentImpl
-import org.mozilla.firefox.vpn.apptunneling.ui.AppTunnelingViewModel.UIState
+import org.mozilla.firefox.vpn.apptunneling.ui.AppTunnelingViewModel.InfoState
 import org.mozilla.firefox.vpn.databinding.FragmentAppTunnelingBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
@@ -44,27 +44,21 @@ class AppTunnelingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.uiModel.observe(viewLifecycleOwner, Observer {
-            if (binding.expandableList.adapter == null) {
-                binding.expandableList.adapter = ExpandableAdapter(it, onExpandableItemCallback)
-            } else {
-                (binding.expandableList.adapter as? ExpandableAdapter)?.setData(it)
+            when (it) {
+                is AppTunnelingUiState.StateLoading -> showLoading()
+                is AppTunnelingUiState.StateLoaded -> showData(it.uiModel)
+                else -> return@Observer
             }
         })
 
         viewModel.vpnState.observe(viewLifecycleOwner, Observer { vpnState ->
             when (vpnState) {
-                is VpnState.Disconnected -> {
-                    if (binding.switchBtn.isChecked) {
-                        updateUIState(UIState.SwitchOnEnabled)
-                    } else {
-                        updateUIState(UIState.SwitchOffEnabled)
-                    }
-                }
+                is VpnState.Disconnected -> updateInfoState()
                 else -> {
                     if (binding.switchBtn.isChecked) {
-                        updateUIState(UIState.SwitchOnDisabled)
+                        updateInfoState(InfoState.SwitchOnWarning)
                     } else {
-                        updateUIState(UIState.SwitchOffDisabled)
+                        updateInfoState(InfoState.SwitchOffWarning)
                     }
                 }
             }
@@ -81,24 +75,34 @@ class AppTunnelingFragment : Fragment() {
         }
 
         binding.switchBtn.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                updateUIState(UIState.SwitchOnEnabled)
-            } else {
-                updateUIState(UIState.SwitchOffEnabled)
-            }
+            updateInfoState()
             viewModel.switchAppTunneling(isChecked)
         }
 
         binding.switchBtn.isChecked = viewModel.getAppTunnelingSwitchState()
     }
 
-    private fun updateUIState(uiState: UIState) {
-        binding.infoView.infoIcon.setImageResource(uiState.infoDrawableId)
-        binding.infoView.infoText.text = getString(uiState.infoTextResId)
+    private fun showLoading() {
+        binding.loadingView.isVisible = binding.switchBtn.isChecked
+    }
+
+    private fun showData(uiModel: AppTunnelingUiModel) {
+        binding.loadingView.visibility = View.GONE
+        binding.expandableList.isVisible = binding.switchBtn.isChecked
+
+        if (binding.expandableList.adapter == null) {
+            binding.expandableList.adapter = ExpandableAdapter(uiModel, onExpandableItemCallback)
+        } else {
+            (binding.expandableList.adapter as? ExpandableAdapter)?.setData(uiModel)
+        }
+    }
+
+    private fun updateInfoState(infoState: InfoState = InfoState.Normal) {
+        binding.infoView.infoIcon.setImageResource(infoState.infoDrawableId)
+        binding.infoView.infoText.text = getString(infoState.infoTextResId)
         binding.infoView.root.isVisible =
-            uiState is UIState.Warning || uiState is UIState.SwitchOffEnabled
-        binding.expandableList.isVisible =
-            uiState is UIState.SwitchOnEnabled || uiState is UIState.SwitchOnDisabled
+            !binding.switchBtn.isChecked || infoState is InfoState.Warning
+        binding.expandableList.isVisible = binding.switchBtn.isChecked
     }
 
     private fun showSnackBar(config: InAppNotificationView.Config) {

@@ -1,6 +1,7 @@
 package org.mozilla.firefox.vpn.apptunneling.ui
 
 import android.content.pm.ApplicationInfo
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,9 +32,10 @@ class AppTunnelingViewModel(
     private val installedApps = MutableLiveData<List<ApplicationInfo>>()
     private val excludeApps = MutableLiveData<Set<String>>()
 
-    val uiModel = installedApps.combineWith(excludeApps) { packageList, excludeList ->
-        return@combineWith AppTunnelingUiModel(packageList, excludeList)
-    }
+    val uiModel: MediatorLiveData<AppTunnelingUiState> =
+        installedApps.combineWith(excludeApps) { packageList, excludeList ->
+            return@combineWith AppTunnelingUiState.StateLoaded(AppTunnelingUiModel(packageList, excludeList))
+        }
 
     val vpnState = vpnStateProvider.stateObservable
 
@@ -42,6 +44,7 @@ class AppTunnelingViewModel(
     }
 
     init {
+        uiModel.value = AppTunnelingUiState.StateLoading
         viewModelScope.launch(Dispatchers.IO) {
             loadInstalledApps()
             loadExcludeApps()
@@ -84,34 +87,35 @@ class AppTunnelingViewModel(
         excludeApps.postValue(getExcludeAppUseCase())
     }
 
-    sealed class UIState(
+    sealed class InfoState(
         val infoDrawableId: Int,
         val infoTextResId: Int
     ) {
-        abstract class Normal : UIState(
+        object Normal : InfoState(
             R.drawable.ic_information,
             R.string.app_tunneling_switch_info
         )
 
-        object SwitchOnEnabled : Normal()
-
-        object SwitchOffEnabled : Normal()
-
         abstract class Warning(
             infoTextResId: Int
-        ) : UIState(
+        ) : InfoState(
             R.drawable.ic_error,
             infoTextResId
         )
 
-        object SwitchOnDisabled : Warning(
+        object SwitchOnWarning : Warning(
             R.string.app_tunneling_switch_on_warning
         )
 
-        object SwitchOffDisabled : Warning(
+        object SwitchOffWarning : Warning(
             R.string.app_tunneling_switch_off_warning
         )
     }
+}
+
+sealed class AppTunnelingUiState {
+    object StateLoading : AppTunnelingUiState()
+    data class StateLoaded(val uiModel: AppTunnelingUiModel) : AppTunnelingUiState()
 }
 
 data class AppTunnelingUiModel(
