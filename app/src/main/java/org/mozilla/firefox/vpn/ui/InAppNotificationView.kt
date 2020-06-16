@@ -90,9 +90,9 @@ object InAppNotificationView {
     ) {
         object Red : Style(
             R.drawable.ripple_in_app_notification_red,
-            R.color.gray50,
+            android.R.color.white,
             R.drawable.ripple_in_app_notification_close_btn_red,
-            R.color.gray50
+            android.R.color.white
         )
         object Blue : Style(
             R.drawable.ripple_in_app_notification_blue,
