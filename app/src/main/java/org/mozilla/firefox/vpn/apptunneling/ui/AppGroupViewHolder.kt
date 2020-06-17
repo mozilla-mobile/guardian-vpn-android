@@ -21,7 +21,7 @@ class AppGroupViewHolder(
     }
 
     fun bind(appGroupItem: AppGroup) {
-        when (appGroupItem.type) {
+        when (appGroupItem.groupType) {
             AppGroupType.PROTECTED -> {
                 if (appGroupItem.isExpanded) {
                     updateAppGroupState(appGroupItem, AppGroupConfig.ProtectedGroupExpanded)

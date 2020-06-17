@@ -96,7 +96,7 @@ class ExpandableAdapter(
 
         val packageNameSet = appGroupItem.appItems.map { it.applicationInfo.packageName }.toSet()
 
-        if (appGroupItem.type == AppGroupType.UNPROTECTED) {
+        if (appGroupItem.groupType == AppGroupType.UNPROTECTED) {
             expandableItemCallback.onProtectAllClicked(packageNameSet)
         } else {
             expandableItemCallback.onUnprotectAllClicked(packageNameSet)
@@ -106,7 +106,7 @@ class ExpandableAdapter(
     private fun onAppItemActionClicked(holder: AppItemViewHolder) {
         val appItem = items[holder.adapterPosition] as AppItem
 
-        if (appItem.type == AppGroupType.UNPROTECTED) {
+        if (appItem.groupType == AppGroupType.UNPROTECTED) {
             expandableItemCallback.onUnprotectedAppChecked(appItem.applicationInfo)
         } else {
             expandableItemCallback.onProtectedAppChecked(appItem.applicationInfo)
@@ -134,7 +134,7 @@ class ExpandableAdapter(
                 val newItem = newList[newItemPosition]
                 val oldItem = oldList[oldItemPosition]
                 if (newItem is AppGroup && oldItem is AppGroup) {
-                    return newItem.type == oldItem.type
+                    return newItem.groupType == oldItem.groupType
                 }
                 if (newItem is AppItem && oldItem is AppItem) {
                     return newItem.applicationInfo.packageName == oldItem.applicationInfo.packageName
@@ -154,12 +154,12 @@ class ExpandableAdapter(
                 val newItem = newList[newItemPosition]
                 val oldItem = oldList[oldItemPosition]
                 if (newItem is AppGroup && oldItem is AppGroup) {
-                    return newItem.appItems == oldItem.appItems &&
+                    return newItem.appItems.size == oldItem.appItems.size &&
                             newItem.isExpanded == oldItem.isExpanded &&
                             newItem.isEnabled == oldItem.isEnabled
                 }
                 if (newItem is AppItem && oldItem is AppItem) {
-                    return newItem.type == oldItem.type &&
+                    return newItem.groupType == oldItem.groupType &&
                             newItem.isEnabled == oldItem.isEnabled
                 }
                 return false
