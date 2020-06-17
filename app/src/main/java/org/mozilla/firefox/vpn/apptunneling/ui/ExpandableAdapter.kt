@@ -63,6 +63,15 @@ class ExpandableAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        when (holder.itemViewType) {
+            APP_ITEM -> {
+                (holder as AppItemViewHolder).unbind()
+            }
+        }
+        super.onViewRecycled(holder)
+    }
+
     private fun onAppGroupClicked(holder: AppGroupViewHolder) {
         val appGroupItem = items[holder.adapterPosition] as AppGroup
         val startPosition = holder.adapterPosition + 1
