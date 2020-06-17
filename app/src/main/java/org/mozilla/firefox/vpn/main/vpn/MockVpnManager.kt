@@ -3,7 +3,6 @@ package org.mozilla.firefox.vpn.main.vpn
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
-import com.wireguard.config.Config
 import kotlinx.coroutines.delay
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
@@ -27,7 +26,7 @@ class MockVpnManager : VpnManager {
         return true
     }
 
-    override suspend fun connect(server: ServerInfo, serverConfig: Config) {
+    override suspend fun connect(server: ServerInfo, connectionConfig: ConnectionConfig) {
         transfer(VpnState.Connecting)
         transfer(VpnState.Connected, 1500)
         connectedTime = System.currentTimeMillis()
@@ -37,7 +36,7 @@ class MockVpnManager : VpnManager {
     override suspend fun switch(
         oldServer: ServerInfo,
         newServer: ServerInfo,
-        serverConfig: Config
+        connectionConfig: ConnectionConfig
     ) {
         transfer(VpnState.Switching(oldServer, newServer))
         transfer(VpnState.Connected, 1000)

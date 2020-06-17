@@ -33,7 +33,6 @@ import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
-import org.mozilla.firefox.vpn.servers.domain.createConfig
 import org.mozilla.firefox.vpn.service.Version
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
 import org.mozilla.firefox.vpn.update.UpdateManager
@@ -198,7 +197,7 @@ class VpnViewModel(
         val resolved = resolveDispatchableServerUseCase(server) ?: server
         val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase().toList() else emptyList()
         currentDeviceUseCase()?.let {
-            vpnManager.connect(resolved, it.createConfig(resolved, excludeApps = excludeApps))
+            vpnManager.connect(resolved, ConnectionConfig(it, excludeApps = excludeApps))
         }
     }
 
@@ -212,7 +211,7 @@ class VpnViewModel(
             val resolved = resolveDispatchableServerUseCase(newServer) ?: newServer
             val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase().toList() else emptyList()
             currentDeviceUseCase()?.let {
-                vpnManager.switch(oldServer, resolved, it.createConfig(resolved, excludeApps = excludeApps))
+                vpnManager.switch(oldServer, resolved, ConnectionConfig(it, excludeApps = excludeApps))
             }
         }
     }
