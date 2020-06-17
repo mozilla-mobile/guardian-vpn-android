@@ -44,7 +44,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/app_name"
         app:layout_constraintEnd_toStartOf="@id/app_checkbox"
-        tools:text="org.mozilla.firfox.vpn"/>
+        tools:text="org.mozilla.firefox.vpn"/>
 
     <CheckBox
         android:id="@+id/app_checkbox"
