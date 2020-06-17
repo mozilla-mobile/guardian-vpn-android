@@ -43,12 +43,12 @@
     <TextView
         android:id="@+id/group_action"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:textColor="@color/blue50"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
         android:foreground="?attr/selectableItemBackground"
-        app:layout_constraintTop_toTopOf="@id/dropdown_arrow"
-        app:layout_constraintBottom_toBottomOf="@id/dropdown_arrow"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/group_description"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="Protect all"/>
 
