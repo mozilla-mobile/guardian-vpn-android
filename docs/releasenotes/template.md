@@ -1,6 +1,6 @@
 # v<version number> Release Notes
 
-### Firefox Private Network VPN for Android
+### Mozilla VPN for Android
 
 #### <release date>
 
