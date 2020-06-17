@@ -15,13 +15,13 @@ sealed class ExpandableItem(
     var isEnabled: Boolean = true
 ) {
     data class AppGroup(
-        val type: AppGroupType,
+        val groupType: AppGroupType,
         var appItems: List<AppItem> = listOf(),
         var isExpanded: Boolean = true
     ) : ExpandableItem(APP_GROUP)
 
     data class AppItem(
-        val type: AppGroupType,
+        val groupType: AppGroupType,
         val applicationInfo: ApplicationInfo
     ) : ExpandableItem(APP_ITEM)
 }
