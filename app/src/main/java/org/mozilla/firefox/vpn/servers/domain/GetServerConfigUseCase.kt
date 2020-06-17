@@ -10,6 +10,7 @@ import com.wireguard.crypto.KeyPair
 import java.net.InetAddress
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
+import org.mozilla.firefox.vpn.main.vpn.ConnectionConfig
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 
 class GetServerConfigUseCase(
@@ -58,6 +59,15 @@ fun CurrentDevice.createConfig(
 ): Config {
     return Config.Builder().apply {
         setInterface(toWgInterface(includedApps, excludeApps))
+        addPeers(listOf(serverInfo.toWgPeer()))
+    }.build()
+}
+
+fun ConnectionConfig.create(
+    serverInfo: ServerInfo
+): Config {
+    return Config.Builder().apply {
+        setInterface(currentDevice.toWgInterface(includedApps, excludeApps))
         addPeers(listOf(serverInfo.toWgPeer()))
     }.build()
 }
