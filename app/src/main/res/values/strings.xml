@@ -13,20 +13,20 @@
     <string name="vpn_country_switch_hint">Select connection</string>
 
     <!-- The name of the application -->
-    <string name="application_name">Firefox Private Network</string>
+    <string name="application_name">Mozilla VPN</string>
 
     <!-- The description of the application, users will see this when they launch the app for the 1st time -->
     <string name="application_description">A fast, secure and easy to use VPN (Virtual Private Network).</string>
 
 
     <!-- These strings are show in the landing page -->
-    <string name="landing_title">Firefox Private Network</string>
+    <string name="landing_title">Mozilla VPN</string>
     <string name="landing_signin_button_text">Get started</string>
     <string name="nux_learn_more">Learn more</string>
 
 
     <!-- These strings are used in the Learn More section. They provide more information about
-     the Firefox Private Network. Device level encryption, No Activity logs, Servers in 39 countries, Connect up to
+     the Mozilla VPN. Device level encryption, No Activity logs, Servers in 39 countries, Connect up to
      5 devices are the title of each Learn More pages -->
     <string name="nux_title_1">No activity logs</string>
     <string name="nux_content_1">We\'re Mozilla. We don\'t log your activity and we\'re always on your side.</string>
@@ -114,8 +114,8 @@
 
 
 
-    <!-- Users will see this error message when their current Firefox Private Network app is not compatiable with their Android version -->
-    <string name="update_content_1">You must update your software to continue using Firefox Private Network</string>
+    <!-- Users will see this error message when their current Mozilla VPN app is not compatible with their Android version -->
+    <string name="update_content_1">You must update your software to continue using Mozilla VPN</string>
 
     <!-- The string for the default user name -->
     <string name="settings_default_user_name">User</string>

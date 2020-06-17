@@ -1,5 +1,5 @@
 <resources>
-    <string name="application_name">Firefox Private Network</string>
+    <string name="application_name">Mozilla VPN</string>
     <string name="application_description">Ein schnelles, sicheres und praktisches VPN(Virtuelles Privates Netzwerk).</string>
     <string name="connection_page_title">Verbindungen</string>
     <string name="devices_page_title">Meine Geräte</string>
@@ -35,10 +35,10 @@
     <string name="devices_remove_popup_content">Bitte bestätige das Entfernen von %s.</string>
     <string name="popup_cancel_button_text">Abbrechen</string>
     <string name="popup_remove_button_text">Entfernen</string>
-    <string name="landing_title">Firefox Private Network</string>
+    <string name="landing_title">Mozilla VPN</string>
     <string name="landing_signin_button_text">Anmelden</string>
     <string name="update_title">Sicherheitsupdate</string>
-    <string name="update_content_1">Update Firefox Private Network, um es weiter zu verwenden</string>
+    <string name="update_content_1">Update Mozilla VPN, um es weiter zu verwenden</string>
     <string name="update_content_2">Die Verbindung ist während des Updateprozesses nicht sicher.</string>
     <string name="update_update_button_text">Update starten</string>
     <string name="nux_title_1">Kein Aktivitätsprotokoll vorhanden</string>

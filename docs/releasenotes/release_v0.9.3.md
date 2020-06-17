@@ -1,6 +1,6 @@
 # v<version number> Release Notes
 
-### Firefox Private Network VPN for Android
+### Mozilla VPN for Android
 
 #### May 28, 2020
 
@@ -10,6 +10,6 @@
 
 ### Split tunneling prototype
 
-Firefox Private Network VPN supports split tunneling now
+Mozilla VPN supports split tunneling now
 
 ---
