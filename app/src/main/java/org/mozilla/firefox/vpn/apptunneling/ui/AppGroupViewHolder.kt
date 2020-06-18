@@ -64,11 +64,9 @@ class AppGroupViewHolder(
         }
 
         if (appGroupItem.isEnabled) {
-            binding.root.setOnClickListener { onAppGroupClicked(this) }
             binding.groupAction.setOnClickListener { onAppGroupActionClicked(this) }
             binding.groupAction.alpha = 1f
         } else {
-            binding.root.setOnClickListener(null)
             binding.groupAction.setOnClickListener(null)
             binding.groupAction.alpha = 0.5f
         }

@@ -21,21 +21,24 @@
 
     <TextView
         android:id="@+id/app_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:textColor="@color/gray50"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:layout_constraintTop_toTopOf="@id/app_icon"
         app:layout_constraintBottom_toBottomOf="@id/app_icon"
         app:layout_constraintStart_toEndOf="@id/app_icon"
+        app:layout_constraintEnd_toStartOf="@id/app_checkbox"
         tools:text="Mozilla VPN"/>
 
     <TextView
         android:id="@+id/app_package_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:textColor="@color/gray40"
         android:textAppearance="@style/TextAppearance.Guardian.Byline10"
         android:singleLine="true"
@@ -43,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@id/app_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/app_name"
-        app:layout_constraintEnd_toStartOf="@id/app_checkbox"
+        app:layout_constraintEnd_toEndOf="@id/app_name"
         tools:text="org.mozilla.firefox.vpn"/>
 
     <CheckBox
