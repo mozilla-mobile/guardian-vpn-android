@@ -2,7 +2,7 @@
 <resources>
 
     <string name="label_vpn" translatable="false">VPN</string>
-    <string name="launcher_name" translatable="false">Firefox VPN</string>
+    <string name="launcher_name" translatable="false">Mozilla VPN</string>
     <string name="vpn_state_separator" translatable="false">&#8226;</string>
 
     <string name="log_report_subject" translatable="false">User Help Request: %1$s/%2$s</string>
