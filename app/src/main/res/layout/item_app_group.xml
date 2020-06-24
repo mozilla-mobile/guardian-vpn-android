@@ -20,25 +20,36 @@
 
     <TextView
         android:id="@+id/group_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:textColor="@color/gray50"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
+        android:textSize="15dp"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:layout_constraintTop_toTopOf="@id/dropdown_arrow"
         app:layout_constraintBottom_toBottomOf="@id/dropdown_arrow"
         app:layout_constraintStart_toEndOf="@id/dropdown_arrow"
-        tools:text="Unprotected"/>
+        app:layout_constraintEnd_toStartOf="@id/group_action"
+        tools:text="Unprotected"
+        tools:ignore="SpUsage"/>
 
     <TextView
         android:id="@+id/group_description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/gray40"
         android:textAppearance="@style/TextAppearance.Guardian.Byline10"
+        android:textSize="13dp"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:layout_constraintTop_toBottomOf="@id/group_title"
         app:layout_constraintStart_toStartOf="@id/group_title"
-        tools:text="These apps will not use the VPN"/>
+        app:layout_constraintEnd_toEndOf="@id/group_title"
+        tools:text="These apps will not use the VPN"
+        tools:ignore="SpUsage"/>
 
     <TextView
         android:id="@+id/group_action"
@@ -46,11 +57,13 @@
         android:layout_height="0dp"
         android:textColor="@color/blue50"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
+        android:textSize="15dp"
         android:foreground="?attr/selectableItemBackground"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/group_description"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Protect all"/>
+        tools:text="Protect all"
+        tools:ignore="SpUsage"/>
 
     <include
         layout="@layout/view_information"
