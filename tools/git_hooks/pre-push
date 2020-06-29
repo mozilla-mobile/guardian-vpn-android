@@ -1,0 +1,22 @@
+#!/bin/sh
+
+#if ! ./gradlew checkstyle; then
+#  echo "Error: fix checkstyle"
+#  echo "If you really want to proceed, commit with --no-verify."
+#  exit 2
+#fi
+
+if ! ./gradlew :ktlint; then
+  echo "Error: fix ktlint"
+  echo "If you really want to proceed, commit with --no-verify."
+  exit 2
+fi
+
+#if ! ./gradlew findbugs; then
+#  echo "Error: fix findbugs"
+#  echo "If you really want to proceed, commit with --no-verify."
+#  exit 2
+#fi
+
+exit 0
+
