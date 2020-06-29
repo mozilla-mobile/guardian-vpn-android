@@ -6,6 +6,7 @@ import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.android.installreferrer.api.ReferrerDetails
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.mozilla.firefox.vpn.util.BuildConfigExt
 import org.mozilla.firefox.vpn.util.GLog
 import kotlin.coroutines.resume
 
@@ -22,10 +23,12 @@ class ReferralManager(context: Context, private val prefs: SharedPreferences) {
 
 
     suspend fun getUserReferral() = suspendCancellableCoroutine<String> { cont ->
-        GLog.d(TAG, "skip referral info in production-build")
-        if (cont.isActive) {
-            cont.resume("")
-            return@suspendCancellableCoroutine
+        if (!BuildConfigExt.isFlavorPreview() && !BuildConfigExt.isBuildTypeDebug()) {
+            GLog.d(TAG, "skip referral info in production-build")
+            if (cont.isActive) {
+                cont.resume("")
+                return@suspendCancellableCoroutine
+            }
         }
         val cacheReferral = prefs.getString(SIR_PREF_REFERRAL, null)
         if (cacheReferral != null) {
