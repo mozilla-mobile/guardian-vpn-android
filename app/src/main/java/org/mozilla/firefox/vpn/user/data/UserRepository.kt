@@ -3,6 +3,7 @@ package org.mozilla.firefox.vpn.user.data
 import java.net.UnknownHostException
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.LoginInfo
+import org.mozilla.firefox.vpn.service.LoginQueryBuilder
 import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.service.NetworkException
 import org.mozilla.firefox.vpn.service.Subscription
@@ -27,7 +28,8 @@ import org.mozilla.firefox.vpn.util.onSuccess
 
 class UserRepository(
     private val guardianService: GuardianService,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val referralManager: ReferralManager
 ) {
 
     /**
@@ -35,7 +37,8 @@ class UserRepository(
      */
     suspend fun getLoginInfo(): Result<LoginInfo> {
         return try {
-            guardianService.getLoginInfo().resolveBody()
+            val loginQueryBuilder = LoginQueryBuilder(referralManager.getUserReferral())
+            guardianService.getLoginInfo(loginQueryBuilder.build()).resolveBody()
         } catch (e: UnknownHostException) {
             Result.Fail(NetworkException)
         } catch (e: Exception) {
