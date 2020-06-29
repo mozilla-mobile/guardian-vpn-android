@@ -1,6 +1,8 @@
 package org.mozilla.firefox.vpn.service
 
+import android.net.Uri
 import android.os.Build
+import androidx.core.net.toUri
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -30,11 +32,12 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.QueryMap
 import retrofit2.http.Url
 
 interface GuardianService {
     @POST("api/v1/vpn/login")
-    suspend fun getLoginInfo(): Response<LoginInfo>
+    suspend fun getLoginInfo(@QueryMap referral: Map<String, String>): Response<LoginInfo>
 
     @GET
     suspend fun verifyLogin(@Url verifyUrl: String): Response<LoginResult>
@@ -321,6 +324,18 @@ data class Version(
     @SerializedName("message")
     val message: String
 )
+
+class LoginQueryBuilder(private val referral: String) {
+
+    fun build(): Map<String, String> {
+        return "mozilla.com?$referral".toUri().let { uri ->
+            uri.queryParameterNames
+                .filter { it.isNotEmpty() } // parameter name shouldn't be empty
+                .map { it to (uri.getQueryParameter(it) ?: "") }
+                .toMap()
+        }
+    }
+}
 
 data class DeviceRequestBody(
     val name: String,

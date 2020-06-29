@@ -76,6 +76,7 @@ dependencies {
     implementation project(':config')
     implementation(name:'country-flags', ext:'aar')
 
+    implementation 'com.android.installreferrer:installreferrer:1.1'
     implementation "net.sourceforge.streamsupport:android-retrofuture:$streamsupportVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
@@ -101,6 +102,7 @@ dependencies {
     ktlint 'com.pinterest:ktlint:0.35.0'
 
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.robolectric:robolectric:3.4.2"
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation 'com.google.truth:truth:1.0.1'
     testImplementation 'io.mockk:mockk:1.9'

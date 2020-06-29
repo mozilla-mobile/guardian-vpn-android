@@ -9,6 +9,7 @@ import org.mozilla.firefox.vpn.servers.data.ServerRepository
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.MockGuardianService
 import org.mozilla.firefox.vpn.update.UpdateManager
+import org.mozilla.firefox.vpn.user.data.ReferralManager
 import org.mozilla.firefox.vpn.user.data.SessionManager
 import org.mozilla.firefox.vpn.user.data.UserRepository
 
@@ -18,10 +19,12 @@ class MockedGuardianComponent(
 
     private val sessionManager = SessionManager(prefs)
 
+    private val referralManager = ReferralManager(coreComponent.app.applicationContext, prefs)
+
     var service = MockGuardianService()
 
     override val userRepo: UserRepository by lazy {
-        UserRepository(service, sessionManager)
+        UserRepository(service, sessionManager, referralManager)
     }
 
     override val deviceRepo: DeviceRepository by lazy {

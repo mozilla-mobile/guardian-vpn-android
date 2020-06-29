@@ -59,7 +59,7 @@ class MockGuardianService : GuardianService {
 
     private val countries = listOf(Country("Mock country", "US", cities))
 
-    override suspend fun getLoginInfo(): Response<LoginInfo> {
+    override suspend fun getLoginInfo(loginRequestBody: Map<String, String>): Response<LoginInfo> {
         delay()
         return Response.success(LoginInfo(
             loginUrl,
