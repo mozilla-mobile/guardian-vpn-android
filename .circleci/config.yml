@@ -89,9 +89,6 @@ jobs:
     - image: circleci/android:api-29-ndk
     environment:
     - JVM_OPTS: -Xmx3200m
-    - PREVIEW_APK_PATH: app/build/outputs/apk/preview/release/
-    - UNSIGNED_PREVIEW_APK_NAME: app-preview-release-unsigned.apk
-    - SIGNED_PREVIEW_APK_NAME: app-preview-release-signed.apk
     - RELEASE_APK_PATH: app/build/outputs/apk/guardian/release/
     - UNSIGNED_RELEASE_APK_NAME: app-guardian-release-unsigned.apk
     - SIGNED_RELEASE_APK_NAME: app-guardian-release-signed.apk
@@ -123,14 +120,6 @@ jobs:
         name: store service_account key
         command: |
             echo $DEPLOYMENT_PRIVATE_KEY | base64 --decode > service_account.json
-    - run:
-        name: Sign preview apk with autograph
-        command: |
-            curl -H "Authorization: ${VPN_PREVIEW_KEY}" -F "input=@${PREVIEW_APK_PATH}${UNSIGNED_PREVIEW_APK_NAME}" -o "${PREVIEW_APK_PATH}${SIGNED_PREVIEW_APK_NAME}" $ENDPOINT
-    - run:
-        name: deploy preview apk to play store
-        command: |
-            python tools/basic_upload_apks_service_account.py org.mozilla.firefox.vpn.beta ${PREVIEW_APK_PATH}${SIGNED_PREVIEW_APK_NAME} service_account.json internal
     - run:
         name: Sign release apk with autograph
         command: |
