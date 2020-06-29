@@ -1,6 +1,5 @@
 package org.mozilla.firefox.vpn.service
 
-import android.net.Uri
 import android.os.Build
 import androidx.core.net.toUri
 import com.google.gson.Gson

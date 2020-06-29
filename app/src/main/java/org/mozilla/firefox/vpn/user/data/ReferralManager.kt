@@ -5,10 +5,10 @@ import android.content.SharedPreferences
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.android.installreferrer.api.ReferrerDetails
+import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.mozilla.firefox.vpn.util.BuildConfigExt
 import org.mozilla.firefox.vpn.util.GLog
-import kotlin.coroutines.resume
 
 class ReferralManager(context: Context, private val prefs: SharedPreferences) {
 
@@ -20,7 +20,6 @@ class ReferralManager(context: Context, private val prefs: SharedPreferences) {
 
     private var referrerClient: InstallReferrerClient =
         InstallReferrerClient.newBuilder(context).build()
-
 
     suspend fun getUserReferral() = suspendCancellableCoroutine<String> { cont ->
         if (!BuildConfigExt.isFlavorPreview() && !BuildConfigExt.isBuildTypeDebug()) {

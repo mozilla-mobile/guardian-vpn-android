@@ -1,8 +1,7 @@
 package org.mozilla.firefox.vpn.service
 
+import org.junit.Assert.assertTrue
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
@@ -34,6 +33,5 @@ class LoginQueryBuilderTest {
 
         loginQueryBuilder = LoginQueryBuilder("aaa=xxx&=zzz")
         assertTrue(loginQueryBuilder.build().size == 1)
-
     }
 }
