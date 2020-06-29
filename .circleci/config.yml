@@ -158,7 +158,7 @@ workflows:
             branches:
               only:
                 - release
-  scheduled_build_release:
+  scheduled_build_preview:
     triggers:
       - schedule:
           cron: "0 11 * * *"
