@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.databinding.FragmentIntroBinding
 import org.mozilla.firefox.vpn.onboarding.OnboardingActivity
 import org.mozilla.firefox.vpn.util.viewBinding
@@ -28,7 +27,9 @@ class IntroFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        binding.closeBtn.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_entrance))
+        binding.closeBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
         binding.skipBtn.setOnClickListener {
             binding.introList.smoothScrollToPosition(adapter.itemCount - 1)
         }

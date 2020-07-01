@@ -20,12 +20,6 @@
     <fragment
         android:id="@+id/navigation_intro"
         android:name="org.mozilla.firefox.vpn.onboarding.intro.IntroFragment"
-        tools:layout="@layout/fragment_intro">
-
-        <action
-            android:id="@+id/action_entrance"
-            app:destination="@id/navigation_entrance"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_intro"/>
 
 </navigation>
