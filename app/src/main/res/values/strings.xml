@@ -162,12 +162,15 @@
     <string name="app_tunneling_unprotected_title_collapse">Unprotected (%s)</string>
     <string name="app_tunneling_unprotected_description"><![CDATA[These apps <u>will not</u> use the VPN]]></string>
     <string name="app_tunneling_unprotected_action_text">Unprotect all</string>
-    <string name="app_tunneling_unprotected_info">Unselect apps from below to unprotect</string>
+    <string name="app_tunneling_unprotected_info">Deselect apps from below to unprotect</string>
     <string name="app_tunneling_switch_on_warning">VPN must be off before enabling or editing</string>
     <string name="app_tunneling_switch_off_warning">VPN must be off before enabling</string>
     <string name="app_tunneling_notification_protected_one">%s is protected!</string>
     <string name="app_tunneling_notification_protected_all">All apps are protected!</string>
     <string name="app_tunneling_notification_unprotected_one">%s is unprotected!</string>
     <string name="app_tunneling_notification_unprotected_all">All apps are unprotected!</string>
+    <string name="app_tunneling_config_system_apps">Show system apps</string>
+    <string name="app_tunneling_config_new_apps">Protect new apps</string>
+    <string name="app_tunneling_config_new_apps_description">Add newly installed apps to the protected list</string>
 
 </resources>
