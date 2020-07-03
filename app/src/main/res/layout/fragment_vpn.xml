@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="11dp"
         android:text="@string/application_name"
-        android:textColor="@color/gray50"
+        android:textColor="@android:color/black"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toTopOf="@id/app_icon"
         app:layout_constraintBottom_toBottomOf="@id/app_icon"
