@@ -7,10 +7,10 @@
     tools:ignore="MissingTranslation">
 
     <!-- This text is shown in the URL bar when it's empty -->
-    <string name="onboarding_logged_out">Logged out and device removed.</string>
+    <string name="onboarding_logged_out">Signed out and device removed</string>
 
     <!-- This text is shown right below the VPN server pull down list -->
-    <string name="vpn_country_switch_hint">Select connection</string>
+    <string name="vpn_country_switch_hint">Select location</string>
 
     <!-- The name of the application -->
     <string name="application_name">Mozilla VPN</string>
@@ -42,7 +42,7 @@
     <!-- These are the menu items -->
     <string name="settings_page_title">Settings</string>
     <string name="get_help_page_title">Get help</string>
-    <string name="about_page_title">About</string>
+    <string name="about_page_title">About us</string>
     <string name="feedback_page_title">Give feedback</string>
     <string name="terms_service_url_title">Terms of Service</string>
     <string name="privacy_policy_url_title">Privacy Policy</string>
@@ -52,19 +52,19 @@
 
     <!-- Will diplay these strings when the VPN is Off -->
     <string name="hero_text_vpn_off">VPN is off</string>
-    <string name="hero_subtext_turn_on">Turn it on to protect your entire device</string>
+    <string name="hero_subtext_turn_on">Turn on to protect your privacy</string>
 
     <!-- Will diplay these strings when the VPN is On -->
     <string name="hero_text_vpn_on">VPN is on</string>
-    <string name="hero_subtext_secure_protected">Secure and protected</string>
+    <string name="hero_subtext_secure_protected">Secure and private</string>
 
     <!-- Will show the following strings when you are tring to connect to VPN -->
     <string name="hero_text_connecting">Connecting&#8230;</string>
-    <string name="hero_subtext_protected_shortly">You will be protected shortly</string>
+    <string name="hero_subtext_protected_shortly">Masking connection and location</string>
 
     <!-- Will show the following strings when you are tring to disconnect to VPN -->
     <string name="hero_text_disconnecting">Disconnecting&#8230;</string>
-    <string name="hero_subtext_disconnected_shortly">You will be disconnected shortly</string>
+    <string name="hero_subtext_disconnected_shortly">Unmasking connection and location</string>
 
     <!-- Will show this when users is switching from one VPN server to another, for example, from Dalla to LA -->
     <string name="hero_text_switching">Switching&#8230;</string>
@@ -77,7 +77,7 @@
 
 
 
-    <string name="connection_page_title">Connection</string>
+    <string name="connection_page_title">Select location</string>
 
 
     <!-- These strings are used for the device management pages. It tells you how many devices you have used for VPN. e.g. 4 out of 5 -->

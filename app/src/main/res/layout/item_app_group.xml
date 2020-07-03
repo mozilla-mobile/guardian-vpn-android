@@ -58,7 +58,7 @@
         android:textColor="@color/blue50"
         android:textAppearance="@style/TextAppearance.Guardian.Body10"
         android:textSize="15dp"
-        android:foreground="?attr/selectableItemBackground"
+        android:background="@drawable/ripple_rect_radius_4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/group_description"
         app:layout_constraintEnd_toEndOf="parent"

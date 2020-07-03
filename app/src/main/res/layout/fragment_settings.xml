@@ -152,40 +152,6 @@
             android:background="@color/gray10" />
 
         <LinearLayout
-            android:id="@+id/get_help_btn"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_help" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:gravity="center_vertical"
-                android:text="@string/get_help_page_title"
-                android:textAppearance="@style/TextAppearance.Guardian.Header20"
-                android:textColor="@color/gray50" />
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="56dp"
-            android:layout_marginEnd="16dp"
-            android:background="@color/gray10" />
-
-        <LinearLayout
             android:id="@+id/about_btn"
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -207,6 +173,40 @@
                 android:layout_marginStart="16dp"
                 android:gravity="center_vertical"
                 android:text="@string/about_page_title"
+                android:textAppearance="@style/TextAppearance.Guardian.Header20"
+                android:textColor="@color/gray50" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="56dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/gray10" />
+
+        <LinearLayout
+            android:id="@+id/get_help_btn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_help" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:gravity="center_vertical"
+                android:text="@string/get_help_page_title"
                 android:textAppearance="@style/TextAppearance.Guardian.Header20"
                 android:textColor="@color/gray50" />
 
