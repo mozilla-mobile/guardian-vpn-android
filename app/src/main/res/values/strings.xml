@@ -16,7 +16,7 @@
     <string name="application_name">Mozilla VPN</string>
 
     <!-- The description of the application, users will see this when they launch the app for the 1st time -->
-    <string name="application_description">A fast, secure and easy to use VPN (Virtual Private Network).</string>
+    <string name="application_description">A fast, secure and easy to use VPN.\nBuilt by the makers of Firefox.</string>
 
 
     <!-- These strings are show in the landing page -->
@@ -28,14 +28,14 @@
     <!-- These strings are used in the Learn More section. They provide more information about
      the Mozilla VPN. Device level encryption, No Activity logs, Servers in 39 countries, Connect up to
      5 devices are the title of each Learn More pages -->
-    <string name="nux_title_1">No activity logs</string>
-    <string name="nux_content_1">We\'re Mozilla. We don\'t log your activity and we\'re always on your side.</string>
-    <string name="nux_title_2">Device level encryption</string>
-    <string name="nux_content_2">No one will see your location or activity, even on unsecure Wi-Fi networks.</string>
-    <string name="nux_title_3">Servers in 39 countries</string>
-    <string name="nux_content_3">Stand up to tech bullies and protect your access to the web.</string>
-    <string name="nux_title_4">Connect up to 5 devices</string>
-    <string name="nux_content_4">Stream, download and game. We won\'t restrict your bandwidth.</string>
+    <string name="nux_title_1">Device-level encryption</string>
+    <string name="nux_content_1">Encrypt your traffic so that it can\’t be read by your ISP or eavesdroppers.</string>
+    <string name="nux_title_2">Servers in 30+ countries</string>
+    <string name="nux_content_2">Pick a server in any country you want and hide your location to throw off trackers.</string>
+    <string name="nux_title_3">No bandwidth restrictions</string>
+    <string name="nux_content_3">Stream, download, and game without limits, monthly caps or ISP throttling.</string>
+    <string name="nux_title_4">No online activity logs</string>
+    <string name="nux_content_4">We are committed to not monitoring or logging your browsing or network history.</string>
 
 
 
