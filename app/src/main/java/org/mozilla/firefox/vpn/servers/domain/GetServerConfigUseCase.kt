@@ -1,42 +1,24 @@
 package org.mozilla.firefox.vpn.servers.domain
 
-import android.app.Application
 import com.wireguard.config.Config
 import com.wireguard.config.InetNetwork
 import com.wireguard.config.Interface
 import com.wireguard.config.Peer
 import com.wireguard.crypto.Key
 import com.wireguard.crypto.KeyPair
-import java.net.InetAddress
 import org.mozilla.firefox.vpn.device.data.CurrentDevice
-import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.main.vpn.ConnectionConfig
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 
-class GetServerConfigUseCase(
-    appContext: Application,
-    private val deviceRepository: DeviceRepository
-) {
-    private val pkgName = appContext.packageName
-
-    operator fun invoke(serverInfo: ServerInfo, device: CurrentDevice): Config {
-        val wgInterface = device.toWgInterface(listOf(pkgName))
-
-        return Config.Builder().apply {
-            setInterface(wgInterface)
-            addPeers(listOf(serverInfo.toWgPeer()))
-        }.build()
-    }
-}
-
 fun CurrentDevice.toWgInterface(
     includedApps: List<String> = emptyList(),
-    excludeApps: List<String> = emptyList()
+    excludeApps: List<String> = emptyList(),
+    serverInfo: ServerInfo
 ): Interface {
     return Interface.Builder().apply {
         setKeyPair(KeyPair(Key.fromBase64(privateKeyBase64)))
         addAddress(InetNetwork.parse(device.ipv4Address))
-        addDnsServer(InetAddress.getByAddress(byteArrayOf(1, 1, 1, 1)))
+        addDnsServer(InetNetwork.parse(serverInfo.server.ipv4Gateway).address)
         excludeApplications(excludeApps)
         includeApplications(includedApps)
     }.build()
@@ -52,29 +34,11 @@ fun ServerInfo.toWgPeer(): Peer {
     }.build()
 }
 
-fun CurrentDevice.createConfig(
-    serverInfo: ServerInfo,
-    includedApps: List<String> = emptyList(),
-    excludeApps: List<String> = emptyList()
-): Config {
-    return Config.Builder().apply {
-        setInterface(toWgInterface(includedApps, excludeApps))
-        addPeers(listOf(serverInfo.toWgPeer()))
-    }.build()
-}
-
 fun ConnectionConfig.create(
     serverInfo: ServerInfo
 ): Config {
     return Config.Builder().apply {
-        setInterface(currentDevice.toWgInterface(includedApps, excludeApps))
-        addPeers(listOf(serverInfo.toWgPeer()))
-    }.build()
-}
-
-fun Config.from(currentDevice: CurrentDevice, serverInfo: ServerInfo): Config {
-    return Config.Builder().apply {
-        setInterface(currentDevice.toWgInterface())
+        setInterface(currentDevice.toWgInterface(includedApps, excludeApps, serverInfo))
         addPeers(listOf(serverInfo.toWgPeer()))
     }.build()
 }
