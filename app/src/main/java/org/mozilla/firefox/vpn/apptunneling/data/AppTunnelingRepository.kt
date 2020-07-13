@@ -16,8 +16,11 @@ class AppTunnelingRepository(
 ) {
 
     companion object {
+        const val PREF_KEY_STRINGSET_PACKAGES = "key_stringset_apptunneling_packages"
         const val PREF_KEY_STRINGSET_EXCLUDE = "key_stringset_apptunneling_exclude_list"
         const val PREF_KEY_USE_APP_TUNNELING = "key_use_app_tunneling"
+        const val PREF_KEY_SHOW_SYSTEM_APPS = "key_show_system_apps"
+        const val PREF_KEY_PROTECT_NEW_APPS = "key_protect_new_apps"
     }
 
     fun getPackages(
@@ -36,6 +39,14 @@ class AppTunnelingRepository(
             .distinctBy { it.packageName }
             .sortedBy { it.loadLabel(packageManager).toString() }
             .toList()
+    }
+
+    fun cachePackages(packageNameSet: Set<String>) {
+        sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_PACKAGES, packageNameSet)
+    }
+
+    fun getCachedPackages(): Set<String> {
+        return sharedPreferences.getStringSet(PREF_KEY_STRINGSET_PACKAGES, null) ?: HashSet()
     }
 
     fun getPackageExcluded(): Set<String> {
@@ -61,12 +72,28 @@ class AppTunnelingRepository(
         sharedPreferences.putStringSetSafe(PREF_KEY_STRINGSET_EXCLUDE, packageSet)
     }
 
-    fun getAppTunnelingSwitchState(): Boolean {
+    fun isUsingAppTunneling(): Boolean {
         return sharedPreferences.getBoolean(PREF_KEY_USE_APP_TUNNELING, false)
     }
 
     fun switchAppTunneling(isChecked: Boolean) {
         sharedPreferences.edit().putBoolean(PREF_KEY_USE_APP_TUNNELING, isChecked).apply()
+    }
+
+    fun isShowingSystemApps(): Boolean {
+        return sharedPreferences.getBoolean(PREF_KEY_SHOW_SYSTEM_APPS, true)
+    }
+
+    fun switchShowSystemApps(isChecked: Boolean) {
+        sharedPreferences.edit().putBoolean(PREF_KEY_SHOW_SYSTEM_APPS, isChecked).apply()
+    }
+
+    fun isProtectingNewApps(): Boolean {
+        return sharedPreferences.getBoolean(PREF_KEY_PROTECT_NEW_APPS, true)
+    }
+
+    fun switchProtectNewApps(isChecked: Boolean) {
+        sharedPreferences.edit().putBoolean(PREF_KEY_PROTECT_NEW_APPS, isChecked).apply()
     }
 
     private fun resolveBrowserApps(): List<ApplicationInfo> {

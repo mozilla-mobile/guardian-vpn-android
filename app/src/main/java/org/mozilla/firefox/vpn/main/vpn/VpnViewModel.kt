@@ -195,7 +195,7 @@ class VpnViewModel(
 
     private suspend fun connectVpn(server: ServerInfo) {
         val resolved = resolveDispatchableServerUseCase(server) ?: server
-        val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase().toList() else emptyList()
+        val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase(true).toList() else emptyList()
         currentDeviceUseCase()?.let {
             vpnManager.connect(resolved, ConnectionConfig(it, excludeApps = excludeApps))
         }

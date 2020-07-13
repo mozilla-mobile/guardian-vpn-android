@@ -127,6 +127,18 @@ class AppTunnelingFragment : Fragment() {
             width = popupWidth)
 
         popupBinding = ViewAppTunnelingConfigBinding.bind(popupUtil.getRootView())
+
+        popupBinding.systemAppsCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.switchShowSystemApps(isChecked)
+        }
+
+        popupBinding.systemAppsCheckbox.isChecked = viewModel.getShowSystemAppsSwitchState()
+
+        popupBinding.newAppsCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.switchProtectNewApps(isChecked)
+        }
+
+        popupBinding.newAppsCheckbox.isChecked = viewModel.getProtectNewAppsSwitchState()
     }
 
     private fun showLoading() {
