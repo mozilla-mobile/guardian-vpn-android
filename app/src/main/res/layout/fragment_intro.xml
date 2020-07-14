@@ -6,28 +6,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/intro_list"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constrainedHeight="true"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_intro" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <org.mozilla.firefox.vpn.onboarding.intro.IndicatorView
-        android:id="@+id/indicator_view"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/intro_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_intro" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/indicator_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="65dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/spread"
+        android:layout_width="24dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_spread"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/close_btn"
@@ -37,8 +54,9 @@
         android:layout_marginTop="8dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_close"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@drawable/ripple_rect_radius_4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/skip_btn"
@@ -46,30 +64,13 @@
         android:layout_height="48dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
-        android:foreground="?attr/selectableItemBackground"
+        android:background="@drawable/ripple_rect_radius_4dp"
         android:text="@string/nux_skip"
         android:textAllCaps="true"
         android:textColor="@color/blue50"
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
+        app:layout_constraintTop_toTopOf="@id/close_btn"
         app:layout_constraintBottom_toBottomOf="@id/close_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/close_btn" />
-
-    <TextView
-        android:id="@+id/auth_btn"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="48dp"
-        android:background="@drawable/selector_bg_primary_button"
-        android:gravity="center"
-        android:text="@string/landing_signin_button_text"
-        android:textColor="@android:color/white"
-        android:visibility="gone"
-        android:textAppearance="@style/TextAppearance.Guardian.Header20"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
