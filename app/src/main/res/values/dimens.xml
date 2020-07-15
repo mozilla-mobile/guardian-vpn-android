@@ -1,14 +1,15 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-
     <dimen name="vpn_panel_elevation_secure">3dp</dimen>
     <dimen name="vpn_panel_elevation_insecure">2dp</dimen>
 
     <dimen name="radio_button_text_padding">12dp</dimen>
     <dimen name="radio_button_vertical_padding">12dp</dimen>
     <dimen name="radio_button_left_margin">52dp</dimen>
+
     <dimen name="vpn_state_card_radius">8dp</dimen>
     <dimen name="vpn_state_card_ripple_height">318dp</dimen>
+
+    <dimen name="dot_indicator_width">6dp</dimen>
+    <dimen name="dot_indicator_horizontal_padding">8dp</dimen>
+    <dimen name="dot_indicator_bottom_margin">104dp</dimen>
 </resources>

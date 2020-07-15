@@ -21,20 +21,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
+            android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_intro" />
 
     </androidx.core.widget.NestedScrollView>
-
-    <LinearLayout
-        android:id="@+id/indicator_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="65dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ImageView
         android:id="@+id/spread"
@@ -71,6 +62,23 @@
         android:textAppearance="@style/TextAppearance.Guardian.Header20"
         app:layout_constraintTop_toTopOf="@id/close_btn"
         app:layout_constraintBottom_toBottomOf="@id/close_btn"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/auth_btn"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/selector_bg_primary_button"
+        android:gravity="center"
+        android:text="@string/landing_signin_button_text"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:textAppearance="@style/TextAppearance.Guardian.Header20"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
