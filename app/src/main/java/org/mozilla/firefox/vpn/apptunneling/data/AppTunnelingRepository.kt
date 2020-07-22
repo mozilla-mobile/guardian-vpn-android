@@ -4,9 +4,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
 import org.mozilla.firefox.vpn.BuildConfig
+import org.mozilla.firefox.vpn.apptunneling.hasPermission
+import org.mozilla.firefox.vpn.apptunneling.isSystemApp
 import org.mozilla.firefox.vpn.util.putStringSetSafe
 
 class AppTunnelingRepository(
@@ -30,7 +31,7 @@ class AppTunnelingRepository(
             .asSequence()
             .filter { includeInternalApps || !it.isSystemApp() }
             .filter { it.packageName != BuildConfig.APPLICATION_ID }
-            .filter { it.hasPermission(android.Manifest.permission.INTERNET) }
+            .filter { it.hasPermission(packageManager, android.Manifest.permission.INTERNET) }
             .plus(browserApps)
             .distinctBy { it.packageName }
             .sortedBy { it.loadLabel(packageManager).toString() }
@@ -66,15 +67,6 @@ class AppTunnelingRepository(
 
     fun switchAppTunneling(isChecked: Boolean) {
         sharedPreferences.edit().putBoolean(PREF_KEY_USE_APP_TUNNELING, isChecked).apply()
-    }
-
-    private fun ApplicationInfo.isSystemApp(): Boolean {
-        val systemFlag = ApplicationInfo.FLAG_SYSTEM or ApplicationInfo.FLAG_UPDATED_SYSTEM_APP
-        return (this.flags and systemFlag) != 0
-    }
-
-    private fun ApplicationInfo.hasPermission(permission: String): Boolean {
-        return PERMISSION_GRANTED == packageManager.checkPermission(permission, this.packageName)
     }
 
     private fun resolveBrowserApps(): List<ApplicationInfo> {
