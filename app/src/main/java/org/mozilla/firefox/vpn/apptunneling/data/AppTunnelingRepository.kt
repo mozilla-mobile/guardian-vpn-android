@@ -1,10 +1,13 @@
 package org.mozilla.firefox.vpn.apptunneling.data
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.net.Uri
 import org.mozilla.firefox.vpn.BuildConfig
+import org.mozilla.firefox.vpn.apptunneling.hasPermission
+import org.mozilla.firefox.vpn.apptunneling.isSystemApp
 import org.mozilla.firefox.vpn.util.putStringSetSafe
 
 class AppTunnelingRepository(
@@ -17,18 +20,22 @@ class AppTunnelingRepository(
         const val PREF_KEY_USE_APP_TUNNELING = "key_use_app_tunneling"
     }
 
-    fun getPackages(includeInternalApps: Boolean): List<ApplicationInfo> {
+    fun getPackages(
+        includeInternalApps: Boolean,
+        joinBrowserApps: Boolean = true
+    ): List<ApplicationInfo> {
         val applicationInfoList = packageManager.getInstalledApplications(0)
-        return applicationInfoList.filter {
-            PERMISSION_GRANTED == packageManager.checkPermission(
-                android.Manifest.permission.INTERNET,
-                it.packageName
-            )
-        }.filter {
-            includeInternalApps || ((it.flags and ApplicationInfo.FLAG_SYSTEM) == 0)
-        }.filter {
-            it.packageName != BuildConfig.APPLICATION_ID
-        }.sortedBy { it.loadLabel(packageManager).toString() }
+        val browserApps = if (joinBrowserApps) { resolveBrowserApps() } else { emptyList() }
+
+        return applicationInfoList
+            .asSequence()
+            .filter { includeInternalApps || !it.isSystemApp() }
+            .filter { it.packageName != BuildConfig.APPLICATION_ID }
+            .filter { it.hasPermission(packageManager, android.Manifest.permission.INTERNET) }
+            .plus(browserApps)
+            .distinctBy { it.packageName }
+            .sortedBy { it.loadLabel(packageManager).toString() }
+            .toList()
     }
 
     fun getPackageExcluded(): Set<String> {
@@ -60,5 +67,12 @@ class AppTunnelingRepository(
 
     fun switchAppTunneling(isChecked: Boolean) {
         sharedPreferences.edit().putBoolean(PREF_KEY_USE_APP_TUNNELING, isChecked).apply()
+    }
+
+    private fun resolveBrowserApps(): List<ApplicationInfo> {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mozilla.org/"))
+            .apply { addCategory(Intent.CATEGORY_BROWSABLE) }
+        return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            .map { it.activityInfo.applicationInfo }
     }
 }
