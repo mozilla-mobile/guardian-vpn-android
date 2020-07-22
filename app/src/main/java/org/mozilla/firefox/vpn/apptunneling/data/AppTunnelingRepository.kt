@@ -69,7 +69,8 @@ class AppTunnelingRepository(
     }
 
     private fun ApplicationInfo.isSystemApp(): Boolean {
-        return (this.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+        val systemFlag = ApplicationInfo.FLAG_SYSTEM or ApplicationInfo.FLAG_UPDATED_SYSTEM_APP
+        return (this.flags and systemFlag) != 0
     }
 
     private fun ApplicationInfo.hasPermission(permission: String): Boolean {
