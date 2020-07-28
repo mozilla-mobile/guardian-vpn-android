@@ -72,7 +72,10 @@ class AppTunnelingRepository(
     private fun resolveBrowserApps(): List<ApplicationInfo> {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mozilla.org/"))
             .apply { addCategory(Intent.CATEGORY_BROWSABLE) }
-        return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        // We've tried using PackageManager.MATCH_DEFAULT_ONLY flag and found that browsers that
+        // are not set as the default browser won't be matched even if they had CATEGORY_DEFAULT set
+        // in the intent filter
+        return packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL)
             .map { it.activityInfo.applicationInfo }
     }
 }
