@@ -156,3 +156,11 @@ workflows:
               only: master
     jobs:
       - build_preview
+  trigger_build_preview_with_tag:
+    jobs:
+      - build_preview:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: master
