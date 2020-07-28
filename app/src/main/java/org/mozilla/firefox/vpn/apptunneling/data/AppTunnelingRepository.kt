@@ -72,7 +72,7 @@ class AppTunnelingRepository(
     private fun resolveBrowserApps(): List<ApplicationInfo> {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mozilla.org/"))
             .apply { addCategory(Intent.CATEGORY_BROWSABLE) }
-        return packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        return packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL)
             .map { it.activityInfo.applicationInfo }
     }
 }
