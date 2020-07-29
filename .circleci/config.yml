@@ -127,7 +127,7 @@ jobs:
     - run:
         name: deploy release apk to play store
         command: |
-            python tools/basic_upload_apks_service_account.py org.mozilla.firefox.vpn ${RELEASE_APK_PATH}${SIGNED_RELEASE_APK_NAME} service_account.json alpha
+            python tools/basic_upload_apks_service_account.py org.mozilla.firefox.vpn ${RELEASE_APK_PATH}${SIGNED_RELEASE_APK_NAME} service_account.json internal
     - store_artifacts:
         path: app/build/outputs/apk
         destination: apks
