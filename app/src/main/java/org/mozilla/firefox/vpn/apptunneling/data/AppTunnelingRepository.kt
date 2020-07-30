@@ -8,6 +8,7 @@ import android.net.Uri
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.apptunneling.hasPermission
 import org.mozilla.firefox.vpn.apptunneling.isSystemApp
+import org.mozilla.firefox.vpn.apptunneling.isUpdatedSystemApp
 import org.mozilla.firefox.vpn.util.putStringSetSafe
 
 class AppTunnelingRepository(
@@ -32,7 +33,7 @@ class AppTunnelingRepository(
 
         return applicationInfoList
             .asSequence()
-            .filter { includeInternalApps || !it.isSystemApp() }
+            .filter { includeInternalApps || !it.isSystemApp() || it.isUpdatedSystemApp() }
             .filter { it.packageName != BuildConfig.APPLICATION_ID }
             .filter { it.hasPermission(packageManager, android.Manifest.permission.INTERNET) }
             .plus(browserApps)
