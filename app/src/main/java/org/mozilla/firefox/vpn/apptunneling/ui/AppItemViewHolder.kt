@@ -31,7 +31,9 @@ class AppItemViewHolder(
     fun bind(appItem: AppItem) {
         binding.appName.text = appItem.applicationInfo.loadLabel(binding.root.context.packageManager).toString()
         binding.appPackageName.text = appItem.applicationInfo.packageName
-        imageRequest = binding.appIcon.load("android.resource://${appItem.applicationInfo.packageName}/${appItem.applicationInfo.icon}")
+        imageRequest = binding.appIcon.load("android.resource://${appItem.applicationInfo.packageName}/${appItem.applicationInfo.icon}") {
+            error(R.drawable.ic_sys_def_app)
+        }
         binding.appCheckbox.isChecked = appItem.groupType == AppGroupType.PROTECTED
         binding.appCheckbox.isEnabled = appItem.isEnabled
 
