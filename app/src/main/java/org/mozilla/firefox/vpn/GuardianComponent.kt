@@ -2,10 +2,11 @@ package org.mozilla.firefox.vpn
 
 import com.wireguard.android.backend.TunnelManager
 import org.mozilla.firefox.vpn.apptunneling.data.AppTunnelingRepository
+import org.mozilla.firefox.vpn.apptunneling.domain.GetAppTunnelingSwitchStateUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.GetExcludeAppUseCase
 import org.mozilla.firefox.vpn.device.data.DeviceRepository
-import org.mozilla.firefox.vpn.main.vpn.GuardianVpnManager
-import org.mozilla.firefox.vpn.main.vpn.GuardianVpnService
-import org.mozilla.firefox.vpn.main.vpn.VpnManager
+import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
+import org.mozilla.firefox.vpn.main.vpn.*
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.GuardianService
@@ -22,6 +23,7 @@ interface GuardianComponent {
     val appTunnelingRepo: AppTunnelingRepository
     val tunnelManager: TunnelManager<*>
     val vpnManager: VpnManager
+    val connectionConfigProvider: ConnectionConfigProvider
     val userStateResolver: UserStateResolver
     val selectedServerProvider: SelectedServerProvider
     val updateManager: UpdateManager
@@ -59,6 +61,12 @@ class GuardianComponentImpl(
     override val userStateResolver: UserStateResolver by lazy {
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }
     }
+
+    override val connectionConfigProvider: ConnectionConfigProvider = ConnectionConfigProviderImpl(
+        CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
+        GetAppTunnelingSwitchStateUseCase(appTunnelingRepo),
+        GetExcludeAppUseCase(appTunnelingRepo)
+    )
 
     override val selectedServerProvider: SelectedServerProvider = SelectedServerProvider(serverRepo)
 

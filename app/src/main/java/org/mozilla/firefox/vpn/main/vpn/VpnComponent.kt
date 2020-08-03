@@ -33,14 +33,12 @@ class VpnComponentImpl(
             getServersUseCase = GetServersUseCase(serverRepo),
             getSelectedServerUseCase = GetSelectedServerUseCase(serverRepo),
             resolveDispatchableServerUseCase = ResolveDispatchableServerUseCase(GetServersUseCase(serverRepo)),
-            currentDeviceUseCase = CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
             setLatestUpdateMessageUseCase = SetLatestUpdateMessageUseCase(prefs),
             getLatestUpdateMessageUseCase = GetLatestUpdateMessageUseCase(prefs),
             refreshUserInfoUseCase = RefreshUserInfoUseCase(userRepo),
             logoutUseCase = LogoutUseCase(userRepo, deviceRepo),
             notifyUserStateUseCase = NotifyUserStateUseCase(userStateResolver),
-            getAppTunnelingSwitchStateUseCase = GetAppTunnelingSwitchStateUseCase(appTunnelingRepo),
-            getExcludeAppUseCase = GetExcludeAppUseCase(appTunnelingRepo),
+            connectionConfigProvider = guardianComponent.connectionConfigProvider,
             updateManager = updateManager
         )
 }

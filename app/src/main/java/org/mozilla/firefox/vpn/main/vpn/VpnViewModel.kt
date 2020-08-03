@@ -4,14 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
-import androidx.lifecycle.map
-import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.hadilq.liveevent.LiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -20,14 +13,7 @@ import kotlinx.coroutines.withContext
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.R
-import org.mozilla.firefox.vpn.apptunneling.domain.GetAppTunnelingSwitchStateUseCase
-import org.mozilla.firefox.vpn.apptunneling.domain.GetExcludeAppUseCase
-import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
-import org.mozilla.firefox.vpn.main.vpn.domain.GetLatestUpdateMessageUseCase
-import org.mozilla.firefox.vpn.main.vpn.domain.ResolveDispatchableServerUseCase
-import org.mozilla.firefox.vpn.main.vpn.domain.SetLatestUpdateMessageUseCase
-import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
-import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
+import org.mozilla.firefox.vpn.main.vpn.domain.*
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.servers.domain.FilterStrategy
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
@@ -53,14 +39,12 @@ class VpnViewModel(
     private val getServersUseCase: GetServersUseCase,
     private val getSelectedServerUseCase: GetSelectedServerUseCase,
     private val resolveDispatchableServerUseCase: ResolveDispatchableServerUseCase,
-    private val currentDeviceUseCase: CurrentDeviceUseCase,
     private val getLatestUpdateMessageUseCase: GetLatestUpdateMessageUseCase,
     private val setLatestUpdateMessageUseCase: SetLatestUpdateMessageUseCase,
     private val refreshUserInfoUseCase: RefreshUserInfoUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val notifyUserStateUseCase: NotifyUserStateUseCase,
-    private val getAppTunnelingSwitchStateUseCase: GetAppTunnelingSwitchStateUseCase,
-    private val getExcludeAppUseCase: GetExcludeAppUseCase,
+    private val connectionConfigProvider: ConnectionConfigProvider,
     private val updateManager: UpdateManager
 ) : AndroidViewModel(application) {
 
@@ -195,9 +179,8 @@ class VpnViewModel(
 
     private suspend fun connectVpn(server: ServerInfo) {
         val resolved = resolveDispatchableServerUseCase(server) ?: server
-        val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase().toList() else emptyList()
-        currentDeviceUseCase()?.let {
-            vpnManager.connect(resolved, ConnectionConfig(it, excludeApps = excludeApps))
+        connectionConfigProvider.getCurrentConnectionConfig()?.let {
+            vpnManager.connect(resolved, it)
         }
     }
 
@@ -209,9 +192,8 @@ class VpnViewModel(
     private fun switchVpn(oldServer: ServerInfo, newServer: ServerInfo) {
         viewModelScope.launch(Dispatchers.Main.immediate) {
             val resolved = resolveDispatchableServerUseCase(newServer) ?: newServer
-            val excludeApps = if (getAppTunnelingSwitchStateUseCase()) getExcludeAppUseCase().toList() else emptyList()
-            currentDeviceUseCase()?.let {
-                vpnManager.switch(oldServer, resolved, ConnectionConfig(it, excludeApps = excludeApps))
+            connectionConfigProvider.getCurrentConnectionConfig()?.let {
+                vpnManager.switch(oldServer, resolved, it)
             }
         }
     }
