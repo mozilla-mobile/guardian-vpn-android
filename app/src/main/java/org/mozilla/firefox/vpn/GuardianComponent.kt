@@ -8,6 +8,7 @@ import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.*
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
+import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.newInstance
@@ -24,6 +25,7 @@ interface GuardianComponent {
     val tunnelManager: TunnelManager<*>
     val vpnManager: VpnManager
     val connectionConfigProvider: ConnectionConfigProvider
+    val getSelectedServerUseCase: GetSelectedServerUseCase
     val userStateResolver: UserStateResolver
     val selectedServerProvider: SelectedServerProvider
     val updateManager: UpdateManager
@@ -62,6 +64,7 @@ class GuardianComponentImpl(
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }
     }
 
+    override val getSelectedServerUseCase: GetSelectedServerUseCase = GetSelectedServerUseCase(serverRepo)
     override val connectionConfigProvider: ConnectionConfigProvider = ConnectionConfigProviderImpl(
         CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
         GetAppTunnelingSwitchStateUseCase(appTunnelingRepo),

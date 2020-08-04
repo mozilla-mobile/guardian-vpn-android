@@ -8,6 +8,7 @@ import org.mozilla.firefox.vpn.device.data.DeviceRepository
 import org.mozilla.firefox.vpn.device.domain.CurrentDeviceUseCase
 import org.mozilla.firefox.vpn.main.vpn.*
 import org.mozilla.firefox.vpn.servers.data.ServerRepository
+import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.SelectedServerProvider
 import org.mozilla.firefox.vpn.service.MockGuardianService
 import org.mozilla.firefox.vpn.update.UpdateManager
@@ -49,6 +50,8 @@ class MockedGuardianComponent(
     override val userStateResolver: UserStateResolver by lazy {
         UserStateResolver(userRepo, deviceRepo).apply { refresh() }
     }
+
+    override val getSelectedServerUseCase: GetSelectedServerUseCase = GetSelectedServerUseCase(serverRepo)
 
     override val connectionConfigProvider: ConnectionConfigProvider = ConnectionConfigProviderImpl(
         CurrentDeviceUseCase(deviceRepo, userRepo, userStateResolver),
