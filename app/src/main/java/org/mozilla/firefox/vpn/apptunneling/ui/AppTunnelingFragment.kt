@@ -90,10 +90,12 @@ class AppTunnelingFragment : Fragment() {
 
         binding.switchBtn.setOnCheckedChangeListener { _, isChecked ->
             updateInfoState()
+            binding.contentLayout.isVisible = isChecked
             viewModel.switchAppTunneling(isChecked)
         }
 
         binding.switchBtn.isChecked = viewModel.getAppTunnelingSwitchState()
+        binding.contentLayout.isVisible = binding.switchBtn.isChecked
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -142,12 +144,13 @@ class AppTunnelingFragment : Fragment() {
     }
 
     private fun showLoading() {
-        binding.loadingView.isVisible = binding.switchBtn.isChecked
+        binding.loadingView.visibility = View.VISIBLE
+        binding.expandableList.visibility = View.GONE
     }
 
     private fun showData(uiModel: AppTunnelingUiModel) {
         binding.loadingView.visibility = View.GONE
-        binding.expandableList.isVisible = binding.switchBtn.isChecked
+        binding.expandableList.visibility = View.VISIBLE
 
         if (binding.expandableList.adapter == null) {
             binding.expandableList.adapter = ExpandableAdapter(uiModel, onExpandableItemCallback)
@@ -161,7 +164,6 @@ class AppTunnelingFragment : Fragment() {
         binding.infoView.infoText.text = getString(infoState.infoTextResId)
         binding.infoView.root.isVisible =
             !binding.switchBtn.isChecked || infoState is InfoState.Warning
-        binding.expandableList.isVisible = binding.switchBtn.isChecked
     }
 
     private fun showPopupConfig() {
