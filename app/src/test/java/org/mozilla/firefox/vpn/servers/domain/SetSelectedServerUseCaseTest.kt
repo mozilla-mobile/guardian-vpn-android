@@ -27,9 +27,9 @@ class SetSelectedServerUseCaseTest {
         every { edit().putString(any(), any()).apply() } just Runs
     }
 
-    lateinit var serverRepository: ServerRepository
-    lateinit var selectedServerProvider: SelectedServerProvider
-    lateinit var setSelectedServerUseCase: SetSelectedServerUseCase
+    private lateinit var serverRepository: ServerRepository
+    private lateinit var selectedServerProvider: SelectedServerProvider
+    private lateinit var setSelectedServerUseCase: SetSelectedServerUseCase
 
     @Before
     fun setUp() {

@@ -2,10 +2,11 @@ package org.mozilla.firefox.vpn.user.data
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import org.mozilla.firefox.vpn.user.domain.AuthToken
 
 class SessionManager(private val prefs: SharedPreferences) {
 
-    fun createUserInfo(user: UserInfo) {
+    fun saveUserInfo(user: UserInfo) {
         val json = Gson().toJson(user)
         prefs.edit()
             .putString(PREF_USER_INFO, json)
@@ -18,11 +19,23 @@ class SessionManager(private val prefs: SharedPreferences) {
         }
     }
 
-    fun removeUserInfo() {
-        prefs.edit().remove(PREF_USER_INFO).apply()
+    fun saveAuthToken(token: AuthToken) {
+        prefs.edit()
+            .putString(PREF_AUTH_TOKEN, token)
+            .apply()
+    }
+
+    fun getAuthToken(): AuthToken? = prefs.getString(PREF_AUTH_TOKEN, null)
+
+    fun invalidateSession() {
+        prefs.edit()
+            .remove(PREF_USER_INFO)
+            .remove(PREF_AUTH_TOKEN)
+            .apply()
     }
 
     companion object {
         private const val PREF_USER_INFO = "user_info"
+        private const val PREF_AUTH_TOKEN = "auth_token"
     }
 }

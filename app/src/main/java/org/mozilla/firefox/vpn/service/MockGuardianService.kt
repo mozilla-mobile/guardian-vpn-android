@@ -59,19 +59,8 @@ class MockGuardianService : GuardianService {
 
     private val countries = listOf(Country("Mock country", "US", cities))
 
-    override suspend fun getLoginInfo(loginRequestBody: Map<String, String>): Response<LoginInfo> {
-        delay()
-        return Response.success(LoginInfo(
-            loginUrl,
-            verifyUrl,
-            nextYear(),
-            2000
-        ))
-    }
-
-    override suspend fun verifyLogin(verifyUrl: String): Response<LoginResult> {
-        delay()
-        return Response.success(LoginResult(user, "mock_token"))
+    override suspend fun verifyLogin(data: GuardianService.PostData): Response<LoginResult> {
+        return Response.success(LoginResult(("mock_token")))
     }
 
     override suspend fun getUserInfo(connectTimeout: String, readTimeout: String): Response<User> {

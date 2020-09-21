@@ -12,6 +12,12 @@ inline fun <T : Any, R : Any> Result<T>.mapValue(function: (T) -> R): Result<R> 
     }
 }
 
+inline fun <T : Any, R : Any> Result<T>.flatMapValue(function: (T) -> Result<R>): Result<R> =
+    when (this) {
+        is Result.Success -> function(value)
+        is Result.Fail -> Result.Fail(exception)
+    }
+
 inline fun <T : Any> Result<T>.mapError(function: (Exception) -> Exception): Result<T> {
     return when (this) {
         is Result.Success -> this

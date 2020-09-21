@@ -11,15 +11,12 @@ import com.bosphere.filelogger.FLConfig
 import com.bosphere.filelogger.FLConst
 import java.io.File
 import org.mozilla.firefox.vpn.service.DeviceInfo
-import org.mozilla.firefox.vpn.service.LoginInfo
-import org.mozilla.firefox.vpn.service.LoginResult
+import org.mozilla.firefox.vpn.service.User
 import org.mozilla.firefox.vpn.user.data.UserInfo
 import org.mozilla.firefox.vpn.user.data.isDeviceLimitReached
 import org.mozilla.firefox.vpn.user.data.isSubscribed
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.Result
-import org.mozilla.firefox.vpn.util.TimeFormat
-import org.mozilla.firefox.vpn.util.TimeUtil
 import org.mozilla.firefox.vpn.util.onError
 import org.mozilla.firefox.vpn.util.onSuccess
 
@@ -126,8 +123,7 @@ inline fun <reified T : Any> Result<T>.doReport(
 
 inline fun <reified T : Any> reportDataType(value: T): String {
     return when (value) {
-        is LoginInfo -> value.toReport()
-        is LoginResult -> value.toReport()
+        is User -> value.toReport()
         is UserInfo -> value.toReport()
         is DeviceInfo -> value.toReport()
         is List<*> -> {
@@ -146,21 +142,9 @@ fun reportError(tag: String, msg: String) {
     GLog.report(tag, "error($msg)")
 }
 
-fun LoginInfo.toReport(): String {
-    val time = System.currentTimeMillis()
-    val expire = try {
-        TimeUtil.parse(this.expiresOn, TimeFormat.Iso8601).time
-    } catch (e: Exception) {
-        0L
-    }
-    val expireIn = expire - time
-    val interval = this.pollInterval
-    return "expireIn=$expireIn, pollInterval=$interval"
-}
-
-fun LoginResult.toReport(): String {
-    val subscribed = user.subscription.isSubscribed
-    val numDevices = user.devices
+fun User.toReport(): String {
+    val subscribed = subscription.isSubscribed
+    val numDevices = devices
     return "subscribed=$subscribed, numDevices=${numDevices.size}"
 }
 

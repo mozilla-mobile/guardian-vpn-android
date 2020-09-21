@@ -1,9 +1,10 @@
 package org.mozilla.firefox.vpn.user.data
 
 import java.net.UnknownHostException
+import org.mozilla.firefox.vpn.AuthCode
+import org.mozilla.firefox.vpn.crypto.CodeVerifier
+import org.mozilla.firefox.vpn.report.doReport
 import org.mozilla.firefox.vpn.service.GuardianService
-import org.mozilla.firefox.vpn.service.LoginInfo
-import org.mozilla.firefox.vpn.service.LoginQueryBuilder
 import org.mozilla.firefox.vpn.service.LoginResult
 import org.mozilla.firefox.vpn.service.NetworkException
 import org.mozilla.firefox.vpn.service.Subscription
@@ -17,6 +18,7 @@ import org.mozilla.firefox.vpn.service.handleError
 import org.mozilla.firefox.vpn.service.resolveBody
 import org.mozilla.firefox.vpn.service.toErrorBody
 import org.mozilla.firefox.vpn.service.toUnauthorizedError
+import org.mozilla.firefox.vpn.user.domain.AuthToken
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.TimeFormat
@@ -26,71 +28,59 @@ import org.mozilla.firefox.vpn.util.mapValue
 import org.mozilla.firefox.vpn.util.onError
 import org.mozilla.firefox.vpn.util.onSuccess
 
+private const val TAG = "UserRepository"
+
 class UserRepository(
     private val guardianService: GuardianService,
-    private val sessionManager: SessionManager,
-    private val referralManager: ReferralManager
+    private val sessionManager: SessionManager
 ) {
 
     /**
-     * @return Result.Success(loginInfo) or Result.Fail(NetworkException|Otherwise)
+     *
      */
-    suspend fun getLoginInfo(): Result<LoginInfo> {
-        return try {
-            val loginQueryBuilder = LoginQueryBuilder(referralManager.getUserReferral())
-            guardianService.getLoginInfo(loginQueryBuilder.build()).resolveBody()
-        } catch (e: UnknownHostException) {
-            Result.Fail(NetworkException)
-        } catch (e: Exception) {
-            Result.Fail(UnknownException("Unknown exception=$e"))
-        }
+    suspend fun verifyLogin(
+        authCode: AuthCode,
+        codeVerifier: CodeVerifier
+    ): Result<LoginResult> = try {
+        val response =
+            guardianService.verifyLogin(GuardianService.PostData(authCode, codeVerifier))
+
+        response.resolveBody()
+            .handleError(401) {
+                it?.toErrorBody()
+                    ?.toUnauthorizedError()
+                    ?: UnknownErrorBody(it)
+            }
+    } catch (e: UnknownHostException) {
+        Result.Fail(NetworkException)
+    } catch (e: Exception) {
+        Result.Fail(UnknownException("Unknown exception=$e"))
     }
+
+    fun saveUserInfo(user: UserInfo) = sessionManager.saveUserInfo(user)
+
+    fun getUserInfo(): UserInfo? = sessionManager.getUserInfo()
 
     /**
-     * @return Result.Success(loginResult) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
+     * Remove stored user info and auth token.
      */
-    suspend fun verifyLogin(info: LoginInfo): Result<LoginResult> {
-        return try {
-            val response = guardianService.verifyLogin(info.verificationUrl)
-            response.resolveBody()
-                .handleError(401) {
-                    it?.toErrorBody()
-                        ?.toUnauthorizedError()
-                        ?: UnknownErrorBody(it)
-                }
-        } catch (e: UnknownHostException) {
-            Result.Fail(NetworkException)
-        } catch (e: Exception) {
-            Result.Fail(UnknownException("Unknown exception=$e"))
-        }
-    }
+    fun invalidateSession() = sessionManager.invalidateSession()
 
-    fun createUserInfo(user: UserInfo) {
-        sessionManager.createUserInfo(user)
-    }
-
-    fun getUserInfo(): UserInfo? {
-        return sessionManager.getUserInfo()
-    }
-
-    fun removeUserInfo() {
-        sessionManager.removeUserInfo()
-    }
+    fun saveAuthToken(token: AuthToken) = sessionManager.saveAuthToken(token)
 
     /**
      * @return Result.Success(user) or Result.Fail(UnauthorizedException|NetworkException|Otherwise)
      */
     suspend fun refreshUserInfo(connectTimeout: Long = 0, readTimeout: Long = 0): Result<UserInfo> {
-        val userInfo = getUserInfo() ?: return Result.Fail(UnauthorizedException())
-
         return try {
             val response = guardianService.getUserInfo(connectTimeout, readTimeout)
             response.resolveBody()
+                .doReport(tag = TAG)
                 .mapValue {
-                    userInfo.copy(
+                    UserInfo(
                         user = it,
                         latestUpdateTime = System.currentTimeMillis()
-                    ).apply { createUserInfo(this) }
+                    ).apply { saveUserInfo(this) }
                 }
                 .handleError(401) {
                     it?.toErrorBody()
@@ -118,7 +108,6 @@ class UserRepository(
 
 data class UserInfo(
     val user: User,
-    val token: String,
     val latestUpdateTime: Long
 )
 

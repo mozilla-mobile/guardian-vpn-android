@@ -11,7 +11,7 @@ class LogoutUseCase(
 
     operator fun invoke() {
         GLog.report(TAG, "logged out")
-        userRepository.removeUserInfo()
+        userRepository.invalidateSession()
         deviceRepository.removeDevice()
     }
 

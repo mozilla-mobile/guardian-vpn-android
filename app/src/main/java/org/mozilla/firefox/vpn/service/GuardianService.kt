@@ -1,7 +1,6 @@
 package org.mozilla.firefox.vpn.service
 
 import android.os.Build
-import androidx.core.net.toUri
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -17,9 +16,13 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import org.mozilla.firefox.vpn.AuthCode
 import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.const.ENDPOINT
+import org.mozilla.firefox.vpn.crypto.CodeChallenge
+import org.mozilla.firefox.vpn.crypto.CodeVerifier
 import org.mozilla.firefox.vpn.user.data.SessionManager
+import org.mozilla.firefox.vpn.user.domain.AuthToken
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
@@ -31,15 +34,16 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.QueryMap
-import retrofit2.http.Url
 
 interface GuardianService {
-    @POST("api/v1/vpn/login")
-    suspend fun getLoginInfo(@QueryMap referral: Map<String, String>): Response<LoginInfo>
 
-    @GET
-    suspend fun verifyLogin(@Url verifyUrl: String): Response<LoginResult>
+    @POST("/api/v2/vpn/login/verify/")
+    suspend fun verifyLogin(@Body postData: PostData): Response<LoginResult>
+
+    data class PostData(
+        @SerializedName("code") val code: AuthCode,
+        @SerializedName("code_verifier") val codeVerifier: CodeVerifier
+    )
 
     @GET("api/v1/vpn/account")
     suspend fun getUserInfo(
@@ -67,6 +71,12 @@ interface GuardianService {
         const val HOST_CONTACT = "$HOST_GUARDIAN/r/vpn/contact"
         const val HOST_TERMS = "$HOST_GUARDIAN/r/vpn/terms"
         const val HOST_PRIVACY = "$HOST_GUARDIAN/r/vpn/privacy"
+
+        fun getLoginUrl(
+            codeChallenge: CodeChallenge,
+            challengeMethod: String = "S256"
+        ) = "$HOST_GUARDIAN/api/v2/vpn/login/android?" +
+                "code_challenge=$codeChallenge&code_challenge_method=$challengeMethod"
     }
 }
 
@@ -78,7 +88,7 @@ fun GuardianService.Companion.newInstance(sessionManager: SessionManager): Guard
                 .header("User-Agent", getUserAgent())
                 .method(original.method(), original.body())
             if (original.isHttps) {
-                request.addHeader("Authorization", "Bearer ${sessionManager.getUserInfo()?.token}")
+                request.addHeader("Authorization", "Bearer ${sessionManager.getAuthToken()}")
             }
             it.proceed(request.build())
         }
@@ -150,30 +160,13 @@ private class TimeoutInterceptor : Interceptor {
 
 private fun getUserAgent(): String {
     val os = "Android ${Build.VERSION.RELEASE}"
-    val abi = Build.SUPPORTED_ABIS.firstOrNull()?.let { it } ?: "no-support-abi"
+    val abi = Build.SUPPORTED_ABIS.firstOrNull() ?: "no-support-abi"
     return "FirefoxPrivateNetworkVPN/${BuildConfig.VERSION_NAME} ($os; $abi)"
 }
 
-data class LoginInfo(
-    @SerializedName("login_url")
-    val loginUrl: String,
-
-    @SerializedName("verification_url")
-    val verificationUrl: String,
-
-    @SerializedName("expires_on")
-    val expiresOn: String,
-
-    @SerializedName("poll_interval")
-    val pollInterval: Int
-)
-
 data class LoginResult(
-    @SerializedName("user")
-    val user: User,
-
     @SerializedName("token")
-    val token: String
+    val token: AuthToken
 )
 
 data class User(
@@ -324,18 +317,6 @@ data class Version(
     val message: String
 )
 
-class LoginQueryBuilder(private val referral: String) {
-
-    fun build(): Map<String, String> {
-        return "mozilla.com?$referral".toUri().let { uri ->
-            uri.queryParameterNames
-                .filter { it.isNotEmpty() } // parameter name shouldn't be empty
-                .map { it to (uri.getQueryParameter(it) ?: "") }
-                .toMap()
-        }
-    }
-}
-
 data class DeviceRequestBody(
     val name: String,
     val pubkey: String
@@ -423,10 +404,12 @@ object LoginTokenNotFound : UnauthorizedException()
 object LoginTokenExpired : UnauthorizedException()
 object LoginTokenUnverified : UnauthorizedException()
 
+object BrowserClosedWithoutLogin : RuntimeException()
+
 data class ExpiredException(val currentTime: String, val expireTime: String) : RuntimeException()
 class ErrorCodeException(val code: Int, val errorBody: ResponseBody?) : RuntimeException()
 
 object NetworkException : RuntimeException()
 
-open class UnknownException(private val msg: String) : RuntimeException(msg)
+open class UnknownException(msg: String) : RuntimeException(msg)
 data class UnknownErrorBody(val body: ResponseBody?) : UnknownException("${body?.string()}")
