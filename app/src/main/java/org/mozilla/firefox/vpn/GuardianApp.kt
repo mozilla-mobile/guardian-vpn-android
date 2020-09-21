@@ -8,7 +8,7 @@ import org.mozilla.firefox.vpn.report.ReportUtil
 import org.mozilla.firefox.vpn.service.MockGuardianService
 import org.mozilla.firefox.vpn.util.NotificationUtil
 
-class GuardianApp : Application() {
+open class GuardianApp : Application() {
 
     val coreComponent: CoreComponent by lazy {
         CoreComponentImpl(this)

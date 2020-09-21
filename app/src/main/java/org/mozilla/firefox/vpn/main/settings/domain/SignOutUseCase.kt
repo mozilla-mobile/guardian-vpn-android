@@ -27,7 +27,7 @@ class SignOutUseCase(
         CoroutineScope(coroutineContext + NonCancellable).launch {
             deviceRepository.getDevice()?.let {
                 deviceRepository.unregisterDevice(it.device.pubKey)
-                userRepository.removeUserInfo()
+                userRepository.invalidateSession()
             }
         }
     }

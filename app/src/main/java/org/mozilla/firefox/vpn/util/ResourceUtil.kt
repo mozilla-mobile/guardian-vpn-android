@@ -8,8 +8,8 @@ import java.util.Locale
 
 class StringResource {
     var id: Int? = null
-    var str: String? = null
-    var formatArgs: Array<out String>? = null
+    private var str: String? = null
+    private var formatArgs: Array<out String>? = null
 
     constructor(str: String) {
         this.str = str

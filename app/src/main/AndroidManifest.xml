@@ -50,6 +50,20 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity android:name="org.mozilla.firefox.vpn.IntentReceiverActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="mozilla-vpn"
+                    android:host="login"
+                    android:path="/success" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name="org.mozilla.firefox.vpn.main.vpn.GuardianVpnService"
             android:permission="android.permission.BIND_VPN_SERVICE">

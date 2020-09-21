@@ -3,7 +3,6 @@ package org.mozilla.firefox.vpn.onboarding
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -40,11 +39,11 @@ class OnboardingActivity : AppCompatActivity() {
 
         viewModel.isLoggedOut = isLoggedOut()
 
-        viewModel.toast.observe(this, Observer {
+        viewModel.bus.toast.observe(this, Observer {
             Toast.makeText(this, it.resolve(this), Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.showLoggedOutMessage.observe(this, Observer {
+        viewModel.bus.showLoggedOutMessage.observe(this, Observer {
             val message = it.resolve(this) ?: return@Observer
             val sb = GuardianSnackbar.make(
                 binding.container,
@@ -57,31 +56,21 @@ class OnboardingActivity : AppCompatActivity() {
             sb.show()
         })
 
-        viewModel.promptLogin.observe(this, Observer {
+        viewModel.bus.promptLogin.observe(this, Observer {
             customTab.launchUrl(it)
         })
 
-        viewModel.launchMainPage.observerUntilOnDestroy(this, Observer {
+        viewModel.bus.launchMainPage.observerUntilOnDestroy(this, Observer {
             if (redirectHandled) {
                 handlePreviousFailedRedirection()
             } else {
-                redirectHandled = true
                 redirectToMainPage()
             }
         })
 
-        viewModel.uiModel.observe(this, Observer {
-            binding.loadingView.visibility = if (it.isLoading) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+        viewModel.bus.closeTabsToOnboarding.observerUntilOnDestroy(this, Observer {
+            closeCustomTabsToOnboarding()
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.resumeLoginFlow()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -106,6 +95,16 @@ class OnboardingActivity : AppCompatActivity() {
         // To close custom tab first, current approach launches OnboardingActivity again with
         // FLAG_ACTIVITY_CLEAR_TOP to clear the custom tab, and since onNewIntent() will be called
         // in this case, we launch main activity there
+        redirectHandled = true
+
+        startActivity(getStartIntent(this@OnboardingActivity).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        })
+    }
+
+    private fun closeCustomTabsToOnboarding() {
+        // See #redirectToMainPage for explanation
+        redirectHandled = false
 
         startActivity(getStartIntent(this@OnboardingActivity).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
