@@ -37,27 +37,22 @@ class GetAuthCodeUseCase(
         val authCodeReceived = CompletableDeferred<AuthCode>().also {
             IntentReceiverActivity.setAuthCodeReceivedDeferred(it)
         }
-        val customTabsClosed = CompletableDeferred<Unit>().also {
-            LoginCustomTab.setCustomTabsClosedEvent(it)
-        }
 
         val loginUrl = GuardianService.getLoginUrl(codeChallenge)
         bus.promptLogin.postValue(loginUrl)
 
         return try {
-            while (!authCodeReceived.isCompleted && !customTabsClosed.isCompleted) {
+            while (!authCodeReceived.isCompleted) {
                 scope.ensureActive() // Yield to check for cancellation
                 /* block */
             }
 
             when {
                 authCodeReceived.isCompleted -> Result.Success(authCodeReceived.await())
-                customTabsClosed.isCompleted -> Result.Fail(BrowserClosedWithoutLogin)
                 else -> Result.Fail(UnknownException("Get secret failed unexpectedly"))
             }
         } finally {
             authCodeReceived.cancel()
-            customTabsClosed.cancel()
 
             Result.Fail(NetworkException)
         }
