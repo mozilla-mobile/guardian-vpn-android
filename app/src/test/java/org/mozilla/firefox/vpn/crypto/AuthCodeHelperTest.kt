@@ -8,8 +8,10 @@ import kotlin.random.Random
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.firefox.vpn.FakeAndroidKeyStore
 import org.mozilla.firefox.vpn.TestGuardianApp
 import org.mozilla.firefox.vpn.WORKING_SDK
 import org.robolectric.RobolectricTestRunner
@@ -101,5 +103,13 @@ class AuthCodeHelperTest {
         val codeChallenge = AuthCodeHelper.generateCodeChallenge(verifier)
 
         assertEquals("RZ77XZltYSfl0BLxuGd8pHGJ4EoMoVDVuSWHgNq3RY8=", codeChallenge)
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun beforeClass() {
+            FakeAndroidKeyStore.setup
+        }
     }
 }
