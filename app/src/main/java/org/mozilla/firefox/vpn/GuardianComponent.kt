@@ -30,7 +30,7 @@ class GuardianComponentImpl(
     private val coreComponent: CoreComponent
 ) : GuardianComponent, CoreComponent by coreComponent {
 
-    private val sessionManager = SessionManager(prefs)
+    private val sessionManager = SessionManager(encryptedPrefs)
 
     var service = GuardianService.newInstance(sessionManager)
 
