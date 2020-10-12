@@ -11,11 +11,9 @@ import org.mozilla.firefox.vpn.AuthCode
 import org.mozilla.firefox.vpn.IntentReceiverActivity
 import org.mozilla.firefox.vpn.crypto.CodeChallenge
 import org.mozilla.firefox.vpn.onboarding.Bus
-import org.mozilla.firefox.vpn.service.BrowserClosedWithoutLogin
 import org.mozilla.firefox.vpn.service.GuardianService
 import org.mozilla.firefox.vpn.service.NetworkException
 import org.mozilla.firefox.vpn.service.UnknownException
-import org.mozilla.firefox.vpn.util.LoginCustomTab
 import org.mozilla.firefox.vpn.util.Result
 
 class GetAuthCodeUseCase(
