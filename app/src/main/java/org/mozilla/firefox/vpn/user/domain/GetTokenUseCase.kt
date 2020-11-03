@@ -6,15 +6,11 @@ package org.mozilla.firefox.vpn.user.domain
 
 import kotlinx.coroutines.CoroutineScope
 import org.mozilla.firefox.vpn.crypto.AuthCodeHelper
+import org.mozilla.firefox.vpn.user.data.AuthToken
 import org.mozilla.firefox.vpn.user.data.UserRepository
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.flatMapValue
 import org.mozilla.firefox.vpn.util.mapValue
-
-/**
- * Token that is attached to all requests made by an authenticated user.
- */
-typealias AuthToken = String
 
 class GetTokenUseCase(
     private val userRepository: UserRepository,
