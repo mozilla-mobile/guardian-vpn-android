@@ -9,7 +9,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CompletableDeferred
 import org.mozilla.firefox.vpn.ext.toCode
-import org.mozilla.firefox.vpn.user.domain.AuthToken
 
 /**
  * Code that is included in the `verify` request that is used to retrieve an [AuthToken].

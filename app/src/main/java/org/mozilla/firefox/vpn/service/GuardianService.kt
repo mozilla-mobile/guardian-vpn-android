@@ -21,8 +21,8 @@ import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.const.ENDPOINT
 import org.mozilla.firefox.vpn.crypto.CodeChallenge
 import org.mozilla.firefox.vpn.crypto.CodeVerifier
+import org.mozilla.firefox.vpn.user.data.AuthToken
 import org.mozilla.firefox.vpn.user.data.SessionManager
-import org.mozilla.firefox.vpn.user.domain.AuthToken
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
@@ -81,6 +81,13 @@ interface GuardianService {
 }
 
 fun GuardianService.Companion.newInstance(sessionManager: SessionManager): GuardianService {
+    val logLevel = if (BuildConfig.DEBUG) {
+        // Warning: this will log headers and full body. Do not use for production builds.
+        HttpLoggingInterceptor.Level.BODY
+    } else {
+        // Logs request URL and response code only.
+        HttpLoggingInterceptor.Level.BASIC
+    }
     val client = OkHttpClient.Builder()
         .addInterceptor {
             val original = it.request()
@@ -93,7 +100,7 @@ fun GuardianService.Companion.newInstance(sessionManager: SessionManager): Guard
             it.proceed(request.build())
         }
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = logLevel
         })
         .addInterceptor(TimeoutInterceptor())
         .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))

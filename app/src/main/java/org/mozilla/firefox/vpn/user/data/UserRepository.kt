@@ -11,14 +11,12 @@ import org.mozilla.firefox.vpn.service.Subscription
 import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.service.UnknownErrorBody
 import org.mozilla.firefox.vpn.service.UnknownException
-import org.mozilla.firefox.vpn.service.User
 import org.mozilla.firefox.vpn.service.Versions
 import org.mozilla.firefox.vpn.service.getUserInfo
 import org.mozilla.firefox.vpn.service.handleError
 import org.mozilla.firefox.vpn.service.resolveBody
 import org.mozilla.firefox.vpn.service.toErrorBody
 import org.mozilla.firefox.vpn.service.toUnauthorizedError
-import org.mozilla.firefox.vpn.user.domain.AuthToken
 import org.mozilla.firefox.vpn.util.GLog
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.TimeFormat
@@ -105,11 +103,6 @@ class UserRepository(
         }
     }
 }
-
-data class UserInfo(
-    val user: User,
-    val latestUpdateTime: Long
-)
 
 val UserInfo.isSubscribed: Boolean
     get() {

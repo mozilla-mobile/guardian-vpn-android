@@ -1,13 +1,19 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.firefox.vpn.user.data
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import org.mozilla.firefox.vpn.user.domain.AuthToken
 
 class SessionManager(private val prefs: SharedPreferences) {
+    init {
+        DataMigration(prefs).migrate()
+    }
 
-    fun saveUserInfo(user: UserInfo) {
-        val json = Gson().toJson(user)
+    fun saveUserInfo(userInfo: UserInfo) {
+        val json = Gson().toJson(userInfo)
         prefs.edit()
             .putString(PREF_USER_INFO, json)
             .apply()
@@ -32,10 +38,5 @@ class SessionManager(private val prefs: SharedPreferences) {
             .remove(PREF_USER_INFO)
             .remove(PREF_AUTH_TOKEN)
             .apply()
-    }
-
-    companion object {
-        private const val PREF_USER_INFO = "user_info"
-        private const val PREF_AUTH_TOKEN = "auth_token"
     }
 }
