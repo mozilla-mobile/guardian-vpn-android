@@ -17,7 +17,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric.buildActivity
@@ -210,14 +209,6 @@ class IntentReceiverActivityTest {
 
         return runBlocking {
             shouldPass == (authCodeReceived.isCompleted && code == authCodeReceived.await())
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        @BeforeClass
-        fun beforeClass() {
-            FakeAndroidKeyStore.setup
         }
     }
 }
