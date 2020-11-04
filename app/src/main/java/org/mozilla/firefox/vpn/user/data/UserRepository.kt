@@ -11,7 +11,6 @@ import org.mozilla.firefox.vpn.service.Subscription
 import org.mozilla.firefox.vpn.service.UnauthorizedException
 import org.mozilla.firefox.vpn.service.UnknownErrorBody
 import org.mozilla.firefox.vpn.service.UnknownException
-import org.mozilla.firefox.vpn.service.User
 import org.mozilla.firefox.vpn.service.Versions
 import org.mozilla.firefox.vpn.service.getUserInfo
 import org.mozilla.firefox.vpn.service.handleError
