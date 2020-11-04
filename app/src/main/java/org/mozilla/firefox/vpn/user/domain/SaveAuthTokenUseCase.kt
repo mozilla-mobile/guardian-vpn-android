@@ -4,6 +4,7 @@
 
 package org.mozilla.firefox.vpn.user.domain
 
+import org.mozilla.firefox.vpn.user.data.AuthToken
 import org.mozilla.firefox.vpn.user.data.UserRepository
 
 class SaveAuthTokenUseCase(private val userRepository: UserRepository) {

@@ -21,8 +21,8 @@ import org.mozilla.firefox.vpn.BuildConfig
 import org.mozilla.firefox.vpn.const.ENDPOINT
 import org.mozilla.firefox.vpn.crypto.CodeChallenge
 import org.mozilla.firefox.vpn.crypto.CodeVerifier
+import org.mozilla.firefox.vpn.user.data.AuthToken
 import org.mozilla.firefox.vpn.user.data.SessionManager
-import org.mozilla.firefox.vpn.user.domain.AuthToken
 import org.mozilla.firefox.vpn.util.Result
 import org.mozilla.firefox.vpn.util.mapError
 import retrofit2.Response
