@@ -81,6 +81,13 @@ interface GuardianService {
 }
 
 fun GuardianService.Companion.newInstance(sessionManager: SessionManager): GuardianService {
+    val logLevel = if (BuildConfig.DEBUG) {
+        // Warning: this will log headers and full body. Do not use for production builds.
+        HttpLoggingInterceptor.Level.BODY
+    } else {
+        // Logs request URL and response code only.
+        HttpLoggingInterceptor.Level.BASIC
+    }
     val client = OkHttpClient.Builder()
         .addInterceptor {
             val original = it.request()
@@ -93,7 +100,7 @@ fun GuardianService.Companion.newInstance(sessionManager: SessionManager): Guard
             it.proceed(request.build())
         }
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = logLevel
         })
         .addInterceptor(TimeoutInterceptor())
         .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
