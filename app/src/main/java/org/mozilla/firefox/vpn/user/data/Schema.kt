@@ -10,7 +10,7 @@ import org.mozilla.firefox.vpn.service.User
 
 const val PREF_SCHEMA_VERSION = "schema_version"
 const val PREF_USER_INFO = "user_info"
-const val PREF_AUTH_TOKEN = "auth_info"
+const val PREF_AUTH_TOKEN = "auth_token"
 
 /**
  * Token that is attached to all requests made by an authenticated user.
