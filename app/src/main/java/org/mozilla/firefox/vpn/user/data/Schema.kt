@@ -52,7 +52,7 @@ class DataMigration(private val prefs: SharedPreferences) {
         // 1->2
         if (currentVersion == 1) {
             migrate1to2()
-        }// else if ... -> on new versions, expand the migrations.
+        } // else if ... -> on new versions, expand the migrations.
     }
 
     private fun migrate1to2() {

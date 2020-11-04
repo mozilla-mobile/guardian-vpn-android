@@ -8,7 +8,8 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.gson.Gson
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.firefox.vpn.WORKING_SDK
@@ -115,7 +116,7 @@ class DataMigrationTest {
 internal fun v1UserInfo(): DataMigration.UserInfoV1 {
     return DataMigration.UserInfoV1(
         user = User(
-            email ="test@mozilla.com",
+            email = "test@mozilla.com",
             displayName = "Test User v1",
             avatar = "http://someAvatar.url",
             subscription = Subscription(
@@ -136,7 +137,7 @@ internal fun v1UserInfo(): DataMigration.UserInfoV1 {
 internal fun v2UserInfo(): DataMigration.UserInfoV2 {
     return DataMigration.UserInfoV2(
         user = User(
-            email ="test@mozilla.com",
+            email = "test@mozilla.com",
             displayName = "Test User v2",
             avatar = "http://someAvatar.url",
             subscription = Subscription(
