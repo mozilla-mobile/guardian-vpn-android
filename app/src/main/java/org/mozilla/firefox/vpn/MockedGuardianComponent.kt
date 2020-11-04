@@ -17,7 +17,7 @@ class MockedGuardianComponent(
     private val coreComponent: CoreComponent
 ) : GuardianComponent, CoreComponent by coreComponent {
 
-    private val sessionManager = SessionManager(prefs, encryptedPrefs)
+    private val sessionManager = SessionManager(prefs)
 
     var service = MockGuardianService()
 
