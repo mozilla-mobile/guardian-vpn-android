@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name="org.mozilla.firefox.vpn.GuardianApp"
@@ -82,6 +83,13 @@
                 android:resource="@xml/file_paths" />
 
         </provider>
+
+        <!-- Enables VPN auto-start on API23 devices -->
+        <receiver android:name="org.mozilla.firefox.vpn.receivers.LegacyBootBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
