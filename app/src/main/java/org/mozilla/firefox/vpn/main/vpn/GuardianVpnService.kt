@@ -7,6 +7,9 @@ import com.wireguard.android.backend.TunnelManager
 import com.wireguard.android.backend.WireGuardVpnService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.GuardianApp
 import org.mozilla.firefox.vpn.ext.connectVpnIfPossible
@@ -14,6 +17,8 @@ import org.mozilla.firefox.vpn.util.NotificationUtil
 
 class GuardianVpnService : WireGuardVpnService() {
     private val logTag = "GuardianVpnService"
+
+    private val coroutineScope by lazy { CoroutineScope(Dispatchers.IO) + SupervisorJob() }
 
     private val component by lazy {
         (applicationContext as GuardianApp).guardianComponent
@@ -31,6 +36,9 @@ class GuardianVpnService : WireGuardVpnService() {
             COMMAND_TURN_OFF -> {
                 Log.d(logTag, "Handling 'turn off' command")
                 // Service being turned off manually by the user.
+                // We don't stop the service here ourselves (e.g. stopSelf()); below we pass along
+                // the intent over to wireguard's 'onStartCommand', which will turn itself off,
+                // and notify any VPN state listeners.
                 stopForeground(false)
             }
             COMMAND_TURN_ON -> {
@@ -44,12 +52,16 @@ class GuardianVpnService : WireGuardVpnService() {
                 // Below we'll "properly" start ourselves, setting up a tunnel with a selected server, etc.
                 // We'll end-up circling back to this method, since while it's turning on, wireguard's
                 // TunnelManager ends up starting this service with a COMMAND_TURN_ON extra.
-                CoroutineScope(Dispatchers.IO).launch {
+                coroutineScope.launch {
                     this@GuardianVpnService.connectVpnIfPossible(logTag)
                 }
             }
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        coroutineScope.cancel()
     }
 
     companion object {
