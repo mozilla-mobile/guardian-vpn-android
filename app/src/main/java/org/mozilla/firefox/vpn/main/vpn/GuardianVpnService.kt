@@ -12,7 +12,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.launch
 import org.mozilla.firefox.vpn.GuardianApp
+import org.mozilla.firefox.vpn.UserState
 import org.mozilla.firefox.vpn.ext.connectVpnIfPossible
+import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.util.NotificationUtil
 
 class GuardianVpnService : WireGuardVpnService() {
@@ -29,6 +31,18 @@ class GuardianVpnService : WireGuardVpnService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Short-circuit if user isn't logged-in, subscribed, has a registered device, etc.
+        if (this.guardianComponent.userStateResolver.resolve() != UserState.Normal) {
+            // If this extra is present, somehow, WireGuardVpnService will attempt to process it and
+            // may try to start. So let's remove it just in case.
+            // This extra should only be present if we're starting the service ourselves from the UI.
+            // It should not be possible to start a service while we're in a bad state,
+            // so this may be an unnecessary (yet harmless) precaution.
+            // When Android is starting us as part of Always-On mode, it should not pass us any extras.
+            Log.d(logTag, "Not in a good state, short-circuiting onStartCommand")
+            intent?.removeExtra(EXTRA_COMMAND)
+            return super.onStartCommand(intent, flags, startId)
+        }
         val turnOn = {
             startForeground(NotificationUtil.DEFAULT_NOTIFICATION_ID, NotificationUtil.createBaseBuilder(this).build())
         }
