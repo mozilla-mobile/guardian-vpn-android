@@ -9,13 +9,7 @@
     <fragment
         android:id="@+id/navigation_entrance"
         android:name="org.mozilla.firefox.vpn.onboarding.entrance.EntranceFragment"
-        tools:layout="@layout/fragment_entrance">
-
-        <action
-            android:id="@+id/action_intro"
-            app:destination="@id/navigation_intro"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_entrance"/>
 
     <fragment
         android:id="@+id/navigation_intro"

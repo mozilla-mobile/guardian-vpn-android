@@ -1,4 +1,4 @@
-package org.mozilla.firefox.vpn.servers.ui
+package org.mozilla.firefox.vpn.servers
 
 import org.mozilla.firefox.vpn.CoreComponent
 import org.mozilla.firefox.vpn.GuardianComponent
@@ -6,6 +6,7 @@ import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 import org.mozilla.firefox.vpn.servers.domain.GetSelectedServerUseCase
 import org.mozilla.firefox.vpn.servers.domain.GetServersUseCase
 import org.mozilla.firefox.vpn.servers.domain.SetSelectedServerUseCase
+import org.mozilla.firefox.vpn.servers.ui.ServersViewModel
 
 interface ServersComponent {
     val viewModel: ServersViewModel

@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.databinding.ItemIntroBinding
-import org.mozilla.firefox.vpn.onboarding.intro.IntroListAdapter.IntroViewHolder
+import org.mozilla.firefox.vpn.onboarding.intro.IntroAdapter.IntroViewHolder
 
-class IntroListAdapter : RecyclerView.Adapter<IntroViewHolder>() {
+class IntroAdapter : RecyclerView.Adapter<IntroViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IntroViewHolder =
         IntroViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_intro, parent, false))

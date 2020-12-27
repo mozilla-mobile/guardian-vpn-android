@@ -16,6 +16,7 @@ import org.mozilla.firefox.vpn.coreComponent
 import org.mozilla.firefox.vpn.databinding.FragmentServersBinding
 import org.mozilla.firefox.vpn.guardianComponent
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
+import org.mozilla.firefox.vpn.servers.ServersComponentImpl
 import org.mozilla.firefox.vpn.servers.data.ServerInfo
 import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
@@ -23,7 +24,10 @@ import org.mozilla.firefox.vpn.util.viewModel
 class ServersFragment : BottomSheetDialogFragment() {
 
     private val component by lazy {
-        ServersComponentImpl(context!!.coreComponent, context!!.guardianComponent)
+        ServersComponentImpl(
+            context!!.coreComponent,
+            context!!.guardianComponent
+        )
     }
 
     private val viewModel by viewModel { component.viewModel }
@@ -59,7 +63,7 @@ class ServersFragment : BottomSheetDialogFragment() {
             }
 
             (params.behavior as? BottomSheetBehavior)?.apply {
-                setBottomSheetCallback(bottomSheetBehaviorCallback)
+                addBottomSheetCallback(bottomSheetBehaviorCallback)
                 peekHeight = 0
                 state = BottomSheetBehavior.STATE_EXPANDED
             }
