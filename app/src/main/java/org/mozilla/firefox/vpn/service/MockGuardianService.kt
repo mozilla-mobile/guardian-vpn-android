@@ -59,7 +59,7 @@ class MockGuardianService : GuardianService {
 
     private val countries = listOf(Country("Mock country", "US", cities))
 
-    override suspend fun verifyLogin(data: GuardianService.PostData): Response<LoginResult> {
+    override suspend fun verifyLogin(postData: GuardianService.PostData): Response<LoginResult> {
         return Response.success(LoginResult(("mock_token")))
     }
 

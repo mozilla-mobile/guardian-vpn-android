@@ -2,7 +2,11 @@ package org.mozilla.firefox.vpn.apptunneling.ui
 
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -13,10 +17,14 @@ import org.mozilla.firefox.vpn.R
 import org.mozilla.firefox.vpn.apptunneling.AppTunnelingComponentImpl
 import org.mozilla.firefox.vpn.apptunneling.ui.AppTunnelingViewModel.InfoState
 import org.mozilla.firefox.vpn.databinding.FragmentAppTunnelingBinding
+import org.mozilla.firefox.vpn.databinding.ViewAppTunnelingConfigBinding
 import org.mozilla.firefox.vpn.guardianComponent
+import org.mozilla.firefox.vpn.main.getSupportActionBar
+import org.mozilla.firefox.vpn.main.setSupportActionBar
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.ui.GuardianSnackbar
 import org.mozilla.firefox.vpn.ui.InAppNotificationView
+import org.mozilla.firefox.vpn.util.PopupWindowUtil
 import org.mozilla.firefox.vpn.util.StringResource
 import org.mozilla.firefox.vpn.util.viewBinding
 import org.mozilla.firefox.vpn.util.viewModel
@@ -32,8 +40,12 @@ class AppTunnelingFragment : Fragment() {
     }
 
     private var binding: FragmentAppTunnelingBinding by viewBinding()
-
     private var snackBar: GuardianSnackbar? = null
+    private var popupWidth: Int = 0
+    private var popupLeftMargin: Int = 0
+
+    private lateinit var popupBinding: ViewAppTunnelingConfigBinding
+    private lateinit var popupUtil: PopupWindowUtil
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentAppTunnelingBinding.inflate(inflater, container, false)
@@ -42,6 +54,8 @@ class AppTunnelingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initActionBar()
+        initPopupConfig()
 
         viewModel.uiModel.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -76,19 +90,67 @@ class AppTunnelingFragment : Fragment() {
 
         binding.switchBtn.setOnCheckedChangeListener { _, isChecked ->
             updateInfoState()
+            binding.contentLayout.isVisible = isChecked
             viewModel.switchAppTunneling(isChecked)
         }
 
         binding.switchBtn.isChecked = viewModel.getAppTunnelingSwitchState()
+        binding.contentLayout.isVisible = binding.switchBtn.isChecked
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_app_tunneling, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.more -> showPopupConfig()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun initActionBar() {
+        setHasOptionsMenu(true)
+
+        activity?.apply {
+            setSupportActionBar(binding.toolbar)
+            getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        }
+    }
+
+    private fun initPopupConfig() {
+        popupWidth = resources.getDimensionPixelSize(R.dimen.app_tunneling_config_width)
+        popupLeftMargin = resources.getDimensionPixelSize(R.dimen.app_tunneling_config_left_margin)
+
+        popupUtil = PopupWindowUtil(
+            context!!,
+            R.layout.view_app_tunneling_config,
+            width = popupWidth)
+
+        popupBinding = ViewAppTunnelingConfigBinding.bind(popupUtil.getRootView())
+
+        popupBinding.systemAppsCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.switchShowSystemApps(isChecked)
+        }
+
+        popupBinding.systemAppsCheckbox.isChecked = viewModel.getShowSystemAppsSwitchState()
+
+        popupBinding.newAppsCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.switchProtectNewApps(isChecked)
+        }
+
+        popupBinding.newAppsCheckbox.isChecked = viewModel.getProtectNewAppsSwitchState()
     }
 
     private fun showLoading() {
-        binding.loadingView.isVisible = binding.switchBtn.isChecked
+        binding.loadingView.visibility = View.VISIBLE
+        binding.expandableList.visibility = View.GONE
     }
 
     private fun showData(uiModel: AppTunnelingUiModel) {
         binding.loadingView.visibility = View.GONE
-        binding.expandableList.isVisible = binding.switchBtn.isChecked
+        binding.expandableList.visibility = View.VISIBLE
 
         if (binding.expandableList.adapter == null) {
             binding.expandableList.adapter = ExpandableAdapter(uiModel, onExpandableItemCallback)
@@ -102,7 +164,10 @@ class AppTunnelingFragment : Fragment() {
         binding.infoView.infoText.text = getString(infoState.infoTextResId)
         binding.infoView.root.isVisible =
             !binding.switchBtn.isChecked || infoState is InfoState.Warning
-        binding.expandableList.isVisible = binding.switchBtn.isChecked
+    }
+
+    private fun showPopupConfig() {
+        popupUtil.showAtLocation(binding.root, Gravity.END or Gravity.TOP, x = popupLeftMargin)
     }
 
     private fun showSnackBar(config: InAppNotificationView.Config) {

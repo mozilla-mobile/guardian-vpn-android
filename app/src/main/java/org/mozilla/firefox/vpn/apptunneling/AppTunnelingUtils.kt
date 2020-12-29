@@ -11,6 +11,11 @@ fun ApplicationInfo.isSystemApp(): Boolean {
     return (this.flags and systemFlag) != 0
 }
 
+fun ApplicationInfo.isUpdatedSystemApp(): Boolean {
+    val updatedSystemFlag = ApplicationInfo.FLAG_UPDATED_SYSTEM_APP
+    return (this.flags and updatedSystemFlag) != 0
+}
+
 fun ApplicationInfo.hasPermission(packageManager: PackageManager, permission: String): Boolean {
     return PackageManager.PERMISSION_GRANTED == packageManager.checkPermission(permission, this.packageName)
 }

@@ -13,8 +13,12 @@ import org.mozilla.firefox.vpn.apptunneling.domain.AddExcludeAppUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.GetAppTunnelingSwitchStateUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.GetExcludeAppUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.GetPackagesUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.GetProtectNewAppsSwitchStateUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.GetShowSystemAppsSwitchStateUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.RemoveExcludeAppUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.SwitchAppTunnelingUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.SwitchProtectNewAppsUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.SwitchShowSystemAppsUseCase
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnState
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnStateProvider
 import org.mozilla.firefox.vpn.util.combineWith
@@ -26,7 +30,11 @@ class AppTunnelingViewModel(
     private val addExcludeAppUseCase: AddExcludeAppUseCase,
     private val removeExcludeAppUseCase: RemoveExcludeAppUseCase,
     private val getAppTunnelingSwitchStateUseCase: GetAppTunnelingSwitchStateUseCase,
-    private val switchStateUseCase: SwitchAppTunnelingUseCase
+    private val switchAppTunnelingUseCase: SwitchAppTunnelingUseCase,
+    private val getShowSystemAppsSwitchStateUseCase: GetShowSystemAppsSwitchStateUseCase,
+    private val switchShowSystemAppsUseCase: SwitchShowSystemAppsUseCase,
+    private val getProtectNewAppsSwitchStateUseCase: GetProtectNewAppsSwitchStateUseCase,
+    private val switchProtectNewAppsUseCase: SwitchProtectNewAppsUseCase
 ) : ViewModel() {
 
     private val installedApps = MutableLiveData<List<ApplicationInfo>>()
@@ -47,7 +55,7 @@ class AppTunnelingViewModel(
         uiModel.value = AppTunnelingUiState.StateLoading
         viewModelScope.launch(Dispatchers.IO) {
             loadInstalledApps()
-            loadExcludeApps()
+            loadExcludeApps(true)
         }
     }
 
@@ -76,15 +84,32 @@ class AppTunnelingViewModel(
     }
 
     fun switchAppTunneling(isChecked: Boolean): Job = viewModelScope.launch(Dispatchers.Main.immediate) {
-        switchStateUseCase(isChecked)
+        switchAppTunnelingUseCase(isChecked)
     }
 
-    private suspend fun loadInstalledApps(includeInternalApps: Boolean = false) {
-        installedApps.postValue(getPackagesUseCase(includeInternalApps))
+    fun getShowSystemAppsSwitchState(): Boolean {
+        return getShowSystemAppsSwitchStateUseCase()
     }
 
-    private suspend fun loadExcludeApps() {
-        excludeApps.postValue(getExcludeAppUseCase())
+    fun switchShowSystemApps(isChecked: Boolean): Job = viewModelScope.launch(Dispatchers.Main.immediate) {
+        switchShowSystemAppsUseCase(isChecked)
+        loadInstalledApps()
+    }
+
+    fun getProtectNewAppsSwitchState(): Boolean {
+        return getProtectNewAppsSwitchStateUseCase()
+    }
+
+    fun switchProtectNewApps(isChecked: Boolean): Job = viewModelScope.launch(Dispatchers.Main.immediate) {
+        switchProtectNewAppsUseCase(isChecked)
+    }
+
+    private suspend fun loadInstalledApps() {
+        installedApps.postValue(getPackagesUseCase())
+    }
+
+    private suspend fun loadExcludeApps(forceUpdate: Boolean = false) {
+        excludeApps.postValue(getExcludeAppUseCase(forceUpdate))
     }
 
     sealed class InfoState(

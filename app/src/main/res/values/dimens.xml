@@ -11,4 +11,8 @@
     <dimen name="radio_button_left_margin">52dp</dimen>
     <dimen name="vpn_state_card_radius">8dp</dimen>
     <dimen name="vpn_state_card_ripple_height">318dp</dimen>
+
+    <dimen name="app_tunneling_config_width">230dp</dimen>
+    <dimen name="app_tunneling_config_left_margin">8dp</dimen>
+
 </resources>

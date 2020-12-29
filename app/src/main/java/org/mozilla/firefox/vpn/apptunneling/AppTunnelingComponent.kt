@@ -5,8 +5,12 @@ import org.mozilla.firefox.vpn.apptunneling.domain.AddExcludeAppUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.GetAppTunnelingSwitchStateUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.GetExcludeAppUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.GetPackagesUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.GetProtectNewAppsSwitchStateUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.GetShowSystemAppsSwitchStateUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.RemoveExcludeAppUseCase
 import org.mozilla.firefox.vpn.apptunneling.domain.SwitchAppTunnelingUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.SwitchProtectNewAppsUseCase
+import org.mozilla.firefox.vpn.apptunneling.domain.SwitchShowSystemAppsUseCase
 import org.mozilla.firefox.vpn.apptunneling.ui.AppTunnelingViewModel
 import org.mozilla.firefox.vpn.main.vpn.domain.VpnManagerStateProvider
 
@@ -26,6 +30,10 @@ class AppTunnelingComponentImpl(
             addExcludeAppUseCase = AddExcludeAppUseCase(appTunnelingRepo),
             removeExcludeAppUseCase = RemoveExcludeAppUseCase(appTunnelingRepo),
             getAppTunnelingSwitchStateUseCase = GetAppTunnelingSwitchStateUseCase(appTunnelingRepo),
-            switchStateUseCase = SwitchAppTunnelingUseCase(appTunnelingRepo)
+            switchAppTunnelingUseCase = SwitchAppTunnelingUseCase(appTunnelingRepo),
+            getShowSystemAppsSwitchStateUseCase = GetShowSystemAppsSwitchStateUseCase(appTunnelingRepo),
+            switchShowSystemAppsUseCase = SwitchShowSystemAppsUseCase(appTunnelingRepo),
+            getProtectNewAppsSwitchStateUseCase = GetProtectNewAppsSwitchStateUseCase(appTunnelingRepo),
+            switchProtectNewAppsUseCase = SwitchProtectNewAppsUseCase(appTunnelingRepo)
         )
 }
